@@ -7,6 +7,7 @@ import pl.lodz.hubertgaw.repository.entity.RentEquipmentEntity;
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import java.util.List;
+import java.util.Set;
 
 @Entity(name = "SportObject")
 @Table(name = "sport_object")
@@ -27,7 +28,10 @@ public class SportObjectEntity {
     @NotEmpty
     private Double fullPrice;
 
-    @ElementCollection
-    private List<RentEquipmentEntity> rentEquipment;
+    @ManyToMany
+    @JoinTable(name = "SPORT_OBJECT_RENT_EQUIPMENT",
+            joinColumns = @JoinColumn(name = "sport_object_id"),
+            inverseJoinColumns = @JoinColumn(name = "equipment_id"))
+    private Set<RentEquipmentEntity> rentEquipment;
 
 }

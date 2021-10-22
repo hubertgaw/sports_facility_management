@@ -2,20 +2,21 @@ package pl.lodz.hubertgaw.repository.entity;
 
 import lombok.Getter;
 import lombok.Setter;
+import pl.lodz.hubertgaw.repository.entity.sports_objects.SportObjectEntity;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
+import java.util.Set;
 
 @Entity(name = "RentEquipment")
 @Table(name = "rent_equipment")
 @Getter
 @Setter
-@Embeddable
 public class RentEquipmentEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "equipment_id")
     private Integer id;
 
     @Column(name = "name")
@@ -25,4 +26,7 @@ public class RentEquipmentEntity {
     @Column(name = "full_price")
     @NotEmpty
     private Double price;
+
+    @ManyToMany(mappedBy = "rentEquipment")
+    private Set<SportObjectEntity> sportObjects;
 }

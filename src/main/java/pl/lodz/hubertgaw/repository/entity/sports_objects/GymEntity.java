@@ -8,8 +8,8 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
 
-@Entity(name = "FullSizePitch")
-@Table(name = "full_size_pitch")
+@Entity(name = "Gym")
+@Table(name = "gym")
 @Getter
 @Setter
 public class GymEntity extends SportObjectEntity {

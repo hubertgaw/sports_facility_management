@@ -1,0 +1,22 @@
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+    <changeSet author="hubertgaw" id="2">
+        <preConditions onFail="CONTINUE">
+            <not>
+                <tableExists tableName="SPORT_OBJECT_RENT_EQUIPMENT"/>
+            </not>
+        </preConditions>
+        <createTable tableName="SPORT_OBJECT_RENT_EQUIPMENT">
+            <column name="sport_object_id" type="bigint">
+                <constraints foreignKeyName="fk_sport_object_id" references="sport_object(id)"
+                             nullable="false"/>
+            </column>
+            <column name="equipment_id" type="bigint">
+                <constraints foreignKeyName="fk_equipment_id" references="rent_equipment(equipment_id)"
+                             nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

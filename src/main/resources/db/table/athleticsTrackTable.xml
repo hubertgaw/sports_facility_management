@@ -18,10 +18,10 @@
             <column name="full_price" type="float">
                 <constraints nullable="false"/>
             </column>
-            <column name="single_price" type="float">
+            <column name="capacity" type="int">
                 <constraints nullable="false"/>
             </column>
-            <column name="capacity" type="int">
+            <column name="single_price" type="float">
                 <constraints nullable="false"/>
             </column>
         </createTable>

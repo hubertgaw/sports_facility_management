@@ -1,33 +1,23 @@
 <?xml version="1.1" encoding="UTF-8" standalone="no"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
-                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext
     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
     http://www.liquibase.org/xml/ns/dbchangelog
     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
-    <include file="../table/athleticsTrackTable.xml" relativeToChangelogFile="true"/>
-    <include file="../table/beachVolleyballCourtTable.xml" relativeToChangelogFile="true"/>
-    <include file="../table/climbingWallTable.xml" relativeToChangelogFile="true"/>
-    <include file="../table/dartRoomTable.xml" relativeToChangelogFile="true"/>
-    <include file="../table/fullSizePitchTable.xml" relativeToChangelogFile="true"/>
-    <include file="../table/gymTable.xml" relativeToChangelogFile="true"/>
-    <include file="../table/rentEquipmentTable.xml" relativeToChangelogFile="true"/>
-    <include file="../table/smallPitchTable.xml" relativeToChangelogFile="true"/>
-    <include file="../table/sportObjectTable.xml" relativeToChangelogFile="true"/>
-    <include file="../table/sportsHallTable.xml" relativeToChangelogFile="true"/>
-    <include file="../table/sportSwimmingPoolTable.xml" relativeToChangelogFile="true"/>
-    <include file="../table/tennisCourtTable.xml" relativeToChangelogFile="true"/>
-
-<!--    <changeSet author="hubertgaw" id="2">-->
-<!--        <createTable tableName="SportObject">-->
-<!--            <column name="id" type="bigint">-->
-<!--                <constraints nullable="false"/>-->
-<!--            </column>-->
-<!--            <column name="name" type="VARCHAR(255)"/>-->
-<!--            <column name="price" type="float"/>-->
-<!--        </createTable>-->
-<!--    </changeSet>-->
+    <include file="db/table/athleticsTrackTable.xml"/>
+    <include file="db/table/beachVolleyballCourtTable.xml"/>
+    <include file="db/table/climbingWallTable.xml"/>
+    <include file="db/table/dartRoomTable.xml"/>
+    <include file="db/table/fullSizePitchTable.xml"/>
+    <include file="db/table/gymTable.xml"/>
+    <include file="db/table/rentEquipmentTable.xml"/>
+    <include file="db/table/smallPitchTable.xml"/>
+    <include file="db/table/sportsHallTable.xml"/>
+    <include file="db/table/sportSwimmingPoolTable.xml"/>
+    <include file="db/table/tennisCourtTable.xml"/>
 </databaseChangeLog>
 

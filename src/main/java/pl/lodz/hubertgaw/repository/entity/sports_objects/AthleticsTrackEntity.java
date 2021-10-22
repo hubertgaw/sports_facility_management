@@ -14,11 +14,12 @@ import javax.validation.constraints.NotEmpty;
 @Setter
 public class AthleticsTrackEntity extends SportObjectEntity {
 
+    @Column(name = "capacity")
+    @NotEmpty
+    private Integer capacity;
+
     @Column(name = "single_price")
     @NotEmpty
     private Double singlePrice;
 
-    @Column(name = "capacity")
-    @NotEmpty
-    private Integer capacity;
 }
