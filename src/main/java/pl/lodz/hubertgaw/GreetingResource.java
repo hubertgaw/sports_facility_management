@@ -1,4 +1,4 @@
-package pl.lodz;
+package pl.lodz.hubertgaw;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;

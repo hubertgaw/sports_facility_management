@@ -1,4 +1,4 @@
-package pl.lodz;
+package pl.lodz.hubertgaw;
 
 import io.quarkus.test.junit.NativeImageTest;
 
