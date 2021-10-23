@@ -1,4 +1,4 @@
-package pl.lodz.hubertgaw;
+package pl.lodz.hubertgaw.resource;
 
 import io.smallrye.config.ConfigMapping;
 import io.smallrye.config.WithName;
