@@ -8,16 +8,18 @@
     http://www.liquibase.org/xml/ns/dbchangelog
     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
+    <include file="db/table/rentEquipmentTable.xml"/>
+    <include file="db/table/sportObject.xml"/>
     <include file="db/table/athleticsTrackTable.xml"/>
     <include file="db/table/beachVolleyballCourtTable.xml"/>
     <include file="db/table/climbingWallTable.xml"/>
     <include file="db/table/dartRoomTable.xml"/>
     <include file="db/table/fullSizePitchTable.xml"/>
     <include file="db/table/gymTable.xml"/>
-    <include file="db/table/rentEquipmentTable.xml"/>
     <include file="db/table/smallPitchTable.xml"/>
     <include file="db/table/sportsHallTable.xml"/>
     <include file="db/table/sportSwimmingPoolTable.xml"/>
     <include file="db/table/tennisCourtTable.xml"/>
+    <include file="db/table/objectEquipmentTable.xml"/>
 </databaseChangeLog>
 

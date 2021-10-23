@@ -11,12 +11,13 @@ import java.util.Set;
 
 @Entity(name = "SportObject")
 @Table(name = "sport_object")
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @Getter
 @Setter
-public class SportObjectEntity {
+public abstract class SportObjectEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.TABLE)
     @Column(name = "id")
     private Integer id;
 
@@ -30,8 +31,8 @@ public class SportObjectEntity {
 
     @ManyToMany
     @JoinTable(name = "SPORT_OBJECT_RENT_EQUIPMENT",
-            joinColumns = @JoinColumn(name = "sport_object_id"),
-            inverseJoinColumns = @JoinColumn(name = "equipment_id"))
+            joinColumns = { @JoinColumn(name = "sport_object_id", referencedColumnName = "id") },
+            inverseJoinColumns = { @JoinColumn(name = "equipment_id", referencedColumnName = "equipment_id")})
     private Set<RentEquipmentEntity> rentEquipment;
 
 }
