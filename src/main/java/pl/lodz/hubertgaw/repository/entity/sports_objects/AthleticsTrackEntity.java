@@ -18,8 +18,8 @@ public class AthleticsTrackEntity extends SportObjectEntity {
     @NotEmpty
     private Integer capacity;
 
-    @Column(name = "single_price")
+    @Column(name = "single_track_price")
     @NotEmpty
-    private Double singlePrice;
+    private Double singleTrackPrice;
 
 }

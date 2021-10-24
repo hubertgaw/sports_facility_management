@@ -6,7 +6,6 @@ import pl.lodz.hubertgaw.repository.entity.RentEquipmentEntity;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
-import java.util.List;
 import java.util.Set;
 
 @Entity(name = "SportObject")
