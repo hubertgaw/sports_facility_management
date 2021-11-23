@@ -7,6 +7,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 @Entity(name = "FullSizePitch")
 @Table(name = "full_size_pitch")
@@ -15,10 +16,10 @@ import javax.validation.constraints.NotEmpty;
 public class FullSizePitchEntity extends SportObjectEntity {
 
     @Column(name = "half_pitch_price")
-    @NotEmpty
+    @NotNull
     private Double halfPitchPrice;
 
     @Column(name = "is_full_rented")
-    @NotEmpty
+    @NotNull
     private Boolean isFullRented;
 }

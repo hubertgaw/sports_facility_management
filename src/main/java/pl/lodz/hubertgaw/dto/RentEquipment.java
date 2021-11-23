@@ -15,5 +15,5 @@ public class RentEquipment {
     @NotNull
     private Double price;
 
-    private Set<SportObject> sportObjects;
+    private Set<String> sportObjects;
 }

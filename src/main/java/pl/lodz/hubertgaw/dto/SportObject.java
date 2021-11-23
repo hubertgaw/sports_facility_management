@@ -9,12 +9,14 @@ import java.util.Set;
 @Data
 public abstract class SportObject {
 
+    private Integer id;
+
     @NotBlank
     private String name;
 
     @NotNull
     private Double fullPrice;
 
-    private Set<RentEquipment> rentEquipments;
+    private Set<String> rentEquipmentsNames;
 
 }

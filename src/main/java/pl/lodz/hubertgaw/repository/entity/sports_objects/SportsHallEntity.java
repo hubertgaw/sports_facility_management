@@ -7,6 +7,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 @Entity(name = "SportsHall")
 @Table(name = "sports_hall")
@@ -15,10 +16,10 @@ import javax.validation.constraints.NotEmpty;
 public class SportsHallEntity extends SportObjectEntity {
 
     @Column(name = "sectors_number")
-    @NotEmpty
+    @NotNull
     private Integer sectorsNumber;
 
     @Column(name = "sector_price")
-    @NotEmpty
+    @NotNull
     private Double sectorPrice;
 }

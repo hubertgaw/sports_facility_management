@@ -6,6 +6,7 @@ import pl.lodz.hubertgaw.repository.entity.sports_objects.SportObjectEntity;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.Set;
 
 @Entity(name = "RentEquipment")
@@ -24,9 +25,13 @@ public class RentEquipmentEntity {
     private String name;
 
     @Column(name = "full_price")
-    @NotEmpty
+    @NotNull
     private Double price;
 
     @ManyToMany(mappedBy = "rentEquipment")
     private Set<SportObjectEntity> sportObjects;
+
+    public void addSportObject(SportObjectEntity sportObjectEntity) {
+        sportObjects.add(sportObjectEntity);
+    }
 }
