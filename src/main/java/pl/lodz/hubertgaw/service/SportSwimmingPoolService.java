@@ -1,14 +1,10 @@
 package pl.lodz.hubertgaw.service;
 
 import org.slf4j.Logger;
-import pl.lodz.hubertgaw.dto.BeachVolleyballCourt;
 import pl.lodz.hubertgaw.dto.SportSwimmingPool;
-import pl.lodz.hubertgaw.mapper.BeachVolleyballCourtMapper;
-import pl.lodz.hubertgaw.mapper.SportSwimmingPoolMapper;
-import pl.lodz.hubertgaw.repository.BeachVolleyballCourtRepository;
+import pl.lodz.hubertgaw.mapper.SportObjectMapper;
 import pl.lodz.hubertgaw.repository.RentEquipmentRepository;
 import pl.lodz.hubertgaw.repository.SportSwimmingPoolRepository;
-import pl.lodz.hubertgaw.repository.entity.sports_objects.BeachVolleyballCourtEntity;
 import pl.lodz.hubertgaw.repository.entity.sports_objects.SportSwimmingPoolEntity;
 import pl.lodz.hubertgaw.service.exception.ServiceException;
 
@@ -21,35 +17,38 @@ import java.util.stream.Collectors;
 @ApplicationScoped
 public class SportSwimmingPoolService {
     private final SportSwimmingPoolRepository sportSwimmingPoolRepository;
-    private final SportSwimmingPoolMapper sportSwimmingPoolMapper;
+    private final SportObjectMapper sportObjectMapper;
     private final Logger logger;
     private final RentEquipmentRepository rentEquipmentRepository;
 
     public SportSwimmingPoolService(SportSwimmingPoolRepository sportSwimmingPoolRepository,
-                                    SportSwimmingPoolMapper sportSwimmingPoolMapper,
+                                    SportObjectMapper sportObjectMapper,
                                     Logger logger,
                                     RentEquipmentRepository rentEquipmentRepository) {
         this.sportSwimmingPoolRepository = sportSwimmingPoolRepository;
-        this.sportSwimmingPoolMapper = sportSwimmingPoolMapper;
+        this.sportObjectMapper = sportObjectMapper;
         this.logger = logger;
         this.rentEquipmentRepository = rentEquipmentRepository;
     }
 
     public List<SportSwimmingPool> findAll() {
         return sportSwimmingPoolRepository.findAll().stream()
-                .map(sportSwimmingPoolMapper::toDomain)
+                .map(sportObjectMapper::map)
+                .map(SportSwimmingPool.class::cast)
                 .collect(Collectors.toList());
     }
 
     public Optional<SportSwimmingPool> findById(Integer courtId) {
-        return sportSwimmingPoolRepository.findByIdOptional(courtId).map(sportSwimmingPoolMapper::toDomain);
+        return sportSwimmingPoolRepository.findByIdOptional(courtId)
+                .map(sportObjectMapper::map)
+                .map(SportSwimmingPool.class::cast);
     }
 
     @Transactional
     public SportSwimmingPool save(SportSwimmingPool sportSwimmingPool) {
-        SportSwimmingPoolEntity entity = sportSwimmingPoolMapper.toEntity(sportSwimmingPool);
+        SportSwimmingPoolEntity entity = (SportSwimmingPoolEntity) sportObjectMapper.map(sportSwimmingPool);
         sportSwimmingPoolRepository.persist(entity);
-        return sportSwimmingPoolMapper.toDomain(entity);
+        return (SportSwimmingPool) sportObjectMapper.map(entity);
     }
 
     @Transactional
@@ -66,17 +65,15 @@ public class SportSwimmingPoolService {
         entity.setName(sportSwimmingPool.getName());
         entity.setTrackPrice(sportSwimmingPool.getTrackPrice());
         entity.setTracksNumber(sportSwimmingPool.getTracksNumber());
-//        entity.set(sportSwimmingPool.getFullPrice());
-//        entity.setRentEquipment(sportSwimmingPool.getRentEquipments());
         sportSwimmingPoolRepository.persist(entity);
-        return sportSwimmingPoolMapper.toDomain(entity);
+        return (SportSwimmingPool) sportObjectMapper.map(entity);
     }
 
     public SportSwimmingPool putEquipmentToObject(Integer sportObjectId, Integer rentEquipmentId) {
         SportSwimmingPoolEntity sportSwimmingPoolToUpdate = sportSwimmingPoolRepository.findById(sportObjectId);
         sportSwimmingPoolToUpdate.addRentEquipment(rentEquipmentRepository.findById(rentEquipmentId));
-        sportSwimmingPoolRepository.persist(sportSwimmingPoolToUpdate);
-        return sportSwimmingPoolMapper.toDomain(sportSwimmingPoolToUpdate);
+        sportSwimmingPoolRepository.persistAndFlush(sportSwimmingPoolToUpdate);
+        return (SportSwimmingPool) sportObjectMapper.map(sportSwimmingPoolToUpdate);
     }
 
 }

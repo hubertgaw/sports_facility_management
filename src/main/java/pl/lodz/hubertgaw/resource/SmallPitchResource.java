@@ -6,8 +6,7 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 import org.slf4j.Logger;
-import pl.lodz.hubertgaw.dto.AthleticsTrack;
-import pl.lodz.hubertgaw.service.AthleticsTrackService;
+import pl.lodz.hubertgaw.dto.SmallPitch;
 
 import javax.validation.Valid;
 import javax.ws.rs.*;
@@ -15,16 +14,16 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Optional;
 
-@Path("/api/athletics_tracks")
+@Path("/api/small_pitches")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public class AthleticsTrackResource {
+public class SmallPitchResource {
 
-    private final AthleticsTrackService athleticsTrackService;
+    private final pl.lodz.hubertgaw.service.SmallPitchService SmallPitchService;
     private final Logger logger;
 
-    public AthleticsTrackResource(AthleticsTrackService athleticsTrackService, Logger logger) {
-        this.athleticsTrackService = athleticsTrackService;
+    public SmallPitchResource(pl.lodz.hubertgaw.service.SmallPitchService SmallPitchService, Logger logger) {
+        this.SmallPitchService = SmallPitchService;
         this.logger = logger;
     }
 
@@ -33,32 +32,32 @@ public class AthleticsTrackResource {
             value = {
                     @APIResponse(
                             responseCode = "200",
-                            description = "Get all Athletics Tracks",
+                            description = "Get all SmallPitchs",
                             content = @Content(mediaType = "application/json",
-                                    schema = @Schema(type = SchemaType.ARRAY, implementation = AthleticsTrack.class)))
+                                    schema = @Schema(type = SchemaType.ARRAY, implementation = SmallPitch.class)))
             }
     )
     public Response get() {
-        return Response.ok(athleticsTrackService.findAll()).build();
+        return Response.ok(SmallPitchService.findAll()).build();
     }
 
     @GET
-    @Path("/{athleticsTrackId}")
+    @Path("/{sportObjectId}")
     @APIResponses(
             value = {
                     @APIResponse(
                             responseCode = "200",
-                            description = "Get Athletics_Track by id",
+                            description = "Get SmallPitch by id",
                             content = @Content(mediaType = "application/json",
-                                    schema = @Schema(type = SchemaType.OBJECT, implementation = AthleticsTrack.class))),
+                                    schema = @Schema(type = SchemaType.OBJECT, implementation = SmallPitch.class))),
                     @APIResponse(
                             responseCode = "404",
-                            description = "No AthleticsTrack found for id provided",
+                            description = "No SmallPitch found for id provided",
                             content = @Content(mediaType = "application/json")),
             }
     )
-    public Response getById(@PathParam("athleticsTrackId") Integer athleticsTrackId) {
-        Optional<AthleticsTrack> optional = athleticsTrackService.findById(athleticsTrackId);
+    public Response getById(@PathParam("sportObjectId") Integer sportObjectId) {
+        Optional<SmallPitch> optional = SmallPitchService.findById(sportObjectId);
         return !optional.isEmpty() ? Response.ok(optional.get()).build() : Response.status(Response.Status.NOT_FOUND).build();
     }
 
@@ -67,18 +66,18 @@ public class AthleticsTrackResource {
             value = {
                     @APIResponse(
                             responseCode = "201",
-                            description = "AthleticsTrack Created",
+                            description = "SmallPitch Created",
                             content = @Content(mediaType = "application/json",
-                                    schema = @Schema(type = SchemaType.OBJECT, implementation = AthleticsTrack.class))),
+                                    schema = @Schema(type = SchemaType.OBJECT, implementation = SmallPitch.class))),
                     @APIResponse(
                             responseCode = "400",
-                            description = "AthleticsTrack already exists for athleticsTrackId",
+                            description = "SmallPitch already exists for Id",
                             content = @Content(mediaType = "application/json")),
             }
     )
-    public Response post(@Valid AthleticsTrack athleticsTrack) {
+    public Response post(@Valid SmallPitch SmallPitch) {
         logger.info("post");
-        final AthleticsTrack saved = athleticsTrackService.save(athleticsTrack);
+        final SmallPitch saved = SmallPitchService.save(SmallPitch);
         return Response.status(Response.Status.CREATED).entity(saved).build();
     }
 
@@ -87,40 +86,39 @@ public class AthleticsTrackResource {
             value = {
                     @APIResponse(
                             responseCode = "200",
-                            description = "AthleticsTrack updated",
+                            description = "SmallPitch updated",
                             content = @Content(mediaType = "application/json",
-                                    schema = @Schema(type = SchemaType.OBJECT, implementation = AthleticsTrack.class))),
+                                    schema = @Schema(type = SchemaType.OBJECT, implementation = SmallPitch.class))),
                     @APIResponse(
                             responseCode = "404",
-                            description = "No AthleticsTrack found for athleticsTrackId provided",
+                            description = "No SmallPitch found for athleticsTrackId provided",
                             content = @Content(mediaType = "application/json")),
             }
     )
-    public Response put(@Valid AthleticsTrack athleticsTrack) {
-        final AthleticsTrack saved = athleticsTrackService.update(athleticsTrack);
+    public Response put(@Valid SmallPitch SmallPitch) {
+        final SmallPitch saved = SmallPitchService.update(SmallPitch);
         return Response.ok(saved).build();
     }
 
     @PUT
-    @Path("/{athleticsTrackId}/rent_equipment/{rentEquipmentId}")
+    @Path("/{sportObjectId}/rent_equipment/{rentEquipmentId}")
     @APIResponses(
             value = {
                     @APIResponse(
                             responseCode = "200",
-                            description = "AthleticsTrack updated",
+                            description = "SmallPitch updated",
                             content = @Content(mediaType = "application/json",
-                                    schema = @Schema(type = SchemaType.OBJECT, implementation = AthleticsTrack.class))),
+                                    schema = @Schema(type = SchemaType.OBJECT, implementation = SmallPitch.class))),
                     @APIResponse(
                             responseCode = "404",
-                            description = "No AthleticsTrack found for athleticsTrackId provided",
+                            description = "No SmallPitch found for Id provided",
                             content = @Content(mediaType = "application/json")),
             }
     )
-    public Response putEquipmentToObject(@PathParam("athleticsTrackId") Integer athleticsTrackId,
+    public Response putEquipmentToObject(@PathParam("sportObjectId") Integer sportObjectId,
                                          @PathParam("rentEquipmentId") Integer rentEquipmentId) {
-        final AthleticsTrack saved = athleticsTrackService.putEquipmentToObject(athleticsTrackId, rentEquipmentId);
+        final SmallPitch saved = SmallPitchService.putEquipmentToObject(sportObjectId, rentEquipmentId);
         return Response.ok(saved).build();
     }
 
 }
-

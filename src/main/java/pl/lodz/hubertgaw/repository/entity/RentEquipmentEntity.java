@@ -7,6 +7,7 @@ import pl.lodz.hubertgaw.repository.entity.sports_objects.SportObjectEntity;
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity(name = "RentEquipment")
@@ -28,8 +29,8 @@ public class RentEquipmentEntity {
     @NotNull
     private Double price;
 
-    @ManyToMany(mappedBy = "rentEquipment")
-    private Set<SportObjectEntity> sportObjects;
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "rentEquipment")
+    private Set<SportObjectEntity> sportObjects = new HashSet<>();
 
     public void addSportObject(SportObjectEntity sportObjectEntity) {
         sportObjects.add(sportObjectEntity);

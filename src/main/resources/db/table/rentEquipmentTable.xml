@@ -15,7 +15,7 @@
             <column name="name" type="VARCHAR(255)">
                 <constraints nullable="false" unique="true"/>
             </column>
-            <column name="price" type="float">
+            <column name="full_price" type="float">
                 <constraints nullable="false"/>
             </column>
         </createTable>

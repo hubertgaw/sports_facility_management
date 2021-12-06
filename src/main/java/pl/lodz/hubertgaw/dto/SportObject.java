@@ -7,7 +7,7 @@ import javax.validation.constraints.NotNull;
 import java.util.Set;
 
 @Data
-public abstract class SportObject {
+public class SportObject {
 
     private Integer id;
 

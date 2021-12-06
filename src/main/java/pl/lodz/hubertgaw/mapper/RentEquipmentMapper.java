@@ -17,7 +17,6 @@ public interface RentEquipmentMapper {
 
     RentEquipment toDomain(RentEquipmentEntity entity);
 
-    //TODO - sprawdzic skladnie switch case'a, dokonczyc mapper:
     default SportObjectEntity map(String value) {
 
         AthleticsTrackRepository athleticsTrackRepository = new AthleticsTrackRepository();

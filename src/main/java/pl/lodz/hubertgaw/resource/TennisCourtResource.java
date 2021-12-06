@@ -1,13 +1,13 @@
 package pl.lodz.hubertgaw.resource;
 
+
 import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 import org.slf4j.Logger;
-import pl.lodz.hubertgaw.dto.AthleticsTrack;
-import pl.lodz.hubertgaw.service.AthleticsTrackService;
+import pl.lodz.hubertgaw.dto.TennisCourt;
 
 import javax.validation.Valid;
 import javax.ws.rs.*;
@@ -15,16 +15,16 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Optional;
 
-@Path("/api/athletics_tracks")
+@Path("/api/tennis_courts")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public class AthleticsTrackResource {
+public class TennisCourtResource {
 
-    private final AthleticsTrackService athleticsTrackService;
+    private final pl.lodz.hubertgaw.service.TennisCourtService TennisCourtService;
     private final Logger logger;
 
-    public AthleticsTrackResource(AthleticsTrackService athleticsTrackService, Logger logger) {
-        this.athleticsTrackService = athleticsTrackService;
+    public TennisCourtResource(pl.lodz.hubertgaw.service.TennisCourtService TennisCourtService, Logger logger) {
+        this.TennisCourtService = TennisCourtService;
         this.logger = logger;
     }
 
@@ -33,32 +33,32 @@ public class AthleticsTrackResource {
             value = {
                     @APIResponse(
                             responseCode = "200",
-                            description = "Get all Athletics Tracks",
+                            description = "Get all TennisCourts",
                             content = @Content(mediaType = "application/json",
-                                    schema = @Schema(type = SchemaType.ARRAY, implementation = AthleticsTrack.class)))
+                                    schema = @Schema(type = SchemaType.ARRAY, implementation = TennisCourt.class)))
             }
     )
     public Response get() {
-        return Response.ok(athleticsTrackService.findAll()).build();
+        return Response.ok(TennisCourtService.findAll()).build();
     }
 
     @GET
-    @Path("/{athleticsTrackId}")
+    @Path("/{sportObjectId}")
     @APIResponses(
             value = {
                     @APIResponse(
                             responseCode = "200",
-                            description = "Get Athletics_Track by id",
+                            description = "Get TennisCourt by id",
                             content = @Content(mediaType = "application/json",
-                                    schema = @Schema(type = SchemaType.OBJECT, implementation = AthleticsTrack.class))),
+                                    schema = @Schema(type = SchemaType.OBJECT, implementation = TennisCourt.class))),
                     @APIResponse(
                             responseCode = "404",
-                            description = "No AthleticsTrack found for id provided",
+                            description = "No TennisCourt found for id provided",
                             content = @Content(mediaType = "application/json")),
             }
     )
-    public Response getById(@PathParam("athleticsTrackId") Integer athleticsTrackId) {
-        Optional<AthleticsTrack> optional = athleticsTrackService.findById(athleticsTrackId);
+    public Response getById(@PathParam("sportObjectId") Integer sportObjectId) {
+        Optional<TennisCourt> optional = TennisCourtService.findById(sportObjectId);
         return !optional.isEmpty() ? Response.ok(optional.get()).build() : Response.status(Response.Status.NOT_FOUND).build();
     }
 
@@ -67,18 +67,18 @@ public class AthleticsTrackResource {
             value = {
                     @APIResponse(
                             responseCode = "201",
-                            description = "AthleticsTrack Created",
+                            description = "TennisCourt Created",
                             content = @Content(mediaType = "application/json",
-                                    schema = @Schema(type = SchemaType.OBJECT, implementation = AthleticsTrack.class))),
+                                    schema = @Schema(type = SchemaType.OBJECT, implementation = TennisCourt.class))),
                     @APIResponse(
                             responseCode = "400",
-                            description = "AthleticsTrack already exists for athleticsTrackId",
+                            description = "TennisCourt already exists for Id",
                             content = @Content(mediaType = "application/json")),
             }
     )
-    public Response post(@Valid AthleticsTrack athleticsTrack) {
+    public Response post(@Valid TennisCourt TennisCourt) {
         logger.info("post");
-        final AthleticsTrack saved = athleticsTrackService.save(athleticsTrack);
+        final TennisCourt saved = TennisCourtService.save(TennisCourt);
         return Response.status(Response.Status.CREATED).entity(saved).build();
     }
 
@@ -87,40 +87,39 @@ public class AthleticsTrackResource {
             value = {
                     @APIResponse(
                             responseCode = "200",
-                            description = "AthleticsTrack updated",
+                            description = "TennisCourt updated",
                             content = @Content(mediaType = "application/json",
-                                    schema = @Schema(type = SchemaType.OBJECT, implementation = AthleticsTrack.class))),
+                                    schema = @Schema(type = SchemaType.OBJECT, implementation = TennisCourt.class))),
                     @APIResponse(
                             responseCode = "404",
-                            description = "No AthleticsTrack found for athleticsTrackId provided",
+                            description = "No TennisCourt found for athleticsTrackId provided",
                             content = @Content(mediaType = "application/json")),
             }
     )
-    public Response put(@Valid AthleticsTrack athleticsTrack) {
-        final AthleticsTrack saved = athleticsTrackService.update(athleticsTrack);
+    public Response put(@Valid TennisCourt TennisCourt) {
+        final TennisCourt saved = TennisCourtService.update(TennisCourt);
         return Response.ok(saved).build();
     }
 
     @PUT
-    @Path("/{athleticsTrackId}/rent_equipment/{rentEquipmentId}")
+    @Path("/{sportObjectId}/rent_equipment/{rentEquipmentId}")
     @APIResponses(
             value = {
                     @APIResponse(
                             responseCode = "200",
-                            description = "AthleticsTrack updated",
+                            description = "TennisCourt updated",
                             content = @Content(mediaType = "application/json",
-                                    schema = @Schema(type = SchemaType.OBJECT, implementation = AthleticsTrack.class))),
+                                    schema = @Schema(type = SchemaType.OBJECT, implementation = TennisCourt.class))),
                     @APIResponse(
                             responseCode = "404",
-                            description = "No AthleticsTrack found for athleticsTrackId provided",
+                            description = "No TennisCourt found for Id provided",
                             content = @Content(mediaType = "application/json")),
             }
     )
-    public Response putEquipmentToObject(@PathParam("athleticsTrackId") Integer athleticsTrackId,
+    public Response putEquipmentToObject(@PathParam("sportObjectId") Integer sportObjectId,
                                          @PathParam("rentEquipmentId") Integer rentEquipmentId) {
-        final AthleticsTrack saved = athleticsTrackService.putEquipmentToObject(athleticsTrackId, rentEquipmentId);
+        final TennisCourt saved = TennisCourtService.putEquipmentToObject(sportObjectId, rentEquipmentId);
         return Response.ok(saved).build();
     }
 
 }
-

@@ -7,6 +7,7 @@ import pl.lodz.hubertgaw.repository.entity.RentEquipmentEntity;
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity(name = "SportObject")
@@ -14,7 +15,7 @@ import java.util.Set;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Getter
 @Setter
-public abstract class SportObjectEntity {
+public class SportObjectEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -29,13 +30,14 @@ public abstract class SportObjectEntity {
     @NotNull
     private Double fullPrice;
 
-    @ManyToMany
-    @JoinTable(name = "SPORT_OBJECT_RENT_EQUIPMENT",
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(name = "sport_object_rent_equipment",
             joinColumns = { @JoinColumn(name = "sport_object_id", referencedColumnName = "id") },
             inverseJoinColumns = { @JoinColumn(name = "equipment_id", referencedColumnName = "equipment_id")})
-    private Set<RentEquipmentEntity> rentEquipment;
+    private Set<RentEquipmentEntity> rentEquipment = new HashSet<>();
 
     public void addRentEquipment(RentEquipmentEntity rentEquipmentEntity) {
+        rentEquipmentEntity.addSportObject(this);
         rentEquipment.add(rentEquipmentEntity);
     }
 }

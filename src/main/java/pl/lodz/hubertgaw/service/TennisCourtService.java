@@ -1,14 +1,10 @@
 package pl.lodz.hubertgaw.service;
 
 import org.slf4j.Logger;
-import pl.lodz.hubertgaw.dto.BeachVolleyballCourt;
 import pl.lodz.hubertgaw.dto.TennisCourt;
-import pl.lodz.hubertgaw.mapper.BeachVolleyballCourtMapper;
-import pl.lodz.hubertgaw.mapper.TennisCourtMapper;
-import pl.lodz.hubertgaw.repository.BeachVolleyballCourtRepository;
+import pl.lodz.hubertgaw.mapper.SportObjectMapper;
 import pl.lodz.hubertgaw.repository.RentEquipmentRepository;
 import pl.lodz.hubertgaw.repository.TennisCourtRepository;
-import pl.lodz.hubertgaw.repository.entity.sports_objects.BeachVolleyballCourtEntity;
 import pl.lodz.hubertgaw.repository.entity.sports_objects.TennisCourtEntity;
 import pl.lodz.hubertgaw.service.exception.ServiceException;
 
@@ -21,35 +17,38 @@ import java.util.stream.Collectors;
 @ApplicationScoped
 public class TennisCourtService {
     private final TennisCourtRepository tennisCourtRepository;
-    private final TennisCourtMapper tennisCourtMapper;
+    private final SportObjectMapper sportObjectMapper;
     private final Logger logger;
     private final RentEquipmentRepository rentEquipmentRepository;
 
     public TennisCourtService(TennisCourtRepository tennisCourtRepository,
-                              TennisCourtMapper tennisCourtMapper,
+                              SportObjectMapper sportObjectMapper,
                               Logger logger,
                               RentEquipmentRepository rentEquipmentRepository) {
         this.tennisCourtRepository = tennisCourtRepository;
-        this.tennisCourtMapper = tennisCourtMapper;
+        this.sportObjectMapper = sportObjectMapper;
         this.logger = logger;
         this.rentEquipmentRepository = rentEquipmentRepository;
     }
 
     public List<TennisCourt> findAll() {
         return tennisCourtRepository.findAll().stream()
-                .map(tennisCourtMapper::toDomain)
+                .map(sportObjectMapper::map)
+                .map(TennisCourt.class::cast)
                 .collect(Collectors.toList());
     }
 
     public Optional<TennisCourt> findById(Integer courtId) {
-        return tennisCourtRepository.findByIdOptional(courtId).map(tennisCourtMapper::toDomain);
+        return tennisCourtRepository.findByIdOptional(courtId)
+                .map(sportObjectMapper::map)
+                .map(TennisCourt.class::cast);
     }
 
     @Transactional
     public TennisCourt save(TennisCourt tennisCourt) {
-        TennisCourtEntity entity = tennisCourtMapper.toEntity(tennisCourt);
+        TennisCourtEntity entity = (TennisCourtEntity) sportObjectMapper.map(tennisCourt);
         tennisCourtRepository.persist(entity);
-        return tennisCourtMapper.toDomain(entity);
+        return (TennisCourt) sportObjectMapper.map(entity);
     }
 
     @Transactional
@@ -64,18 +63,15 @@ public class TennisCourtService {
         TennisCourtEntity entity = optional.get();
         entity.setFullPrice(tennisCourt.getFullPrice());
         entity.setName(tennisCourt.getName());
-//        entity.set(tennisCourt.getFullPrice());
-//        entity.setRentEquipment(tennisCourt.getRentEquipments());
         tennisCourtRepository.persist(entity);
-        return tennisCourtMapper.toDomain(entity);
+        return (TennisCourt) sportObjectMapper.map(entity);
     }
 
     public TennisCourt putEquipmentToObject(Integer sportObjectId, Integer rentEquipmentId) {
         TennisCourtEntity tennisCourtToUpdate = tennisCourtRepository.findById(sportObjectId);
         tennisCourtToUpdate.addRentEquipment(rentEquipmentRepository.findById(rentEquipmentId));
-        tennisCourtRepository.persist(tennisCourtToUpdate);
-        return tennisCourtMapper.toDomain(tennisCourtToUpdate);
+        tennisCourtRepository.persistAndFlush(tennisCourtToUpdate);
+        return (TennisCourt) sportObjectMapper.map(tennisCourtToUpdate);
     }
-
 
 }

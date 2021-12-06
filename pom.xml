@@ -18,9 +18,17 @@
         <quarkus.platform.version>2.3.0.Final</quarkus.platform.version>
         <surefire-plugin.version>3.0.0-M5</surefire-plugin.version>
         <maven.home>C:\\Maven\apache-maven-3.6.3</maven.home>
-        <mapstruct.version>1.3.1.Final</mapstruct.version>
+        <mapstruct.version>1.5.0.Beta1</mapstruct.version>
         <lombok.version>1.18.22</lombok.version>
     </properties>
+
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -113,18 +121,22 @@
             <version>${lombok.version}</version>
             <scope>provided</scope>
         </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.mapstruct</groupId>-->
+<!--            <artifactId>mapstruct</artifactId>-->
+<!--            <version>${mapstruct.version}</version>-->
+<!--        </dependency>-->
         <dependency>
-            <groupId>org.mapstruct</groupId>
-            <artifactId>mapstruct</artifactId>
-            <version>${mapstruct.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.mapstruct</groupId>
+            <groupId>com.github.mapstruct.mapstruct</groupId>
             <artifactId>mapstruct-processor</artifactId>
-            <version>${mapstruct.version}</version>
+            <version>master-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
-
+        <dependency>
+            <groupId>com.github.mapstruct.mapstruct</groupId>
+            <artifactId>mapstruct</artifactId>
+            <version>master-SNAPSHOT</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -200,9 +212,9 @@
                         <configuration>
                             <annotationProcessorPaths>
                                 <path>
-                                    <groupId>org.mapstruct</groupId>
+                                    <groupId>com.github.mapstruct.mapstruct</groupId>
                                     <artifactId>mapstruct-processor</artifactId>
-                                    <version>${mapstruct.version}</version>
+                                    <version>master-SNAPSHOT</version>
                                 </path>
                             </annotationProcessorPaths>
                         </configuration>

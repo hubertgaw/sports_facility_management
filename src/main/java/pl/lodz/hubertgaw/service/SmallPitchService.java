@@ -1,14 +1,10 @@
 package pl.lodz.hubertgaw.service;
 
 import org.slf4j.Logger;
-import pl.lodz.hubertgaw.dto.BeachVolleyballCourt;
 import pl.lodz.hubertgaw.dto.SmallPitch;
-import pl.lodz.hubertgaw.mapper.BeachVolleyballCourtMapper;
-import pl.lodz.hubertgaw.mapper.SmallPitchMapper;
-import pl.lodz.hubertgaw.repository.BeachVolleyballCourtRepository;
+import pl.lodz.hubertgaw.mapper.SportObjectMapper;
 import pl.lodz.hubertgaw.repository.RentEquipmentRepository;
 import pl.lodz.hubertgaw.repository.SmallPitchRepository;
-import pl.lodz.hubertgaw.repository.entity.sports_objects.BeachVolleyballCourtEntity;
 import pl.lodz.hubertgaw.repository.entity.sports_objects.SmallPitchEntity;
 import pl.lodz.hubertgaw.service.exception.ServiceException;
 
@@ -21,35 +17,38 @@ import java.util.stream.Collectors;
 @ApplicationScoped
 public class SmallPitchService {
     private final SmallPitchRepository smallPitchRepository;
-    private final SmallPitchMapper smallPitchMapper;
+    private final SportObjectMapper sportObjectMapper;
     private final Logger logger;
     private final RentEquipmentRepository rentEquipmentRepository;
 
     public SmallPitchService(SmallPitchRepository smallPitchRepository,
-                             SmallPitchMapper smallPitchMapper,
+                             SportObjectMapper sportObjectMapper,
                              Logger logger,
                              RentEquipmentRepository rentEquipmentRepository) {
         this.smallPitchRepository = smallPitchRepository;
-        this.smallPitchMapper = smallPitchMapper;
+        this.sportObjectMapper = sportObjectMapper;
         this.logger = logger;
         this.rentEquipmentRepository = rentEquipmentRepository;
     }
 
     public List<SmallPitch> findAll() {
         return smallPitchRepository.findAll().stream()
-                .map(smallPitchMapper::toDomain)
+                .map(sportObjectMapper::map)
+                .map(SmallPitch.class::cast)
                 .collect(Collectors.toList());
     }
 
     public Optional<SmallPitch> findById(Integer pitchId) {
-        return smallPitchRepository.findByIdOptional(pitchId).map(smallPitchMapper::toDomain);
+        return smallPitchRepository.findByIdOptional(pitchId)
+                .map(sportObjectMapper::map)
+                .map(SmallPitch.class::cast);
     }
 
     @Transactional
     public SmallPitch save(SmallPitch smallPitch) {
-        SmallPitchEntity entity = smallPitchMapper.toEntity(smallPitch);
+        SmallPitchEntity entity = (SmallPitchEntity) sportObjectMapper.map(smallPitch);
         smallPitchRepository.persist(entity);
-        return smallPitchMapper.toDomain(entity);
+        return (SmallPitch) sportObjectMapper.map(entity);
     }
 
     @Transactional
@@ -66,17 +65,15 @@ public class SmallPitchService {
         entity.setName(smallPitch.getName());
         entity.setHalfPitchPrice(smallPitch.getHalfPitchPrice());
         entity.setIsFullRented(smallPitch.getIsFullRented());
-//        entity.set(smallPitch.getFullPrice());
-//        entity.setRentEquipment(smallPitch.getRentEquipments());
         smallPitchRepository.persist(entity);
-        return smallPitchMapper.toDomain(entity);
+        return (SmallPitch) sportObjectMapper.map(entity);
     }
 
     public SmallPitch putEquipmentToObject(Integer sportObjectId, Integer rentEquipmentId) {
         SmallPitchEntity smallPitchToUpdate = smallPitchRepository.findById(sportObjectId);
         smallPitchToUpdate.addRentEquipment(rentEquipmentRepository.findById(rentEquipmentId));
-        smallPitchRepository.persist(smallPitchToUpdate);
-        return smallPitchMapper.toDomain(smallPitchToUpdate);
+        smallPitchRepository.persistAndFlush(smallPitchToUpdate);
+        return (SmallPitch) sportObjectMapper.map(smallPitchToUpdate);
     }
 
 }

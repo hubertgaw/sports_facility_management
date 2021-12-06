@@ -1,14 +1,10 @@
 package pl.lodz.hubertgaw.service;
 
 import org.slf4j.Logger;
-import pl.lodz.hubertgaw.dto.BeachVolleyballCourt;
 import pl.lodz.hubertgaw.dto.ClimbingWall;
-import pl.lodz.hubertgaw.mapper.BeachVolleyballCourtMapper;
-import pl.lodz.hubertgaw.mapper.ClimbingWallMapper;
-import pl.lodz.hubertgaw.repository.BeachVolleyballCourtRepository;
+import pl.lodz.hubertgaw.mapper.SportObjectMapper;
 import pl.lodz.hubertgaw.repository.ClimbingWallRepository;
 import pl.lodz.hubertgaw.repository.RentEquipmentRepository;
-import pl.lodz.hubertgaw.repository.entity.sports_objects.BeachVolleyballCourtEntity;
 import pl.lodz.hubertgaw.repository.entity.sports_objects.ClimbingWallEntity;
 import pl.lodz.hubertgaw.service.exception.ServiceException;
 
@@ -21,35 +17,38 @@ import java.util.stream.Collectors;
 @ApplicationScoped
 public class ClimbingWallService {
     private final ClimbingWallRepository climbingWallRepository;
-    private final ClimbingWallMapper climbingWallMapper;
+    private final SportObjectMapper sportObjectMapper;
     private final Logger logger;
     private final RentEquipmentRepository rentEquipmentRepository;
 
     public ClimbingWallService(ClimbingWallRepository climbingWallRepository,
-                               ClimbingWallMapper climbingWallMapper,
+                               SportObjectMapper sportObjectMapper,
                                Logger logger,
                                RentEquipmentRepository rentEquipmentRepository) {
         this.climbingWallRepository = climbingWallRepository;
-        this.climbingWallMapper = climbingWallMapper;
+        this.sportObjectMapper = sportObjectMapper;
         this.logger = logger;
         this.rentEquipmentRepository = rentEquipmentRepository;
     }
 
     public List<ClimbingWall> findAll() {
         return climbingWallRepository.findAll().stream()
-                .map(climbingWallMapper::toDomain)
+                .map(sportObjectMapper::map)
+                .map(ClimbingWall.class::cast)
                 .collect(Collectors.toList());
     }
 
     public Optional<ClimbingWall> findById(Integer wallId) {
-        return climbingWallRepository.findByIdOptional(wallId).map(climbingWallMapper::toDomain);
+        return climbingWallRepository.findByIdOptional(wallId)
+                .map(sportObjectMapper::map)
+                .map(ClimbingWall.class::cast);
     }
 
     @Transactional
     public ClimbingWall save(ClimbingWall climbingWall) {
-        ClimbingWallEntity entity = climbingWallMapper.toEntity(climbingWall);
+        ClimbingWallEntity entity = (ClimbingWallEntity) sportObjectMapper.map(climbingWall);
         climbingWallRepository.persist(entity);
-        return climbingWallMapper.toDomain(entity);
+        return (ClimbingWall) sportObjectMapper.map(entity);
     }
 
     @Transactional
@@ -66,17 +65,15 @@ public class ClimbingWallService {
         entity.setName(climbingWall.getName());
         entity.setCapacity(climbingWall.getCapacity());
         entity.setSinglePrice(climbingWall.getSinglePrice());
-//        entity.set(climbingWall.getFullPrice());
-//        entity.setRentEquipment(climbingWall.getRentEquipments());
         climbingWallRepository.persist(entity);
-        return climbingWallMapper.toDomain(entity);
+        return (ClimbingWall) sportObjectMapper.map(entity);
     }
 
     public ClimbingWall putEquipmentToObject(Integer sportObjectId, Integer rentEquipmentId) {
         ClimbingWallEntity climbingWallToUpdate = climbingWallRepository.findById(sportObjectId);
         climbingWallToUpdate.addRentEquipment(rentEquipmentRepository.findById(rentEquipmentId));
-        climbingWallRepository.persist(climbingWallToUpdate);
-        return climbingWallMapper.toDomain(climbingWallToUpdate);
+        climbingWallRepository.persistAndFlush(climbingWallToUpdate);
+        return (ClimbingWall) sportObjectMapper.map(climbingWallToUpdate);
     }
 
 }

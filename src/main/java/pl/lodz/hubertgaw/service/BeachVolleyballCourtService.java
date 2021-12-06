@@ -1,14 +1,10 @@
 package pl.lodz.hubertgaw.service;
 
 import org.slf4j.Logger;
-import pl.lodz.hubertgaw.dto.AthleticsTrack;
 import pl.lodz.hubertgaw.dto.BeachVolleyballCourt;
-import pl.lodz.hubertgaw.mapper.AthleticsTrackMapper;
-import pl.lodz.hubertgaw.mapper.BeachVolleyballCourtMapper;
-import pl.lodz.hubertgaw.repository.AthleticsTrackRepository;
+import pl.lodz.hubertgaw.mapper.SportObjectMapper;
 import pl.lodz.hubertgaw.repository.BeachVolleyballCourtRepository;
 import pl.lodz.hubertgaw.repository.RentEquipmentRepository;
-import pl.lodz.hubertgaw.repository.entity.sports_objects.AthleticsTrackEntity;
 import pl.lodz.hubertgaw.repository.entity.sports_objects.BeachVolleyballCourtEntity;
 import pl.lodz.hubertgaw.service.exception.ServiceException;
 
@@ -21,35 +17,38 @@ import java.util.stream.Collectors;
 @ApplicationScoped
 public class BeachVolleyballCourtService {
     private final BeachVolleyballCourtRepository beachVolleyballCourtRepository;
-    private final BeachVolleyballCourtMapper beachVolleyballCourtMapper;
+    private final SportObjectMapper sportObjectMapper;
     private final Logger logger;
     private final RentEquipmentRepository rentEquipmentRepository;
 
     public BeachVolleyballCourtService(BeachVolleyballCourtRepository beachVolleyballCourtRepository,
-                                 BeachVolleyballCourtMapper beachVolleyballCourtMapper,
+                                 SportObjectMapper sportObjectMapper,
                                  Logger logger,
                                  RentEquipmentRepository rentEquipmentRepository) {
         this.beachVolleyballCourtRepository = beachVolleyballCourtRepository;
-        this.beachVolleyballCourtMapper = beachVolleyballCourtMapper;
+        this.sportObjectMapper = sportObjectMapper;
         this.logger = logger;
         this.rentEquipmentRepository = rentEquipmentRepository;
     }
 
     public List<BeachVolleyballCourt> findAll() {
         return beachVolleyballCourtRepository.findAll().stream()
-                .map(beachVolleyballCourtMapper::toDomain)
+                .map(sportObjectMapper::map)
+                .map(BeachVolleyballCourt.class::cast)
                 .collect(Collectors.toList());
     }
 
     public Optional<BeachVolleyballCourt> findById(Integer courtId) {
-        return beachVolleyballCourtRepository.findByIdOptional(courtId).map(beachVolleyballCourtMapper::toDomain);
+        return beachVolleyballCourtRepository.findByIdOptional(courtId)
+                .map(sportObjectMapper::map)
+                .map(BeachVolleyballCourt.class::cast);
     }
 
     @Transactional
     public BeachVolleyballCourt save(BeachVolleyballCourt beachVolleyballCourt) {
-        BeachVolleyballCourtEntity entity = beachVolleyballCourtMapper.toEntity(beachVolleyballCourt);
+        BeachVolleyballCourtEntity entity = (BeachVolleyballCourtEntity) sportObjectMapper.map(beachVolleyballCourt);
         beachVolleyballCourtRepository.persist(entity);
-        return beachVolleyballCourtMapper.toDomain(entity);
+        return (BeachVolleyballCourt) sportObjectMapper.map(entity);
     }
 
     @Transactional
@@ -64,17 +63,15 @@ public class BeachVolleyballCourtService {
         BeachVolleyballCourtEntity entity = optional.get();
         entity.setFullPrice(beachVolleyballCourt.getFullPrice());
         entity.setName(beachVolleyballCourt.getName());
-//        entity.set(beachVolleyballCourt.getFullPrice());
-//        entity.setRentEquipment(beachVolleyballCourt.getRentEquipments());
         beachVolleyballCourtRepository.persist(entity);
-        return beachVolleyballCourtMapper.toDomain(entity);
+        return (BeachVolleyballCourt) sportObjectMapper.map(entity);
     }
 
     public BeachVolleyballCourt putEquipmentToObject(Integer sportObjectId, Integer rentEquipmentId) {
         BeachVolleyballCourtEntity beachVolleyballCourtToUpdate = beachVolleyballCourtRepository.findById(sportObjectId);
         beachVolleyballCourtToUpdate.addRentEquipment(rentEquipmentRepository.findById(rentEquipmentId));
-        beachVolleyballCourtRepository.persist(beachVolleyballCourtToUpdate);
-        return beachVolleyballCourtMapper.toDomain(beachVolleyballCourtToUpdate);
+        beachVolleyballCourtRepository.persistAndFlush(beachVolleyballCourtToUpdate);
+        return (BeachVolleyballCourt) sportObjectMapper.map(beachVolleyballCourtToUpdate);
     }
 
 }

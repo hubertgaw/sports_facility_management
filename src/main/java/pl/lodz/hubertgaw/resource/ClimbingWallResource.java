@@ -6,8 +6,8 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 import org.slf4j.Logger;
-import pl.lodz.hubertgaw.dto.AthleticsTrack;
-import pl.lodz.hubertgaw.service.AthleticsTrackService;
+import pl.lodz.hubertgaw.dto.ClimbingWall;
+import pl.lodz.hubertgaw.service.ClimbingWallService;
 
 import javax.validation.Valid;
 import javax.ws.rs.*;
@@ -15,16 +15,17 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Optional;
 
-@Path("/api/athletics_tracks")
+
+@Path("/api/climbing_walls")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public class AthleticsTrackResource {
+public class ClimbingWallResource {
 
-    private final AthleticsTrackService athleticsTrackService;
+    private final ClimbingWallService ClimbingWallService;
     private final Logger logger;
 
-    public AthleticsTrackResource(AthleticsTrackService athleticsTrackService, Logger logger) {
-        this.athleticsTrackService = athleticsTrackService;
+    public ClimbingWallResource(ClimbingWallService ClimbingWallService, Logger logger) {
+        this.ClimbingWallService = ClimbingWallService;
         this.logger = logger;
     }
 
@@ -33,32 +34,32 @@ public class AthleticsTrackResource {
             value = {
                     @APIResponse(
                             responseCode = "200",
-                            description = "Get all Athletics Tracks",
+                            description = "Get all ClimbingWalls",
                             content = @Content(mediaType = "application/json",
-                                    schema = @Schema(type = SchemaType.ARRAY, implementation = AthleticsTrack.class)))
+                                    schema = @Schema(type = SchemaType.ARRAY, implementation = ClimbingWall.class)))
             }
     )
     public Response get() {
-        return Response.ok(athleticsTrackService.findAll()).build();
+        return Response.ok(ClimbingWallService.findAll()).build();
     }
 
     @GET
-    @Path("/{athleticsTrackId}")
+    @Path("/{sportObjectId}")
     @APIResponses(
             value = {
                     @APIResponse(
                             responseCode = "200",
-                            description = "Get Athletics_Track by id",
+                            description = "Get ClimbingWall by id",
                             content = @Content(mediaType = "application/json",
-                                    schema = @Schema(type = SchemaType.OBJECT, implementation = AthleticsTrack.class))),
+                                    schema = @Schema(type = SchemaType.OBJECT, implementation = ClimbingWall.class))),
                     @APIResponse(
                             responseCode = "404",
-                            description = "No AthleticsTrack found for id provided",
+                            description = "No ClimbingWall found for id provided",
                             content = @Content(mediaType = "application/json")),
             }
     )
-    public Response getById(@PathParam("athleticsTrackId") Integer athleticsTrackId) {
-        Optional<AthleticsTrack> optional = athleticsTrackService.findById(athleticsTrackId);
+    public Response getById(@PathParam("sportObjectId") Integer sportObjectId) {
+        Optional<ClimbingWall> optional = ClimbingWallService.findById(sportObjectId);
         return !optional.isEmpty() ? Response.ok(optional.get()).build() : Response.status(Response.Status.NOT_FOUND).build();
     }
 
@@ -67,18 +68,18 @@ public class AthleticsTrackResource {
             value = {
                     @APIResponse(
                             responseCode = "201",
-                            description = "AthleticsTrack Created",
+                            description = "ClimbingWall Created",
                             content = @Content(mediaType = "application/json",
-                                    schema = @Schema(type = SchemaType.OBJECT, implementation = AthleticsTrack.class))),
+                                    schema = @Schema(type = SchemaType.OBJECT, implementation = ClimbingWall.class))),
                     @APIResponse(
                             responseCode = "400",
-                            description = "AthleticsTrack already exists for athleticsTrackId",
+                            description = "ClimbingWall already exists for Id",
                             content = @Content(mediaType = "application/json")),
             }
     )
-    public Response post(@Valid AthleticsTrack athleticsTrack) {
+    public Response post(@Valid ClimbingWall ClimbingWall) {
         logger.info("post");
-        final AthleticsTrack saved = athleticsTrackService.save(athleticsTrack);
+        final ClimbingWall saved = ClimbingWallService.save(ClimbingWall);
         return Response.status(Response.Status.CREATED).entity(saved).build();
     }
 
@@ -87,40 +88,39 @@ public class AthleticsTrackResource {
             value = {
                     @APIResponse(
                             responseCode = "200",
-                            description = "AthleticsTrack updated",
+                            description = "ClimbingWall updated",
                             content = @Content(mediaType = "application/json",
-                                    schema = @Schema(type = SchemaType.OBJECT, implementation = AthleticsTrack.class))),
+                                    schema = @Schema(type = SchemaType.OBJECT, implementation = ClimbingWall.class))),
                     @APIResponse(
                             responseCode = "404",
-                            description = "No AthleticsTrack found for athleticsTrackId provided",
+                            description = "No ClimbingWall found for athleticsTrackId provided",
                             content = @Content(mediaType = "application/json")),
             }
     )
-    public Response put(@Valid AthleticsTrack athleticsTrack) {
-        final AthleticsTrack saved = athleticsTrackService.update(athleticsTrack);
+    public Response put(@Valid ClimbingWall ClimbingWall) {
+        final ClimbingWall saved = ClimbingWallService.update(ClimbingWall);
         return Response.ok(saved).build();
     }
 
     @PUT
-    @Path("/{athleticsTrackId}/rent_equipment/{rentEquipmentId}")
+    @Path("/{sportObjectId}/rent_equipment/{rentEquipmentId}")
     @APIResponses(
             value = {
                     @APIResponse(
                             responseCode = "200",
-                            description = "AthleticsTrack updated",
+                            description = "ClimbingWall updated",
                             content = @Content(mediaType = "application/json",
-                                    schema = @Schema(type = SchemaType.OBJECT, implementation = AthleticsTrack.class))),
+                                    schema = @Schema(type = SchemaType.OBJECT, implementation = ClimbingWall.class))),
                     @APIResponse(
                             responseCode = "404",
-                            description = "No AthleticsTrack found for athleticsTrackId provided",
+                            description = "No ClimbingWall found for Id provided",
                             content = @Content(mediaType = "application/json")),
             }
     )
-    public Response putEquipmentToObject(@PathParam("athleticsTrackId") Integer athleticsTrackId,
+    public Response putEquipmentToObject(@PathParam("sportObjectId") Integer sportObjectId,
                                          @PathParam("rentEquipmentId") Integer rentEquipmentId) {
-        final AthleticsTrack saved = athleticsTrackService.putEquipmentToObject(athleticsTrackId, rentEquipmentId);
+        final ClimbingWall saved = ClimbingWallService.putEquipmentToObject(sportObjectId, rentEquipmentId);
         return Response.ok(saved).build();
     }
 
 }
-

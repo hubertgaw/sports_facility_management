@@ -1,14 +1,10 @@
 package pl.lodz.hubertgaw.service;
 
 import org.slf4j.Logger;
-import pl.lodz.hubertgaw.dto.BeachVolleyballCourt;
 import pl.lodz.hubertgaw.dto.Gym;
-import pl.lodz.hubertgaw.mapper.BeachVolleyballCourtMapper;
-import pl.lodz.hubertgaw.mapper.GymMapper;
-import pl.lodz.hubertgaw.repository.BeachVolleyballCourtRepository;
+import pl.lodz.hubertgaw.mapper.SportObjectMapper;
 import pl.lodz.hubertgaw.repository.GymRepository;
 import pl.lodz.hubertgaw.repository.RentEquipmentRepository;
-import pl.lodz.hubertgaw.repository.entity.sports_objects.BeachVolleyballCourtEntity;
 import pl.lodz.hubertgaw.repository.entity.sports_objects.GymEntity;
 import pl.lodz.hubertgaw.service.exception.ServiceException;
 
@@ -21,35 +17,38 @@ import java.util.stream.Collectors;
 @ApplicationScoped
 public class GymService {
     private final GymRepository gymRepository;
-    private final GymMapper gymMapper;
+    private final SportObjectMapper sportObjectMapper;
     private final Logger logger;
     private final RentEquipmentRepository rentEquipmentRepository;
 
     public GymService(GymRepository gymRepository,
-                      GymMapper gymMapper,
+                      SportObjectMapper sportObjectMapper,
                       Logger logger,
                       RentEquipmentRepository rentEquipmentRepository) {
         this.gymRepository = gymRepository;
-        this.gymMapper = gymMapper;
+        this.sportObjectMapper = sportObjectMapper;
         this.logger = logger;
         this.rentEquipmentRepository = rentEquipmentRepository;
     }
 
     public List<Gym> findAll() {
         return gymRepository.findAll().stream()
-                .map(gymMapper::toDomain)
+                .map(sportObjectMapper::map)
+                .map(Gym.class::cast)
                 .collect(Collectors.toList());
     }
 
     public Optional<Gym> findById(Integer courtId) {
-        return gymRepository.findByIdOptional(courtId).map(gymMapper::toDomain);
+        return gymRepository.findByIdOptional(courtId)
+                .map(sportObjectMapper::map)
+                .map(Gym.class::cast);
     }
 
     @Transactional
     public Gym save(Gym gym) {
-        GymEntity entity = gymMapper.toEntity(gym);
+        GymEntity entity = (GymEntity) sportObjectMapper.map(gym);
         gymRepository.persist(entity);
-        return gymMapper.toDomain(entity);
+        return (Gym) sportObjectMapper.map(entity);
     }
 
     @Transactional
@@ -66,17 +65,16 @@ public class GymService {
         entity.setName(gym.getName());
         entity.setCapacity(gym.getCapacity());
         entity.setSinglePrice(gym.getSinglePrice());
-//        entity.set(beachVolleyballCourt.getFullPrice());
-//        entity.setRentEquipment(beachVolleyballCourt.getRentEquipments());
         gymRepository.persist(entity);
-        return gymMapper.toDomain(entity);
+        return (Gym) sportObjectMapper.map(entity);
     }
 
+    @Transactional
     public Gym putEquipmentToObject(Integer sportObjectId, Integer rentEquipmentId) {
         GymEntity gymToUpdate = gymRepository.findById(sportObjectId);
         gymToUpdate.addRentEquipment(rentEquipmentRepository.findById(rentEquipmentId));
-        gymRepository.persist(gymToUpdate);
-        return gymMapper.toDomain(gymToUpdate);
+        gymRepository.persistAndFlush(gymToUpdate);
+        return (Gym) sportObjectMapper.map(gymToUpdate);
     }
 
 }

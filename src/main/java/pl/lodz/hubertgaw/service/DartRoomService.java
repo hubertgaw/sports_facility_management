@@ -1,14 +1,10 @@
 package pl.lodz.hubertgaw.service;
 
 import org.slf4j.Logger;
-import pl.lodz.hubertgaw.dto.BeachVolleyballCourt;
 import pl.lodz.hubertgaw.dto.DartRoom;
-import pl.lodz.hubertgaw.mapper.BeachVolleyballCourtMapper;
-import pl.lodz.hubertgaw.mapper.DartRoomMapper;
-import pl.lodz.hubertgaw.repository.BeachVolleyballCourtRepository;
+import pl.lodz.hubertgaw.mapper.SportObjectMapper;
 import pl.lodz.hubertgaw.repository.DartRoomRepository;
 import pl.lodz.hubertgaw.repository.RentEquipmentRepository;
-import pl.lodz.hubertgaw.repository.entity.sports_objects.BeachVolleyballCourtEntity;
 import pl.lodz.hubertgaw.repository.entity.sports_objects.DartRoomEntity;
 import pl.lodz.hubertgaw.service.exception.ServiceException;
 
@@ -21,35 +17,38 @@ import java.util.stream.Collectors;
 @ApplicationScoped
 public class DartRoomService {
     private final DartRoomRepository dartRoomRepository;
-    private final DartRoomMapper dartRoomMapper;
+    private final SportObjectMapper sportObjectMapper;
     private final Logger logger;
     private final RentEquipmentRepository rentEquipmentRepository;
 
     public DartRoomService(DartRoomRepository dartRoomRepository,
-                                       DartRoomMapper dartRoomMapper,
+                                       SportObjectMapper sportObjectMapper,
                                        Logger logger,
                                        RentEquipmentRepository rentEquipmentRepository) {
         this.dartRoomRepository = dartRoomRepository;
-        this.dartRoomMapper = dartRoomMapper;
+        this.sportObjectMapper = sportObjectMapper;
         this.logger = logger;
         this.rentEquipmentRepository = rentEquipmentRepository;
     }
 
     public List<DartRoom> findAll() {
         return dartRoomRepository.findAll().stream()
-                .map(dartRoomMapper::toDomain)
+                .map(sportObjectMapper::map)
+                .map(DartRoom.class::cast)
                 .collect(Collectors.toList());
     }
 
     public Optional<DartRoom> findById(Integer roomId) {
-        return dartRoomRepository.findByIdOptional(roomId).map(dartRoomMapper::toDomain);
+        return dartRoomRepository.findByIdOptional(roomId)
+                .map(sportObjectMapper::map)
+                .map(DartRoom.class::cast);
     }
 
     @Transactional
     public DartRoom save(DartRoom dartRoom) {
-        DartRoomEntity entity = dartRoomMapper.toEntity(dartRoom);
+        DartRoomEntity entity = (DartRoomEntity) sportObjectMapper.map(dartRoom);
         dartRoomRepository.persist(entity);
-        return dartRoomMapper.toDomain(entity);
+        return (DartRoom) sportObjectMapper.map(entity);
     }
 
     @Transactional
@@ -66,17 +65,15 @@ public class DartRoomService {
         entity.setName(dartRoom.getName());
         entity.setStandPrice(dartRoom.getStandPrice());
         entity.setStandsNumber(dartRoom.getStandsNumber());
-//        entity.set(beachVolleyballCourt.getFullPrice());
-//        entity.setRentEquipment(beachVolleyballCourt.getRentEquipments());
         dartRoomRepository.persist(entity);
-        return dartRoomMapper.toDomain(entity);
+        return (DartRoom) sportObjectMapper.map(entity);
     }
 
     public DartRoom putEquipmentToObject(Integer sportObjectId, Integer rentEquipmentId) {
         DartRoomEntity dartRoomToUpdate = dartRoomRepository.findById(sportObjectId);
         dartRoomToUpdate.addRentEquipment(rentEquipmentRepository.findById(rentEquipmentId));
-        dartRoomRepository.persist(dartRoomToUpdate);
-        return dartRoomMapper.toDomain(dartRoomToUpdate);
+        dartRoomRepository.persistAndFlush(dartRoomToUpdate);
+        return (DartRoom) sportObjectMapper.map(dartRoomToUpdate);
     }
 
 }

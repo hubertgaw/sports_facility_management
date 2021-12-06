@@ -2,15 +2,13 @@ package pl.lodz.hubertgaw.service;
 
 import org.slf4j.Logger;
 import pl.lodz.hubertgaw.dto.AthleticsTrack;
-import pl.lodz.hubertgaw.mapper.AthleticsTrackMapper;
+import pl.lodz.hubertgaw.mapper.SportObjectMapper;
 import pl.lodz.hubertgaw.repository.AthleticsTrackRepository;
 import pl.lodz.hubertgaw.repository.RentEquipmentRepository;
-import pl.lodz.hubertgaw.repository.entity.RentEquipmentEntity;
 import pl.lodz.hubertgaw.repository.entity.sports_objects.AthleticsTrackEntity;
 import pl.lodz.hubertgaw.service.exception.ServiceException;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
@@ -20,35 +18,41 @@ import java.util.stream.Collectors;
 public class AthleticsTrackService {
 
     private final AthleticsTrackRepository athleticsTrackRepository;
-    private final AthleticsTrackMapper athleticsTrackMapper;
+    private final SportObjectMapper sportObjectMapper;
     private final Logger logger;
     private final RentEquipmentRepository rentEquipmentRepository;
 
     public AthleticsTrackService(AthleticsTrackRepository athleticsTrackRepository,
-                                 AthleticsTrackMapper athleticsTrackMapper,
+                                 SportObjectMapper sportObjectMapper,
                                  Logger logger,
                                  RentEquipmentRepository rentEquipmentRepository) {
         this.athleticsTrackRepository = athleticsTrackRepository;
-        this.athleticsTrackMapper = athleticsTrackMapper;
+        this.sportObjectMapper = sportObjectMapper;
         this.logger = logger;
         this.rentEquipmentRepository = rentEquipmentRepository;
     }
 
     public List<AthleticsTrack> findAll() {
         return athleticsTrackRepository.findAll().stream()
-                .map(athleticsTrackMapper::toDomain)
+                .map(sportObjectMapper::map)
+                .map(AthleticsTrack.class::cast)
                 .collect(Collectors.toList());
+//        return null;
     }
 
     public Optional<AthleticsTrack> findById(Integer trackId) {
-        return athleticsTrackRepository.findByIdOptional(trackId).map(athleticsTrackMapper::toDomain);
+        return athleticsTrackRepository.findByIdOptional(trackId)
+                .map(sportObjectMapper::map)
+                .map(AthleticsTrack.class::cast);
+//    return null;
     }
 
     @Transactional
     public AthleticsTrack save(AthleticsTrack athleticsTrack) {
-        AthleticsTrackEntity entity = athleticsTrackMapper.toEntity(athleticsTrack);
+        AthleticsTrackEntity entity = (AthleticsTrackEntity) sportObjectMapper.map(athleticsTrack);
         athleticsTrackRepository.persist(entity);
-        return athleticsTrackMapper.toDomain(entity);
+        return (AthleticsTrack) sportObjectMapper.map(entity);
+//    return null;
     }
 
     @Transactional
@@ -65,13 +69,17 @@ public class AthleticsTrackService {
         entity.setSingleTrackPrice(athleticsTrack.getSingleTrackPrice());
         entity.setFullPrice(athleticsTrack.getFullPrice());
 //        entity.setRentEquipment(athleticsTrack.getRentEquipments());
-        return athleticsTrackMapper.toDomain(entity);
+        athleticsTrackRepository.persist(entity);
+        return (AthleticsTrack) sportObjectMapper.map(entity);
+//        return null;
     }
 
+    @Transactional
     public AthleticsTrack putEquipmentToObject(Integer sportObjectId, Integer rentEquipmentId) {
         AthleticsTrackEntity athleticsTrackToUpdate = athleticsTrackRepository.findById(sportObjectId);
         athleticsTrackToUpdate.addRentEquipment(rentEquipmentRepository.findById(rentEquipmentId));
-        athleticsTrackRepository.persist(athleticsTrackToUpdate);
-        return athleticsTrackMapper.toDomain(athleticsTrackToUpdate);
+        athleticsTrackRepository.persistAndFlush(athleticsTrackToUpdate);
+        return (AthleticsTrack) sportObjectMapper.map(athleticsTrackToUpdate);
+//        return null;
     }
 }
