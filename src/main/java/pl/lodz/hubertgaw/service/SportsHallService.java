@@ -1,6 +1,7 @@
 package pl.lodz.hubertgaw.service;
 
 import org.slf4j.Logger;
+import pl.lodz.hubertgaw.dto.DartRoom;
 import pl.lodz.hubertgaw.dto.SportsHall;
 //import pl.lodz.hubertgaw.mapper.BeachVolleyballCourtMapper;
 //import pl.lodz.hubertgaw.mapper.SportsHallMapper;
@@ -34,23 +35,24 @@ public class SportsHallService {
     }
 
     public List<SportsHall> findAll() {
-        return sportsHallRepository.findAll().stream()
-                .map(sportObjectMapper::map)
+        return sportsHallRepository.listAll()
+                .stream()
+                .map(sportObjectMapper::toDomain)
                 .map(SportsHall.class::cast)
                 .collect(Collectors.toList());
     }
 
     public Optional<SportsHall> findById(Integer courtId) {
         return sportsHallRepository.findByIdOptional(courtId)
-                .map(sportObjectMapper::map)
+                .map(sportObjectMapper::toDomain)
                 .map(SportsHall.class::cast);
     }
 
     @Transactional
     public SportsHall save(SportsHall sportsHall) {
-        SportsHallEntity entity = (SportsHallEntity) sportObjectMapper.map(sportsHall);
+        SportsHallEntity entity = (SportsHallEntity) sportObjectMapper.toEntity(sportsHall);
         sportsHallRepository.persist(entity);
-        return (SportsHall) sportObjectMapper.map(entity);
+        return (SportsHall) sportObjectMapper.toDomain(entity);
     }
 
     @Transactional
@@ -68,14 +70,15 @@ public class SportsHallService {
         entity.setSectorPrice(sportsHall.getSectorPrice());
         sportsHall.setSectorsNumber(sportsHall.getSectorsNumber());
         sportsHallRepository.persist(entity);
-        return (SportsHall) sportObjectMapper.map(entity);
+        return (SportsHall) sportObjectMapper.toDomain(entity);
     }
 
+    @Transactional
     public SportsHall putEquipmentToObject(Integer sportObjectId, Integer rentEquipmentId) {
         SportsHallEntity sportsHallToUpdate = sportsHallRepository.findById(sportObjectId);
         sportsHallToUpdate.addRentEquipment(rentEquipmentRepository.findById(rentEquipmentId));
         sportsHallRepository.persistAndFlush(sportsHallToUpdate);
-        return (SportsHall) sportObjectMapper.map(sportsHallToUpdate);
+        return (SportsHall) sportObjectMapper.toDomain(sportsHallToUpdate);
     }
 
 }

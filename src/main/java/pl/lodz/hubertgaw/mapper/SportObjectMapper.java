@@ -27,7 +27,7 @@ public interface SportObjectMapper {
     @Mappings({
             @Mapping(source = "rentEquipmentNames", target = "rentEquipment")
     })
-    SportObjectEntity map(SportObject domain);
+    SportObjectEntity toEntity(SportObject domain);
 
     @SubclassMapping(source = AthleticsTrackEntity.class, target = AthleticsTrack.class)
     @SubclassMapping(source = BeachVolleyballCourtEntity.class, target = BeachVolleyballCourt.class)
@@ -42,7 +42,7 @@ public interface SportObjectMapper {
     @Mappings({
             @Mapping(source = "rentEquipment", target = "rentEquipmentNames")
     })
-    SportObject map(SportObjectEntity entity);
+    SportObject toDomain(SportObjectEntity entity);
 
     default RentEquipmentEntity map(String value) {
 

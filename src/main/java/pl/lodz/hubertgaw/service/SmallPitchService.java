@@ -1,6 +1,7 @@
 package pl.lodz.hubertgaw.service;
 
 import org.slf4j.Logger;
+import pl.lodz.hubertgaw.dto.DartRoom;
 import pl.lodz.hubertgaw.dto.SmallPitch;
 import pl.lodz.hubertgaw.mapper.SportObjectMapper;
 import pl.lodz.hubertgaw.repository.RentEquipmentRepository;
@@ -32,23 +33,24 @@ public class SmallPitchService {
     }
 
     public List<SmallPitch> findAll() {
-        return smallPitchRepository.findAll().stream()
-                .map(sportObjectMapper::map)
+        return smallPitchRepository.listAll()
+                .stream()
+                .map(sportObjectMapper::toDomain)
                 .map(SmallPitch.class::cast)
                 .collect(Collectors.toList());
     }
 
     public Optional<SmallPitch> findById(Integer pitchId) {
         return smallPitchRepository.findByIdOptional(pitchId)
-                .map(sportObjectMapper::map)
+                .map(sportObjectMapper::toDomain)
                 .map(SmallPitch.class::cast);
     }
 
     @Transactional
     public SmallPitch save(SmallPitch smallPitch) {
-        SmallPitchEntity entity = (SmallPitchEntity) sportObjectMapper.map(smallPitch);
+        SmallPitchEntity entity = (SmallPitchEntity) sportObjectMapper.toEntity(smallPitch);
         smallPitchRepository.persist(entity);
-        return (SmallPitch) sportObjectMapper.map(entity);
+        return (SmallPitch) sportObjectMapper.toDomain(entity);
     }
 
     @Transactional
@@ -66,14 +68,15 @@ public class SmallPitchService {
         entity.setHalfPitchPrice(smallPitch.getHalfPitchPrice());
         entity.setIsFullRented(smallPitch.getIsFullRented());
         smallPitchRepository.persist(entity);
-        return (SmallPitch) sportObjectMapper.map(entity);
+        return (SmallPitch) sportObjectMapper.toDomain(entity);
     }
 
+    @Transactional
     public SmallPitch putEquipmentToObject(Integer sportObjectId, Integer rentEquipmentId) {
         SmallPitchEntity smallPitchToUpdate = smallPitchRepository.findById(sportObjectId);
         smallPitchToUpdate.addRentEquipment(rentEquipmentRepository.findById(rentEquipmentId));
         smallPitchRepository.persistAndFlush(smallPitchToUpdate);
-        return (SmallPitch) sportObjectMapper.map(smallPitchToUpdate);
+        return (SmallPitch) sportObjectMapper.toDomain(smallPitchToUpdate);
     }
 
 }

@@ -2,6 +2,7 @@ package pl.lodz.hubertgaw.service;
 
 import org.slf4j.Logger;
 import pl.lodz.hubertgaw.dto.ClimbingWall;
+import pl.lodz.hubertgaw.dto.DartRoom;
 import pl.lodz.hubertgaw.mapper.SportObjectMapper;
 import pl.lodz.hubertgaw.repository.ClimbingWallRepository;
 import pl.lodz.hubertgaw.repository.RentEquipmentRepository;
@@ -32,23 +33,24 @@ public class ClimbingWallService {
     }
 
     public List<ClimbingWall> findAll() {
-        return climbingWallRepository.findAll().stream()
-                .map(sportObjectMapper::map)
+        return climbingWallRepository.listAll()
+                .stream()
+                .map(sportObjectMapper::toDomain)
                 .map(ClimbingWall.class::cast)
                 .collect(Collectors.toList());
     }
 
     public Optional<ClimbingWall> findById(Integer wallId) {
         return climbingWallRepository.findByIdOptional(wallId)
-                .map(sportObjectMapper::map)
+                .map(sportObjectMapper::toDomain)
                 .map(ClimbingWall.class::cast);
     }
 
     @Transactional
     public ClimbingWall save(ClimbingWall climbingWall) {
-        ClimbingWallEntity entity = (ClimbingWallEntity) sportObjectMapper.map(climbingWall);
+        ClimbingWallEntity entity = (ClimbingWallEntity) sportObjectMapper.toEntity(climbingWall);
         climbingWallRepository.persist(entity);
-        return (ClimbingWall) sportObjectMapper.map(entity);
+        return (ClimbingWall) sportObjectMapper.toDomain(entity);
     }
 
     @Transactional
@@ -66,14 +68,15 @@ public class ClimbingWallService {
         entity.setCapacity(climbingWall.getCapacity());
         entity.setSinglePrice(climbingWall.getSinglePrice());
         climbingWallRepository.persist(entity);
-        return (ClimbingWall) sportObjectMapper.map(entity);
+        return (ClimbingWall) sportObjectMapper.toDomain(entity);
     }
 
+    @Transactional
     public ClimbingWall putEquipmentToObject(Integer sportObjectId, Integer rentEquipmentId) {
         ClimbingWallEntity climbingWallToUpdate = climbingWallRepository.findById(sportObjectId);
         climbingWallToUpdate.addRentEquipment(rentEquipmentRepository.findById(rentEquipmentId));
         climbingWallRepository.persistAndFlush(climbingWallToUpdate);
-        return (ClimbingWall) sportObjectMapper.map(climbingWallToUpdate);
+        return (ClimbingWall) sportObjectMapper.toDomain(climbingWallToUpdate);
     }
 
 }

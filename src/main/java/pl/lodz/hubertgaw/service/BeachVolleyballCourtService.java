@@ -2,6 +2,7 @@ package pl.lodz.hubertgaw.service;
 
 import org.slf4j.Logger;
 import pl.lodz.hubertgaw.dto.BeachVolleyballCourt;
+import pl.lodz.hubertgaw.dto.DartRoom;
 import pl.lodz.hubertgaw.mapper.SportObjectMapper;
 import pl.lodz.hubertgaw.repository.BeachVolleyballCourtRepository;
 import pl.lodz.hubertgaw.repository.RentEquipmentRepository;
@@ -32,23 +33,24 @@ public class BeachVolleyballCourtService {
     }
 
     public List<BeachVolleyballCourt> findAll() {
-        return beachVolleyballCourtRepository.findAll().stream()
-                .map(sportObjectMapper::map)
+        return beachVolleyballCourtRepository.listAll()
+                .stream()
+                .map(sportObjectMapper::toDomain)
                 .map(BeachVolleyballCourt.class::cast)
                 .collect(Collectors.toList());
     }
 
     public Optional<BeachVolleyballCourt> findById(Integer courtId) {
         return beachVolleyballCourtRepository.findByIdOptional(courtId)
-                .map(sportObjectMapper::map)
+                .map(sportObjectMapper::toDomain)
                 .map(BeachVolleyballCourt.class::cast);
     }
 
     @Transactional
     public BeachVolleyballCourt save(BeachVolleyballCourt beachVolleyballCourt) {
-        BeachVolleyballCourtEntity entity = (BeachVolleyballCourtEntity) sportObjectMapper.map(beachVolleyballCourt);
+        BeachVolleyballCourtEntity entity = (BeachVolleyballCourtEntity) sportObjectMapper.toEntity(beachVolleyballCourt);
         beachVolleyballCourtRepository.persist(entity);
-        return (BeachVolleyballCourt) sportObjectMapper.map(entity);
+        return (BeachVolleyballCourt) sportObjectMapper.toDomain(entity);
     }
 
     @Transactional
@@ -64,14 +66,15 @@ public class BeachVolleyballCourtService {
         entity.setFullPrice(beachVolleyballCourt.getFullPrice());
         entity.setName(beachVolleyballCourt.getName());
         beachVolleyballCourtRepository.persist(entity);
-        return (BeachVolleyballCourt) sportObjectMapper.map(entity);
+        return (BeachVolleyballCourt) sportObjectMapper.toDomain(entity);
     }
 
+    @Transactional
     public BeachVolleyballCourt putEquipmentToObject(Integer sportObjectId, Integer rentEquipmentId) {
         BeachVolleyballCourtEntity beachVolleyballCourtToUpdate = beachVolleyballCourtRepository.findById(sportObjectId);
         beachVolleyballCourtToUpdate.addRentEquipment(rentEquipmentRepository.findById(rentEquipmentId));
         beachVolleyballCourtRepository.persistAndFlush(beachVolleyballCourtToUpdate);
-        return (BeachVolleyballCourt) sportObjectMapper.map(beachVolleyballCourtToUpdate);
+        return (BeachVolleyballCourt) sportObjectMapper.toDomain(beachVolleyballCourtToUpdate);
     }
 
 }

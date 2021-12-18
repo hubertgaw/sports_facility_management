@@ -2,6 +2,7 @@ package pl.lodz.hubertgaw.service;
 
 import org.slf4j.Logger;
 import pl.lodz.hubertgaw.dto.AthleticsTrack;
+import pl.lodz.hubertgaw.dto.DartRoom;
 import pl.lodz.hubertgaw.mapper.SportObjectMapper;
 import pl.lodz.hubertgaw.repository.AthleticsTrackRepository;
 import pl.lodz.hubertgaw.repository.RentEquipmentRepository;
@@ -33,25 +34,25 @@ public class AthleticsTrackService {
     }
 
     public List<AthleticsTrack> findAll() {
-        return athleticsTrackRepository.findAll().stream()
-                .map(sportObjectMapper::map)
+        return athleticsTrackRepository.listAll()
+                .stream()
+                .map(sportObjectMapper::toDomain)
                 .map(AthleticsTrack.class::cast)
                 .collect(Collectors.toList());
-//        return null;
     }
 
     public Optional<AthleticsTrack> findById(Integer trackId) {
         return athleticsTrackRepository.findByIdOptional(trackId)
-                .map(sportObjectMapper::map)
+                .map(sportObjectMapper::toDomain)
                 .map(AthleticsTrack.class::cast);
 //    return null;
     }
 
     @Transactional
     public AthleticsTrack save(AthleticsTrack athleticsTrack) {
-        AthleticsTrackEntity entity = (AthleticsTrackEntity) sportObjectMapper.map(athleticsTrack);
+        AthleticsTrackEntity entity = (AthleticsTrackEntity) sportObjectMapper.toEntity(athleticsTrack);
         athleticsTrackRepository.persist(entity);
-        return (AthleticsTrack) sportObjectMapper.map(entity);
+        return (AthleticsTrack) sportObjectMapper.toDomain(entity);
 //    return null;
     }
 
@@ -70,7 +71,7 @@ public class AthleticsTrackService {
         entity.setFullPrice(athleticsTrack.getFullPrice());
 //        entity.setRentEquipment(athleticsTrack.getRentEquipments());
         athleticsTrackRepository.persist(entity);
-        return (AthleticsTrack) sportObjectMapper.map(entity);
+        return (AthleticsTrack) sportObjectMapper.toDomain(entity);
 //        return null;
     }
 
@@ -79,7 +80,7 @@ public class AthleticsTrackService {
         AthleticsTrackEntity athleticsTrackToUpdate = athleticsTrackRepository.findById(sportObjectId);
         athleticsTrackToUpdate.addRentEquipment(rentEquipmentRepository.findById(rentEquipmentId));
         athleticsTrackRepository.persistAndFlush(athleticsTrackToUpdate);
-        return (AthleticsTrack) sportObjectMapper.map(athleticsTrackToUpdate);
+        return (AthleticsTrack) sportObjectMapper.toDomain(athleticsTrackToUpdate);
 //        return null;
     }
 }

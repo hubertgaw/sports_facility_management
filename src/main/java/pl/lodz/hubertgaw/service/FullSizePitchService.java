@@ -1,6 +1,7 @@
 package pl.lodz.hubertgaw.service;
 
 import org.slf4j.Logger;
+import pl.lodz.hubertgaw.dto.DartRoom;
 import pl.lodz.hubertgaw.dto.FullSizePitch;
 import pl.lodz.hubertgaw.mapper.SportObjectMapper;
 import pl.lodz.hubertgaw.repository.FullSizePitchRepository;
@@ -32,23 +33,24 @@ public class FullSizePitchService {
     }
 
     public List<FullSizePitch> findAll() {
-        return fullSizePitchRepository.findAll().stream()
-                .map(sportObjectMapper::map)
+        return fullSizePitchRepository.listAll()
+                .stream()
+                .map(sportObjectMapper::toDomain)
                 .map(FullSizePitch.class::cast)
                 .collect(Collectors.toList());
     }
 
     public Optional<FullSizePitch> findById(Integer pitchId) {
         return fullSizePitchRepository.findByIdOptional(pitchId)
-                .map(sportObjectMapper::map)
+                .map(sportObjectMapper::toDomain)
                 .map(FullSizePitch.class::cast);
     }
 
     @Transactional
     public FullSizePitch save(FullSizePitch fullSizePitch) {
-        FullSizePitchEntity entity = (FullSizePitchEntity) sportObjectMapper.map(fullSizePitch);
+        FullSizePitchEntity entity = (FullSizePitchEntity) sportObjectMapper.toEntity(fullSizePitch);
         fullSizePitchRepository.persist(entity);
-        return (FullSizePitch) sportObjectMapper.map(entity);
+        return (FullSizePitch) sportObjectMapper.toDomain(entity);
     }
 
     @Transactional
@@ -66,14 +68,15 @@ public class FullSizePitchService {
         entity.setHalfPitchPrice(fullSizePitch.getHalfPitchPrice());
         entity.setIsFullRented(fullSizePitch.getIsFullRented());
         fullSizePitchRepository.persist(entity);
-        return (FullSizePitch) sportObjectMapper.map(entity);
+        return (FullSizePitch) sportObjectMapper.toDomain(entity);
     }
 
+    @Transactional
     public FullSizePitch putEquipmentToObject(Integer sportObjectId, Integer rentEquipmentId) {
         FullSizePitchEntity fullSizeToUpdate = fullSizePitchRepository.findById(sportObjectId);
         fullSizeToUpdate.addRentEquipment(rentEquipmentRepository.findById(rentEquipmentId));
         fullSizePitchRepository.persistAndFlush(fullSizeToUpdate);
-        return (FullSizePitch) sportObjectMapper.map(fullSizeToUpdate);
+        return (FullSizePitch) sportObjectMapper.toDomain(fullSizeToUpdate);
     }
 
 }

@@ -1,6 +1,7 @@
 package pl.lodz.hubertgaw.service;
 
 import org.slf4j.Logger;
+import pl.lodz.hubertgaw.dto.DartRoom;
 import pl.lodz.hubertgaw.dto.TennisCourt;
 import pl.lodz.hubertgaw.mapper.SportObjectMapper;
 import pl.lodz.hubertgaw.repository.RentEquipmentRepository;
@@ -32,23 +33,24 @@ public class TennisCourtService {
     }
 
     public List<TennisCourt> findAll() {
-        return tennisCourtRepository.findAll().stream()
-                .map(sportObjectMapper::map)
+        return tennisCourtRepository.listAll()
+                .stream()
+                .map(sportObjectMapper::toDomain)
                 .map(TennisCourt.class::cast)
                 .collect(Collectors.toList());
     }
 
     public Optional<TennisCourt> findById(Integer courtId) {
         return tennisCourtRepository.findByIdOptional(courtId)
-                .map(sportObjectMapper::map)
+                .map(sportObjectMapper::toDomain)
                 .map(TennisCourt.class::cast);
     }
 
     @Transactional
     public TennisCourt save(TennisCourt tennisCourt) {
-        TennisCourtEntity entity = (TennisCourtEntity) sportObjectMapper.map(tennisCourt);
+        TennisCourtEntity entity = (TennisCourtEntity) sportObjectMapper.toEntity(tennisCourt);
         tennisCourtRepository.persist(entity);
-        return (TennisCourt) sportObjectMapper.map(entity);
+        return (TennisCourt) sportObjectMapper.toDomain(entity);
     }
 
     @Transactional
@@ -64,14 +66,15 @@ public class TennisCourtService {
         entity.setFullPrice(tennisCourt.getFullPrice());
         entity.setName(tennisCourt.getName());
         tennisCourtRepository.persist(entity);
-        return (TennisCourt) sportObjectMapper.map(entity);
+        return (TennisCourt) sportObjectMapper.toDomain(entity);
     }
 
+    @Transactional
     public TennisCourt putEquipmentToObject(Integer sportObjectId, Integer rentEquipmentId) {
         TennisCourtEntity tennisCourtToUpdate = tennisCourtRepository.findById(sportObjectId);
         tennisCourtToUpdate.addRentEquipment(rentEquipmentRepository.findById(rentEquipmentId));
         tennisCourtRepository.persistAndFlush(tennisCourtToUpdate);
-        return (TennisCourt) sportObjectMapper.map(tennisCourtToUpdate);
+        return (TennisCourt) sportObjectMapper.toDomain(tennisCourtToUpdate);
     }
 
 }

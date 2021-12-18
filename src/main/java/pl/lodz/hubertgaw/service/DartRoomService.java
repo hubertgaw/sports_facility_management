@@ -32,23 +32,24 @@ public class DartRoomService {
     }
 
     public List<DartRoom> findAll() {
-        return dartRoomRepository.findAll().stream()
-                .map(sportObjectMapper::map)
+        return dartRoomRepository.listAll()
+                .stream()
+                .map(sportObjectMapper::toDomain)
                 .map(DartRoom.class::cast)
                 .collect(Collectors.toList());
     }
 
     public Optional<DartRoom> findById(Integer roomId) {
         return dartRoomRepository.findByIdOptional(roomId)
-                .map(sportObjectMapper::map)
+                .map(sportObjectMapper::toDomain)
                 .map(DartRoom.class::cast);
     }
 
     @Transactional
     public DartRoom save(DartRoom dartRoom) {
-        DartRoomEntity entity = (DartRoomEntity) sportObjectMapper.map(dartRoom);
+        DartRoomEntity entity = (DartRoomEntity) sportObjectMapper.toEntity(dartRoom);
         dartRoomRepository.persist(entity);
-        return (DartRoom) sportObjectMapper.map(entity);
+        return (DartRoom) sportObjectMapper.toDomain(entity);
     }
 
     @Transactional
@@ -66,14 +67,15 @@ public class DartRoomService {
         entity.setStandPrice(dartRoom.getStandPrice());
         entity.setStandsNumber(dartRoom.getStandsNumber());
         dartRoomRepository.persist(entity);
-        return (DartRoom) sportObjectMapper.map(entity);
+        return (DartRoom) sportObjectMapper.toDomain(entity);
     }
 
+    @Transactional
     public DartRoom putEquipmentToObject(Integer sportObjectId, Integer rentEquipmentId) {
         DartRoomEntity dartRoomToUpdate = dartRoomRepository.findById(sportObjectId);
         dartRoomToUpdate.addRentEquipment(rentEquipmentRepository.findById(rentEquipmentId));
         dartRoomRepository.persistAndFlush(dartRoomToUpdate);
-        return (DartRoom) sportObjectMapper.map(dartRoomToUpdate);
+        return (DartRoom) sportObjectMapper.toDomain(dartRoomToUpdate);
     }
 
 }

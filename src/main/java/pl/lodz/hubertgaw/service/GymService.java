@@ -1,6 +1,7 @@
 package pl.lodz.hubertgaw.service;
 
 import org.slf4j.Logger;
+import pl.lodz.hubertgaw.dto.DartRoom;
 import pl.lodz.hubertgaw.dto.Gym;
 import pl.lodz.hubertgaw.mapper.SportObjectMapper;
 import pl.lodz.hubertgaw.repository.GymRepository;
@@ -32,23 +33,24 @@ public class GymService {
     }
 
     public List<Gym> findAll() {
-        return gymRepository.findAll().stream()
-                .map(sportObjectMapper::map)
+        return gymRepository.listAll()
+                .stream()
+                .map(sportObjectMapper::toDomain)
                 .map(Gym.class::cast)
                 .collect(Collectors.toList());
     }
 
     public Optional<Gym> findById(Integer courtId) {
         return gymRepository.findByIdOptional(courtId)
-                .map(sportObjectMapper::map)
+                .map(sportObjectMapper::toDomain)
                 .map(Gym.class::cast);
     }
 
     @Transactional
     public Gym save(Gym gym) {
-        GymEntity entity = (GymEntity) sportObjectMapper.map(gym);
+        GymEntity entity = (GymEntity) sportObjectMapper.toEntity(gym);
         gymRepository.persist(entity);
-        return (Gym) sportObjectMapper.map(entity);
+        return (Gym) sportObjectMapper.toDomain(entity);
     }
 
     @Transactional
@@ -66,7 +68,7 @@ public class GymService {
         entity.setCapacity(gym.getCapacity());
         entity.setSinglePrice(gym.getSinglePrice());
         gymRepository.persist(entity);
-        return (Gym) sportObjectMapper.map(entity);
+        return (Gym) sportObjectMapper.toDomain(entity);
     }
 
     @Transactional
@@ -74,7 +76,7 @@ public class GymService {
         GymEntity gymToUpdate = gymRepository.findById(sportObjectId);
         gymToUpdate.addRentEquipment(rentEquipmentRepository.findById(rentEquipmentId));
         gymRepository.persistAndFlush(gymToUpdate);
-        return (Gym) sportObjectMapper.map(gymToUpdate);
+        return (Gym) sportObjectMapper.toDomain(gymToUpdate);
     }
 
 }
