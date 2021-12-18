@@ -17,6 +17,6 @@ public class SportObject {
     @NotNull
     private Double fullPrice;
 
-    private Set<String> rentEquipmentsNames;
+    private Set<String> rentEquipmentNames;
 
 }

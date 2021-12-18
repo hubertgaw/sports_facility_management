@@ -28,7 +28,12 @@ public class RentEquipmentService {
     }
 
     public List<RentEquipment> findAll() {
-        return rentEquipmentRepository.findAll().stream()
+//        return rentEquipmentRepository.findAll().stream()
+//                .map(rentEquipmentMapper::toDomain)
+//                .collect(Collectors.toList());
+
+        return rentEquipmentRepository.listAll()
+                .stream()
                 .map(rentEquipmentMapper::toDomain)
                 .collect(Collectors.toList());
     }
