@@ -9,6 +9,8 @@ import java.util.Set;
 @Data
 public class RentEquipment {
 
+    private Integer id;
+
     @NotBlank
     private String name;
 

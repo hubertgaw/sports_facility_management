@@ -16,7 +16,7 @@ import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-//TODO : zrobic resource do tego
+
 @ApplicationScoped
 public class SportsHallService {
     private final SportsHallRepository sportsHallRepository;

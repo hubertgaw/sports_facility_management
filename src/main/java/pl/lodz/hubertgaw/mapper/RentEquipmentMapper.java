@@ -12,7 +12,7 @@ import java.util.Locale;
 @Mapper(componentModel = "cdi")
 public interface RentEquipmentMapper {
 
-    @Mapping(target = "id", ignore = true)
+//    @Mapping(target = "id", ignore = true)
     RentEquipmentEntity toEntity(RentEquipment domain);
 
     RentEquipment toDomain(RentEquipmentEntity entity);

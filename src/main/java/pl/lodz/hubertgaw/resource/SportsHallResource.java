@@ -7,6 +7,7 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 import org.slf4j.Logger;
 import pl.lodz.hubertgaw.dto.SportsHall;
+import pl.lodz.hubertgaw.service.SportsHallService;
 
 import javax.validation.Valid;
 import javax.ws.rs.*;
@@ -19,11 +20,11 @@ import java.util.Optional;
 @Consumes(MediaType.APPLICATION_JSON)
 public class SportsHallResource {
 
-    private final pl.lodz.hubertgaw.service.SportsHallService SportsHallService;
+    private final SportsHallService sportsHallService;
     private final Logger logger;
 
-    public SportsHallResource(pl.lodz.hubertgaw.service.SportsHallService SportsHallService, Logger logger) {
-        this.SportsHallService = SportsHallService;
+    public SportsHallResource(SportsHallService SportsHallService, Logger logger) {
+        this.sportsHallService = SportsHallService;
         this.logger = logger;
     }
 
@@ -38,7 +39,7 @@ public class SportsHallResource {
             }
     )
     public Response get() {
-        return Response.ok(SportsHallService.findAll()).build();
+        return Response.ok(sportsHallService.findAll()).build();
     }
 
     @GET
@@ -57,7 +58,7 @@ public class SportsHallResource {
             }
     )
     public Response getById(@PathParam("sportObjectId") Integer sportObjectId) {
-        Optional<SportsHall> optional = SportsHallService.findById(sportObjectId);
+        Optional<SportsHall> optional = sportsHallService.findById(sportObjectId);
         return !optional.isEmpty() ? Response.ok(optional.get()).build() : Response.status(Response.Status.NOT_FOUND).build();
     }
 
@@ -77,7 +78,7 @@ public class SportsHallResource {
     )
     public Response post(@Valid SportsHall SportsHall) {
         logger.info("post");
-        final SportsHall saved = SportsHallService.save(SportsHall);
+        final SportsHall saved = sportsHallService.save(SportsHall);
         return Response.status(Response.Status.CREATED).entity(saved).build();
     }
 
@@ -96,7 +97,7 @@ public class SportsHallResource {
             }
     )
     public Response put(@Valid SportsHall SportsHall) {
-        final SportsHall saved = SportsHallService.update(SportsHall);
+        final SportsHall saved = sportsHallService.update(SportsHall);
         return Response.ok(saved).build();
     }
 
@@ -117,7 +118,7 @@ public class SportsHallResource {
     )
     public Response putEquipmentToObject(@PathParam("sportObjectId") Integer sportObjectId,
                                          @PathParam("rentEquipmentId") Integer rentEquipmentId) {
-        final SportsHall saved = SportsHallService.putEquipmentToObject(sportObjectId, rentEquipmentId);
+        final SportsHall saved = sportsHallService.putEquipmentToObject(sportObjectId, rentEquipmentId);
         return Response.ok(saved).build();
     }
 
