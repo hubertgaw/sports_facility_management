@@ -58,14 +58,15 @@ public class AthleticsTrackService {
 
     @Transactional
     public AthleticsTrack update(AthleticsTrack athleticsTrack) {
-        if (athleticsTrack.getName() == null) {
-            throw new ServiceException("Customer does not have a customerId");
+        if (athleticsTrack.getId() == null) {
+            throw new ServiceException("AthleticsTrack does not have a customerId");
         }
-        Optional<AthleticsTrackEntity> optional = athleticsTrackRepository.findByName(athleticsTrack.getName());
+        Optional<AthleticsTrackEntity> optional = athleticsTrackRepository.findByIdOptional(athleticsTrack.getId());
         if (optional.isEmpty()) {
-            throw new ServiceException(String.format("No Customer found for customerId[%s]", athleticsTrack.getName()));
+            throw new ServiceException(String.format("No AthleticsTrack found for customerId[%s]", athleticsTrack.getId()));
         }
         AthleticsTrackEntity entity = optional.get();
+        entity.setName(athleticsTrack.getName());
         entity.setCapacity(athleticsTrack.getCapacity());
         entity.setSingleTrackPrice(athleticsTrack.getSingleTrackPrice());
         entity.setFullPrice(athleticsTrack.getFullPrice());

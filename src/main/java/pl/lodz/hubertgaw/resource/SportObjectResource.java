@@ -13,8 +13,8 @@ import pl.lodz.hubertgaw.service.SportObjectService;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.util.Optional;
+import javax.ws.rs.core.Response;
 
 @Path("/api/sport_objects")
 @Produces(MediaType.APPLICATION_JSON)
@@ -51,7 +51,7 @@ public class SportObjectResource {
                             responseCode = "200",
                             description = "Get SportObject by id",
                             content = @Content(mediaType = "application/json",
-                                    schema = @Schema(type = SchemaType.OBJECT, implementation = SportsHall.class))),
+                                    schema = @Schema(type = SchemaType.OBJECT, implementation = SportObject.class))),
                     @APIResponse(
                             responseCode = "404",
                             description = "No SportObject found for id provided",
@@ -103,4 +103,26 @@ public class SportObjectResource {
         return Response.ok(saved).build();
     }
 
+
+    @DELETE
+    @Path("{sportObjectId}")
+    @APIResponses(
+            value = {
+                    @APIResponse(
+                            responseCode = "200",
+                            description = "SportObject by id deleted",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(type = SchemaType.OBJECT, implementation = SportObject.class))),
+                    @APIResponse(
+                            responseCode = "404",
+                            description = "No SportObject found for id provided",
+                            content = @Content(mediaType = "application/json")),
+            }
+    )
+    public Response deleteSportObject(@PathParam("sportObjectId") Integer sportObjectId) {
+        sportObjectService.deleteSportObjectById(sportObjectId);
+//        return Response.noContent().build();
+        return Response.ok(Response.Status.NO_CONTENT).build();
+
+    }
 }

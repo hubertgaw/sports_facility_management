@@ -8,6 +8,7 @@ import pl.lodz.hubertgaw.repository.RentEquipmentRepository;
 import pl.lodz.hubertgaw.repository.SportObjectRepository;
 
 import org.slf4j.Logger;
+import pl.lodz.hubertgaw.repository.entity.RentEquipmentEntity;
 import pl.lodz.hubertgaw.repository.entity.sports_objects.SmallPitchEntity;
 import pl.lodz.hubertgaw.repository.entity.sports_objects.SportObjectEntity;
 import pl.lodz.hubertgaw.service.exception.ServiceException;
@@ -16,6 +17,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
@@ -74,5 +76,17 @@ public class SportObjectService {
         sportObjectToUpdate.addRentEquipment(rentEquipmentRepository.findById(rentEquipmentId));
         sportObjectRepository.persistAndFlush(sportObjectToUpdate);
         return sportObjectMapper.toDomain(sportObjectToUpdate);
+    }
+
+    @Transactional
+    public void deleteSportObjectById(Integer sportObjectId) {
+        SportObjectEntity sportObjectToDelete = sportObjectRepository.findById(sportObjectId);
+        Set<RentEquipmentEntity> rentEquipmentToDelete = sportObjectToDelete.getRentEquipment();
+        for (RentEquipmentEntity rentEquipment : rentEquipmentToDelete) {
+            rentEquipment.removeSportObject(sportObjectToDelete);
+        }
+        sportObjectRepository.delete(sportObjectToDelete);
+//        sportObjectRepository.delete(sportObjectRepository.findById(sportObjectId));
+//        return sportObjectRepository.deleteById(sportObjectId);
     }
 }

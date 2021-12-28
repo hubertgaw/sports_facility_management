@@ -1,7 +1,10 @@
 package pl.lodz.hubertgaw.repository.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 import pl.lodz.hubertgaw.repository.entity.sports_objects.SportObjectEntity;
 
 import javax.persistence.*;
@@ -10,6 +13,7 @@ import javax.validation.constraints.NotNull;
 import java.util.HashSet;
 import java.util.Set;
 
+@JsonIgnoreProperties({"hibernateLazyInitializer"})
 @Entity(name = "RentEquipment")
 @Table(name = "rent_equipment")
 @Getter
@@ -33,6 +37,12 @@ public class RentEquipmentEntity {
     private Set<SportObjectEntity> sportObjects = new HashSet<>();
 
     public void addSportObject(SportObjectEntity sportObjectEntity) {
-        sportObjects.add(sportObjectEntity);
+        this.sportObjects.add(sportObjectEntity);
+        sportObjectEntity.getRentEquipment().add(this);
+    }
+
+    public void removeSportObject(SportObjectEntity sportObjectEntity) {
+        //            sportObjectEntity.getRentEquipment().remove(this);
+        this.sportObjects.remove(sportObjectEntity);
     }
 }
