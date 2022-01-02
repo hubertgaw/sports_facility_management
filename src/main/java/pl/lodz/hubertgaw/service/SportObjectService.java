@@ -15,6 +15,8 @@ import pl.lodz.hubertgaw.service.exception.ServiceException;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -70,10 +72,18 @@ public class SportObjectService {
 //
 //    }
 
+    //todo mapowanie exceptionow
     @Transactional
     public SportObject putEquipmentToObject(Integer sportObjectId, Integer rentEquipmentId) {
         SportObjectEntity sportObjectToUpdate = sportObjectRepository.findById(sportObjectId);
-        sportObjectToUpdate.addRentEquipment(rentEquipmentRepository.findById(rentEquipmentId));
+        if (sportObjectToUpdate == null) {
+            throw new WebApplicationException("Sport object with id provided not found", Response.Status.NOT_FOUND);
+        }
+        RentEquipmentEntity rentEquipmentToAdd = rentEquipmentRepository.findById(rentEquipmentId);
+        if (rentEquipmentToAdd == null) {
+            throw new WebApplicationException("Rent equipment with id provided not found", Response.Status.NOT_FOUND);
+        }
+        sportObjectToUpdate.addRentEquipment(rentEquipmentToAdd);
         sportObjectRepository.persistAndFlush(sportObjectToUpdate);
         return sportObjectMapper.toDomain(sportObjectToUpdate);
     }

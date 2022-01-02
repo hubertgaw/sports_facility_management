@@ -100,6 +100,7 @@ public class SportObjectResource {
     public Response putEquipmentToObject(@PathParam("sportObjectId") Integer sportObjectId,
                                          @PathParam("rentEquipmentId") Integer rentEquipmentId) {
         final SportObject saved = sportObjectService.putEquipmentToObject(sportObjectId, rentEquipmentId);
+        //jeśli już koszytsam z "ręcznego" return to mozna ustawić zwracany language/header poprzez wywołanie po ok().
         return Response.ok(saved).build();
     }
 
@@ -109,7 +110,7 @@ public class SportObjectResource {
     @APIResponses(
             value = {
                     @APIResponse(
-                            responseCode = "200",
+                            responseCode = "204",
                             description = "SportObject by id deleted",
                             content = @Content(mediaType = "application/json",
                                     schema = @Schema(type = SchemaType.OBJECT, implementation = SportObject.class))),
@@ -122,7 +123,8 @@ public class SportObjectResource {
     public Response deleteSportObject(@PathParam("sportObjectId") Integer sportObjectId) {
         sportObjectService.deleteSportObjectById(sportObjectId);
 //        return Response.noContent().build();
-        return Response.ok(Response.Status.NO_CONTENT).build();
+//        bez tego return byłoby to samo - jax-rs automatycznie ogarnia podstawowe responsy
+        return Response.noContent().build();
 
     }
 }

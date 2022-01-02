@@ -130,7 +130,7 @@ public class RentEquipmentResource {
     @APIResponses(
             value = {
                     @APIResponse(
-                            responseCode = "200",
+                            responseCode = "204",
                             description = "RentEquipment by id deleted",
                             content = @Content(mediaType = "application/json",
                                     schema = @Schema(type = SchemaType.OBJECT, implementation = RentEquipment.class))),
@@ -143,7 +143,7 @@ public class RentEquipmentResource {
     public Response deleteRentEquipment(@PathParam("rentEquipmentId") Integer rentEquipmentId) {
         rentEquipmentService.deleteRentEquipmentById(rentEquipmentId);
 //        return Response.noContent().build();
-        return Response.ok(Response.Status.NO_CONTENT).build();
+        return Response.noContent().build();
 
     }
 
