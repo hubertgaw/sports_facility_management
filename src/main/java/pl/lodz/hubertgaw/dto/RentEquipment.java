@@ -4,6 +4,7 @@ import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -17,5 +18,5 @@ public class RentEquipment {
     @NotNull
     private Double price;
 
-    private Set<String> sportObjects;
+    private Set<String> sportObjects = new HashSet<>();
 }

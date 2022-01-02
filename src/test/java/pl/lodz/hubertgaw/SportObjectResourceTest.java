@@ -5,6 +5,9 @@ import io.restassured.http.ContentType;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Test;
 import pl.lodz.hubertgaw.dto.AthleticsTrack;
+import pl.lodz.hubertgaw.dto.RentEquipment;
+import pl.lodz.hubertgaw.dto.SportObject;
+import pl.lodz.hubertgaw.service.RentEquipmentService;
 import pl.lodz.hubertgaw.service.SportObjectService;
 
 import javax.inject.Inject;
@@ -13,15 +16,17 @@ import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @QuarkusTest
-public class AthleticsTrackResourceTest {
+public class SportObjectResourceTest {
 
     @Inject
     SportObjectService sportObjectService;
+    @Inject
+    RentEquipmentService rentEquipmentService;
 
     @Test
     public void getAll() {
         given()
-                .when().get("/api/athletics_tracks")
+                .when().get("/api/sport_objects")
                 .then()
                 .statusCode(200);
     }
@@ -29,7 +34,7 @@ public class AthleticsTrackResourceTest {
     @Test
     public void getById() {
         AthleticsTrack athleticsTrack = createAthleticsTrack();
-        AthleticsTrack saved = given()
+        SportObject saved = (SportObject) given()
                 .contentType(ContentType.JSON)
                 .accept(ContentType.JSON)
                 .body(athleticsTrack)
@@ -37,8 +42,8 @@ public class AthleticsTrackResourceTest {
                 .then()
                 .statusCode(201)
                 .extract().as(AthleticsTrack.class);
-        AthleticsTrack got = given()
-                .when().get("/api/athletics_tracks/{athleticsTrackId}", saved.getId())
+        SportObject got = (SportObject) given()
+                .when().get("/api/sport_objects/{sportObjectId}", saved.getId())
                 .then()
                 .statusCode(200)
                 .extract().as(AthleticsTrack.class);
@@ -48,9 +53,9 @@ public class AthleticsTrackResourceTest {
     }
 
     @Test
-    public void post() {
+    public void putEquipmentToObject() {
         AthleticsTrack athleticsTrack = createAthleticsTrack();
-        AthleticsTrack saved = given()
+        AthleticsTrack savedAthleticsTrack = given()
                 .contentType(ContentType.JSON)
                 .accept(ContentType.JSON)
                 .body(athleticsTrack)
@@ -58,70 +63,61 @@ public class AthleticsTrackResourceTest {
                 .then()
                 .statusCode(201)
                 .extract().as(AthleticsTrack.class);
-        assertThat(saved.getId()).isNotNull();
-        clearAthleticsTrackAfterTest(saved.getId());
-    }
 
-    @Test
-    public void postFailNoName() {
-        AthleticsTrack athleticsTrack = createAthleticsTrack();
-        athleticsTrack.setName(null);
-        given()
+        RentEquipment rentEquipment = createRentEquipment();
+        RentEquipment savedRentEquipment = given()
                 .contentType(ContentType.JSON)
                 .accept(ContentType.JSON)
-                .body(athleticsTrack)
-                .post("/api/athletics_tracks")
-                .then()
-                .statusCode(400);
-    }
-
-    @Test
-    public void put() {
-        AthleticsTrack athleticsTrack = createAthleticsTrack();
-        AthleticsTrack saved = given()
-                .contentType(ContentType.JSON)
-                .accept(ContentType.JSON)
-                .body(athleticsTrack)
-                .post("/api/athletics_tracks")
+                .body(rentEquipment)
+                .post("/api/rent_equipments")
                 .then()
                 .statusCode(201)
-                .extract().as(AthleticsTrack.class);
-        saved.setName("Updated");
-        AthleticsTrack updated = given()
+                .extract().as(RentEquipment.class);
+
+        SportObject sportObjectWithEquipment = (SportObject) given()
                 .contentType(ContentType.JSON)
                 .accept(ContentType.JSON)
-                .body(saved)
-                .put("/api/athletics_tracks")
+                .put("/api/sport_objects/{sportObjectId}/rent_equipment/{rentEquipmentId}",
+                        savedAthleticsTrack.getId(), savedRentEquipment.getId())
                 .then()
                 .statusCode(200)
                 .extract().as(AthleticsTrack.class);
-        assertThat(updated.getName()).isEqualTo("Updated");
-        clearAthleticsTrackAfterTest(saved.getId());
+
+        //comparing by names because sportObject has set of Strings
+        assertThat(sportObjectWithEquipment.getRentEquipmentNames().stream().findFirst().get())
+                .isEqualTo(savedRentEquipment.getName());
+
+        clearAthleticsTrackAfterTest(savedAthleticsTrack.getId());
+        clearRentEquipmentAfterTest(savedRentEquipment.getId());
 
     }
 
     @Test
-    public void putFailNoCapacity() {
-        AthleticsTrack athleticsTrack = createAthleticsTrack();
+    public void delete() {
+        AthleticsTrack sportObject = createAthleticsTrack();
         AthleticsTrack saved = given()
                 .contentType(ContentType.JSON)
                 .accept(ContentType.JSON)
-                .body(athleticsTrack)
+                .body(sportObject)
                 .post("/api/athletics_tracks")
                 .then()
                 .statusCode(201)
                 .extract().as(AthleticsTrack.class);
-        saved.setCapacity(null);
         given()
-                .contentType(ContentType.JSON)
-                .accept(ContentType.JSON)
-                .body(saved)
-                .put("/api/athletics_tracks")
+                .when()
+                .delete("api/sport_objects/{sportObjectId}", saved.getId())
                 .then()
-                .statusCode(400);
-        clearAthleticsTrackAfterTest(saved.getId());
+                .statusCode(200);
+        //check if sportObject with that id is not found:
+        given()
+                .when().get("/api/sport_objects/{sportObjectId}", saved.getId())
+                .then()
+                .statusCode(404);
     }
 
+
+
+    //athletics track is used because we need specific implementation of SportObject (can be anything else for example DartRoom etc.)
     private AthleticsTrack createAthleticsTrack() {
         AthleticsTrack athleticsTrack = new AthleticsTrack();
         athleticsTrack.setName(RandomStringUtils.randomAlphabetic(10));
@@ -131,8 +127,19 @@ public class AthleticsTrackResourceTest {
         return athleticsTrack;
     }
 
+    private RentEquipment createRentEquipment() {
+        RentEquipment rentEquipment = new RentEquipment();
+        rentEquipment.setName(RandomStringUtils.randomAlphabetic(10));
+        rentEquipment.setPrice(Double.valueOf(RandomStringUtils.randomNumeric(2)));
+        return rentEquipment;
+    }
+
     private void clearAthleticsTrackAfterTest(Integer id) {
         sportObjectService.deleteSportObjectById(id);
+    }
+
+    private void clearRentEquipmentAfterTest(Integer id) {
+        rentEquipmentService.deleteRentEquipmentById(id);
     }
 
 }

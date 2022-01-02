@@ -8,6 +8,7 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 import org.slf4j.Logger;
 import pl.lodz.hubertgaw.dto.AthleticsTrack;
 import pl.lodz.hubertgaw.dto.RentEquipment;
+import pl.lodz.hubertgaw.dto.SportObject;
 import pl.lodz.hubertgaw.service.AthleticsTrackService;
 import pl.lodz.hubertgaw.service.RentEquipmentService;
 
@@ -123,5 +124,27 @@ public class RentEquipmentResource {
 //        final AthleticsTrack saved = rentEquipmentService.update(athleticsTrack);
 //        return Response.ok(saved).build();
 //    }
+
+    @DELETE
+    @Path("{rentEquipmentId}")
+    @APIResponses(
+            value = {
+                    @APIResponse(
+                            responseCode = "200",
+                            description = "RentEquipment by id deleted",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(type = SchemaType.OBJECT, implementation = RentEquipment.class))),
+                    @APIResponse(
+                            responseCode = "404",
+                            description = "No RentEquipment found for id provided",
+                            content = @Content(mediaType = "application/json")),
+            }
+    )
+    public Response deleteRentEquipment(@PathParam("rentEquipmentId") Integer rentEquipmentId) {
+        rentEquipmentService.deleteRentEquipmentById(rentEquipmentId);
+//        return Response.noContent().build();
+        return Response.ok(Response.Status.NO_CONTENT).build();
+
+    }
 
 }

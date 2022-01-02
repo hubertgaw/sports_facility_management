@@ -96,8 +96,8 @@ public class FullSizePitchResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
-    public Response put(@Valid FullSizePitch FullSizePitch) {
-        final FullSizePitch saved = FullSizePitchService.update(FullSizePitch);
+    public Response put(@Valid FullSizePitch fullSizePitch) {
+        final FullSizePitch saved = FullSizePitchService.update(fullSizePitch);
         return Response.ok(saved).build();
     }
 

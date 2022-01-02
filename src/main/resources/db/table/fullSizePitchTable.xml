@@ -16,7 +16,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="is_full_rented" type="float">
-                <constraints nullable="false"/>
+                <constraints nullable="true"/>
             </column>
         </createTable>
     </changeSet>
