@@ -7,7 +7,9 @@ import pl.lodz.hubertgaw.mapper.SportObjectMapper;
 import pl.lodz.hubertgaw.repository.BeachVolleyballCourtRepository;
 import pl.lodz.hubertgaw.repository.RentEquipmentRepository;
 import pl.lodz.hubertgaw.repository.entity.sports_objects.BeachVolleyballCourtEntity;
-import pl.lodz.hubertgaw.service.exception.ServiceException;
+import pl.lodz.hubertgaw.service.exception.BeachVolleyballCourtException;
+import pl.lodz.hubertgaw.service.exception.SportObjectException;
+import pl.lodz.hubertgaw.service.utils.ServiceUtils;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
@@ -21,15 +23,18 @@ public class BeachVolleyballCourtService {
     private final SportObjectMapper sportObjectMapper;
     private final Logger logger;
     private final RentEquipmentRepository rentEquipmentRepository;
+    private final ServiceUtils serviceUtils;
 
     public BeachVolleyballCourtService(BeachVolleyballCourtRepository beachVolleyballCourtRepository,
                                  SportObjectMapper sportObjectMapper,
                                  Logger logger,
-                                 RentEquipmentRepository rentEquipmentRepository) {
+                                 RentEquipmentRepository rentEquipmentRepository,
+                                       ServiceUtils serviceUtils) {
         this.beachVolleyballCourtRepository = beachVolleyballCourtRepository;
         this.sportObjectMapper = sportObjectMapper;
         this.logger = logger;
         this.rentEquipmentRepository = rentEquipmentRepository;
+        this.serviceUtils = serviceUtils;
     }
 
     public List<BeachVolleyballCourt> findAll() {
@@ -56,13 +61,13 @@ public class BeachVolleyballCourtService {
     @Transactional
     public BeachVolleyballCourt update(BeachVolleyballCourt beachVolleyballCourt) {
         if (beachVolleyballCourt.getId() == null) {
-            throw new ServiceException("Customer does not have a customerId");
+            throw BeachVolleyballCourtException.beachVolleyballCourtEmptyIdException();
         }
-        Optional<BeachVolleyballCourtEntity> optional = beachVolleyballCourtRepository.findByIdOptional(beachVolleyballCourt.getId());
-        if (optional.isEmpty()) {
-            throw new ServiceException(String.format("No Court found for Id[%s]", beachVolleyballCourt.getId()));
+        BeachVolleyballCourtEntity entity = beachVolleyballCourtRepository.findByIdOptional(beachVolleyballCourt.getId())
+                .orElseThrow(BeachVolleyballCourtException::beachVolleyballCourtNotFoundException);
+        if (serviceUtils.compareSportObjectNameWithExisted(entity.getName())) {
+            throw SportObjectException.sportObjectDuplicateNameException();
         }
-        BeachVolleyballCourtEntity entity = optional.get();
         entity.setFullPrice(beachVolleyballCourt.getFullPrice());
         entity.setName(beachVolleyballCourt.getName());
         beachVolleyballCourtRepository.persist(entity);

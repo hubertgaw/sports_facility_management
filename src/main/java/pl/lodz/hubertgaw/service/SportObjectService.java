@@ -11,16 +11,20 @@ import org.slf4j.Logger;
 import pl.lodz.hubertgaw.repository.entity.RentEquipmentEntity;
 import pl.lodz.hubertgaw.repository.entity.sports_objects.SmallPitchEntity;
 import pl.lodz.hubertgaw.repository.entity.sports_objects.SportObjectEntity;
-import pl.lodz.hubertgaw.service.exception.ServiceException;
+import pl.lodz.hubertgaw.service.exception.RentEquipmentException;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.apache.cxf.jaxrs.impl.ResponseBuilderImpl;
+import pl.lodz.hubertgaw.service.exception.SportObjectException;
+
 
 @ApplicationScoped
 public class SportObjectService {
@@ -47,10 +51,14 @@ public class SportObjectService {
                 .collect(Collectors.toList());
     }
 
-    public Optional<SportObject> findById(Integer sportObjectId) {
-        return sportObjectRepository.findByIdOptional(sportObjectId)
-                .map(sportObjectMapper::toDomain)
-                .map(SportObject.class::cast);
+    public SportObject findById(Integer sportObjectId) {
+        SportObjectEntity entity = sportObjectRepository.findByIdOptional(sportObjectId)
+                .orElseThrow(SportObjectException::sportObjectNotFoundException);
+
+        return sportObjectMapper.toDomain(entity);
+//        return entity
+//                .map(sportObjectMapper::toDomain)
+//                .map(SportObject.class::cast);
     }
 
 //    @Transactional
@@ -77,11 +85,21 @@ public class SportObjectService {
     public SportObject putEquipmentToObject(Integer sportObjectId, Integer rentEquipmentId) {
         SportObjectEntity sportObjectToUpdate = sportObjectRepository.findById(sportObjectId);
         if (sportObjectToUpdate == null) {
-            throw new WebApplicationException("Sport object with id provided not found", Response.Status.NOT_FOUND);
+//            ResponseBuilderImpl builder = new ResponseBuilderImpl();
+//            builder.status(Response.Status.NOT_FOUND);
+//            builder.entity("Sport object with id provided not found");
+//            Response response = builder.build();
+//            throw new WebApplicationException(response);
+//            throw new WebApplicationException("Sport object with id provided not found", Response.Status.NOT_FOUND);
+//            throw new NotFoundException("Sport object with id provided not found");
+            throw SportObjectException.sportObjectNotFoundException();
         }
         RentEquipmentEntity rentEquipmentToAdd = rentEquipmentRepository.findById(rentEquipmentId);
         if (rentEquipmentToAdd == null) {
-            throw new WebApplicationException("Rent equipment with id provided not found", Response.Status.NOT_FOUND);
+            throw RentEquipmentException.rentEquipmentNotFoundException();
+//            throw new WebApplicationException("Rent equipment with id provided not found", Response.Status.NOT_FOUND);
+//            throw new NotFoundException("Rent equipment with id provided not found");
+
         }
         sportObjectToUpdate.addRentEquipment(rentEquipmentToAdd);
         sportObjectRepository.persistAndFlush(sportObjectToUpdate);

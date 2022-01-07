@@ -7,7 +7,9 @@ import pl.lodz.hubertgaw.mapper.SportObjectMapper;
 import pl.lodz.hubertgaw.repository.FullSizePitchRepository;
 import pl.lodz.hubertgaw.repository.RentEquipmentRepository;
 import pl.lodz.hubertgaw.repository.entity.sports_objects.FullSizePitchEntity;
-import pl.lodz.hubertgaw.service.exception.ServiceException;
+import pl.lodz.hubertgaw.service.exception.FullSizePitchException;
+import pl.lodz.hubertgaw.service.exception.SportObjectException;
+import pl.lodz.hubertgaw.service.utils.ServiceUtils;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
@@ -21,15 +23,18 @@ public class FullSizePitchService {
     private final SportObjectMapper sportObjectMapper;
     private final Logger logger;
     private final RentEquipmentRepository rentEquipmentRepository;
+    private final ServiceUtils serviceUtils;
 
     public FullSizePitchService(FullSizePitchRepository fullSizePitchRepository,
                                 SportObjectMapper sportObjectMapper,
                                 Logger logger,
-                                RentEquipmentRepository rentEquipmentRepository) {
+                                RentEquipmentRepository rentEquipmentRepository,
+                                ServiceUtils serviceUtils) {
         this.fullSizePitchRepository = fullSizePitchRepository;
         this.sportObjectMapper = sportObjectMapper;
         this.logger = logger;
         this.rentEquipmentRepository = rentEquipmentRepository;
+        this.serviceUtils = serviceUtils;
     }
 
     public List<FullSizePitch> findAll() {
@@ -56,13 +61,13 @@ public class FullSizePitchService {
     @Transactional
     public FullSizePitch update(FullSizePitch fullSizePitch) {
         if (fullSizePitch.getId() == null) {
-            throw new ServiceException("Customer does not have a customerId");
+            throw FullSizePitchException.fullSizePitchEmptyIdException();
         }
-        Optional<FullSizePitchEntity> optional = fullSizePitchRepository.findByIdOptional(fullSizePitch.getId());
-        if (optional.isEmpty()) {
-            throw new ServiceException(String.format("No Court found for Id[%s]", fullSizePitch.getId()));
+        FullSizePitchEntity entity = fullSizePitchRepository.findByIdOptional(fullSizePitch.getId())
+                .orElseThrow(FullSizePitchException::fullSizePitchNotFoundException);
+        if (serviceUtils.compareSportObjectNameWithExisted(entity.getName())) {
+            throw SportObjectException.sportObjectDuplicateNameException();
         }
-        FullSizePitchEntity entity = optional.get();
         entity.setFullPrice(fullSizePitch.getFullPrice());
         entity.setName(fullSizePitch.getName());
         entity.setHalfPitchPrice(fullSizePitch.getHalfPitchPrice());

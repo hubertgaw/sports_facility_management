@@ -6,8 +6,13 @@ import pl.lodz.hubertgaw.dto.DartRoom;
 import pl.lodz.hubertgaw.mapper.SportObjectMapper;
 import pl.lodz.hubertgaw.repository.AthleticsTrackRepository;
 import pl.lodz.hubertgaw.repository.RentEquipmentRepository;
+import pl.lodz.hubertgaw.repository.SportObjectRepository;
 import pl.lodz.hubertgaw.repository.entity.sports_objects.AthleticsTrackEntity;
+import pl.lodz.hubertgaw.repository.entity.sports_objects.SportObjectEntity;
+import pl.lodz.hubertgaw.service.exception.AthleticsTrackException;
 import pl.lodz.hubertgaw.service.exception.ServiceException;
+import pl.lodz.hubertgaw.service.exception.SportObjectException;
+import pl.lodz.hubertgaw.service.utils.ServiceUtils;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
@@ -22,15 +27,18 @@ public class AthleticsTrackService {
     private final SportObjectMapper sportObjectMapper;
     private final Logger logger;
     private final RentEquipmentRepository rentEquipmentRepository;
+    private final ServiceUtils serviceUtils;
 
     public AthleticsTrackService(AthleticsTrackRepository athleticsTrackRepository,
                                  SportObjectMapper sportObjectMapper,
                                  Logger logger,
-                                 RentEquipmentRepository rentEquipmentRepository) {
+                                 RentEquipmentRepository rentEquipmentRepository,
+                                 ServiceUtils serviceUtils) {
         this.athleticsTrackRepository = athleticsTrackRepository;
         this.sportObjectMapper = sportObjectMapper;
         this.logger = logger;
         this.rentEquipmentRepository = rentEquipmentRepository;
+        this.serviceUtils = serviceUtils;
     }
 
     public List<AthleticsTrack> findAll() {
@@ -59,13 +67,15 @@ public class AthleticsTrackService {
     @Transactional
     public AthleticsTrack update(AthleticsTrack athleticsTrack) {
         if (athleticsTrack.getId() == null) {
-            throw new ServiceException("AthleticsTrack does not have a customerId");
+            throw AthleticsTrackException.athleticsTrackEmptyIdException();
         }
-        Optional<AthleticsTrackEntity> optional = athleticsTrackRepository.findByIdOptional(athleticsTrack.getId());
-        if (optional.isEmpty()) {
-            throw new ServiceException(String.format("No AthleticsTrack found for customerId[%s]", athleticsTrack.getId()));
+        AthleticsTrackEntity entity = athleticsTrackRepository.findByIdOptional(athleticsTrack.getId())
+                .orElseThrow(AthleticsTrackException::athleticsTrackNotFoundException);
+
+        if (serviceUtils.compareSportObjectNameWithExisted(entity.getName())) {
+            throw SportObjectException.sportObjectDuplicateNameException();
         }
-        AthleticsTrackEntity entity = optional.get();
+
         entity.setName(athleticsTrack.getName());
         entity.setCapacity(athleticsTrack.getCapacity());
         entity.setSingleTrackPrice(athleticsTrack.getSingleTrackPrice());

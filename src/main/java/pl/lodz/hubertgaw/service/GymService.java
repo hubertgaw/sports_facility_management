@@ -7,7 +7,9 @@ import pl.lodz.hubertgaw.mapper.SportObjectMapper;
 import pl.lodz.hubertgaw.repository.GymRepository;
 import pl.lodz.hubertgaw.repository.RentEquipmentRepository;
 import pl.lodz.hubertgaw.repository.entity.sports_objects.GymEntity;
-import pl.lodz.hubertgaw.service.exception.ServiceException;
+import pl.lodz.hubertgaw.service.exception.GymException;
+import pl.lodz.hubertgaw.service.exception.SportObjectException;
+import pl.lodz.hubertgaw.service.utils.ServiceUtils;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
@@ -21,15 +23,18 @@ public class GymService {
     private final SportObjectMapper sportObjectMapper;
     private final Logger logger;
     private final RentEquipmentRepository rentEquipmentRepository;
+    private final ServiceUtils serviceUtils;
 
     public GymService(GymRepository gymRepository,
                       SportObjectMapper sportObjectMapper,
                       Logger logger,
-                      RentEquipmentRepository rentEquipmentRepository) {
+                      RentEquipmentRepository rentEquipmentRepository,
+                      ServiceUtils serviceUtils) {
         this.gymRepository = gymRepository;
         this.sportObjectMapper = sportObjectMapper;
         this.logger = logger;
         this.rentEquipmentRepository = rentEquipmentRepository;
+        this.serviceUtils = serviceUtils;
     }
 
     public List<Gym> findAll() {
@@ -56,13 +61,13 @@ public class GymService {
     @Transactional
     public Gym update(Gym gym) {
         if (gym.getId() == null) {
-            throw new ServiceException("Customer does not have a customerId");
+            throw GymException.gymEmptyIdException();
         }
-        Optional<GymEntity> optional = gymRepository.findByIdOptional(gym.getId());
-        if (optional.isEmpty()) {
-            throw new ServiceException(String.format("No Court found for Id[%s]", gym.getId()));
+        GymEntity entity = gymRepository.findByIdOptional(gym.getId())
+                .orElseThrow(GymException::gymNotFoundException);
+        if (serviceUtils.compareSportObjectNameWithExisted(entity.getName())) {
+            throw SportObjectException.sportObjectDuplicateNameException();
         }
-        GymEntity entity = optional.get();
         entity.setFullPrice(gym.getFullPrice());
         entity.setName(gym.getName());
         entity.setCapacity(gym.getCapacity());

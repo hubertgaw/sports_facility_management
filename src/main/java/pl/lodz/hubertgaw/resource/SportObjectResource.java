@@ -59,8 +59,8 @@ public class SportObjectResource {
             }
     )
     public Response getById(@PathParam("sportObjectId") Integer sportObjectId) {
-        Optional<SportObject> optional = sportObjectService.findById(sportObjectId);
-        return !optional.isEmpty() ? Response.ok(optional.get()).build() : Response.status(Response.Status.NOT_FOUND).build();
+        return Response.ok(sportObjectService.findById(sportObjectId)).build();
+//        return !optional.isEmpty() ? Response.ok(optional.get()).build() : Response.status(Response.Status.NOT_FOUND).build();
     }
 
 //    @PUT

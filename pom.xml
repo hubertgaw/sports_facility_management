@@ -149,6 +149,11 @@
 <!--            <version>master-SNAPSHOT</version>-->
 <!--            <version>${mapstruct.version}</version>-->
 <!--        </dependency>-->
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-frontend-jaxrs</artifactId>
+            <version>3.4.2</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

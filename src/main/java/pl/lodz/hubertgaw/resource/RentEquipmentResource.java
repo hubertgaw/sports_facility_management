@@ -61,8 +61,8 @@ public class RentEquipmentResource {
             }
     )
     public Response getById(@PathParam("rentEquipmentId") Integer rentEquipmentId) {
-        Optional<RentEquipment> optional = rentEquipmentService.findById(rentEquipmentId);
-        return !optional.isEmpty() ? Response.ok(optional.get()).build() : Response.status(Response.Status.NOT_FOUND).build();
+//        Optional<RentEquipment> optional =
+        return Response.ok(rentEquipmentService.findById(rentEquipmentId)).build();
     }
 
     @POST

@@ -9,7 +9,9 @@ import pl.lodz.hubertgaw.mapper.SportObjectMapper;
 import pl.lodz.hubertgaw.repository.RentEquipmentRepository;
 import pl.lodz.hubertgaw.repository.SportsHallRepository;
 import pl.lodz.hubertgaw.repository.entity.sports_objects.SportsHallEntity;
-import pl.lodz.hubertgaw.service.exception.ServiceException;
+import pl.lodz.hubertgaw.service.exception.SportObjectException;
+import pl.lodz.hubertgaw.service.exception.SportsHallException;
+import pl.lodz.hubertgaw.service.utils.ServiceUtils;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
@@ -23,15 +25,18 @@ public class SportsHallService {
     private final SportObjectMapper sportObjectMapper;
     private final Logger logger;
     private final RentEquipmentRepository rentEquipmentRepository;
+    private final ServiceUtils serviceUtils;
 
     public SportsHallService(SportsHallRepository sportsHallRepository,
                              SportObjectMapper sportObjectMapper,
                              Logger logger,
-                             RentEquipmentRepository rentEquipmentRepository) {
+                             RentEquipmentRepository rentEquipmentRepository,
+                             ServiceUtils serviceUtils) {
         this.sportsHallRepository = sportsHallRepository;
         this.sportObjectMapper = sportObjectMapper;
         this.logger = logger;
         this.rentEquipmentRepository = rentEquipmentRepository;
+        this.serviceUtils = serviceUtils;
     }
 
     public List<SportsHall> findAll() {
@@ -58,13 +63,13 @@ public class SportsHallService {
     @Transactional
     public SportsHall update(SportsHall sportsHall) {
         if (sportsHall.getId() == null) {
-            throw new ServiceException("Customer does not have a customerId");
+            throw SportsHallException.sportsHallEmptyIdException();
         }
-        Optional<SportsHallEntity> optional = sportsHallRepository.findByIdOptional(sportsHall.getId());
-        if (optional.isEmpty()) {
-            throw new ServiceException(String.format("No Court found for Id[%s]", sportsHall.getId()));
+        SportsHallEntity entity = sportsHallRepository.findByIdOptional(sportsHall.getId())
+                .orElseThrow(SportsHallException::sportsHallNotFoundException);
+        if (serviceUtils.compareSportObjectNameWithExisted(entity.getName())) {
+            throw SportObjectException.sportObjectDuplicateNameException();
         }
-        SportsHallEntity entity = optional.get();
         entity.setFullPrice(sportsHall.getFullPrice());
         entity.setName(sportsHall.getName());
         entity.setSectorPrice(sportsHall.getSectorPrice());

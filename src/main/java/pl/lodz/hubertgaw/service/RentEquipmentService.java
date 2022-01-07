@@ -7,7 +7,7 @@ import pl.lodz.hubertgaw.repository.RentEquipmentRepository;
 import pl.lodz.hubertgaw.repository.entity.RentEquipmentEntity;
 import pl.lodz.hubertgaw.repository.entity.RentEquipmentEntity;
 import pl.lodz.hubertgaw.repository.entity.sports_objects.SportObjectEntity;
-import pl.lodz.hubertgaw.service.exception.ServiceException;
+import pl.lodz.hubertgaw.service.exception.RentEquipmentException;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
@@ -41,8 +41,12 @@ public class RentEquipmentService {
                 .collect(Collectors.toList());
     }
 
-    public Optional<RentEquipment> findById(Integer equipmentId) {
-        return rentEquipmentRepository.findByIdOptional(equipmentId).map(rentEquipmentMapper::toDomain);
+    public RentEquipment findById(Integer equipmentId) {
+//        return rentEquipmentRepository.findByIdOptional(equipmentId).map(rentEquipmentMapper::toDomain);
+        RentEquipmentEntity entity = rentEquipmentRepository.findByIdOptional(equipmentId)
+                .orElseThrow(RentEquipmentException::rentEquipmentNotFoundException);
+
+        return rentEquipmentMapper.toDomain(entity);
     }
 
     @Transactional
@@ -55,13 +59,10 @@ public class RentEquipmentService {
     @Transactional
     public RentEquipment update(RentEquipment rentEquipment) {
         if (rentEquipment.getId() == null) {
-            throw new ServiceException("RentEquipment does not have an id");
+            throw RentEquipmentException.rentEquipmentEmptyIdException();
         }
-        Optional<RentEquipmentEntity> optional = rentEquipmentRepository.findByIdOptional(rentEquipment.getId());
-        if (optional.isEmpty()) {
-            throw new ServiceException(String.format("No RentEquipment found for id[%s]", rentEquipment.getId()));
-        }
-        RentEquipmentEntity entity = optional.get();
+        RentEquipmentEntity entity = rentEquipmentRepository.findByIdOptional(rentEquipment.getId())
+                .orElseThrow(RentEquipmentException::rentEquipmentNotFoundException);
         entity.setName(rentEquipment.getName());
         entity.setPrice(rentEquipment.getPrice());
         return rentEquipmentMapper.toDomain(entity);

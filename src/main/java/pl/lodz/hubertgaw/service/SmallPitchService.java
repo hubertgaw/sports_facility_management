@@ -7,7 +7,9 @@ import pl.lodz.hubertgaw.mapper.SportObjectMapper;
 import pl.lodz.hubertgaw.repository.RentEquipmentRepository;
 import pl.lodz.hubertgaw.repository.SmallPitchRepository;
 import pl.lodz.hubertgaw.repository.entity.sports_objects.SmallPitchEntity;
-import pl.lodz.hubertgaw.service.exception.ServiceException;
+import pl.lodz.hubertgaw.service.exception.SmallPitchException;
+import pl.lodz.hubertgaw.service.exception.SportObjectException;
+import pl.lodz.hubertgaw.service.utils.ServiceUtils;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
@@ -21,15 +23,18 @@ public class SmallPitchService {
     private final SportObjectMapper sportObjectMapper;
     private final Logger logger;
     private final RentEquipmentRepository rentEquipmentRepository;
+    private final ServiceUtils serviceUtils;
 
     public SmallPitchService(SmallPitchRepository smallPitchRepository,
                              SportObjectMapper sportObjectMapper,
                              Logger logger,
-                             RentEquipmentRepository rentEquipmentRepository) {
+                             RentEquipmentRepository rentEquipmentRepository,
+                             ServiceUtils serviceUtils) {
         this.smallPitchRepository = smallPitchRepository;
         this.sportObjectMapper = sportObjectMapper;
         this.logger = logger;
         this.rentEquipmentRepository = rentEquipmentRepository;
+        this.serviceUtils = serviceUtils;
     }
 
     public List<SmallPitch> findAll() {
@@ -56,13 +61,13 @@ public class SmallPitchService {
     @Transactional
     public SmallPitch update(SmallPitch smallPitch) {
         if (smallPitch.getId() == null) {
-            throw new ServiceException("Customer does not have a customerId");
+            throw SmallPitchException.smallPitchEmptyIdException();
         }
-        Optional<SmallPitchEntity> optional = smallPitchRepository.findByIdOptional(smallPitch.getId());
-        if (optional.isEmpty()) {
-            throw new ServiceException(String.format("No Court found for Id[%s]", smallPitch.getId()));
+        SmallPitchEntity entity = smallPitchRepository.findByIdOptional(smallPitch.getId()).
+                orElseThrow(SmallPitchException::smallPitchNotFoundException);
+        if (serviceUtils.compareSportObjectNameWithExisted(entity.getName())) {
+            throw SportObjectException.sportObjectDuplicateNameException();
         }
-        SmallPitchEntity entity = optional.get();
         entity.setFullPrice(smallPitch.getFullPrice());
         entity.setName(smallPitch.getName());
         entity.setHalfPitchPrice(smallPitch.getHalfPitchPrice());

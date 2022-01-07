@@ -7,7 +7,9 @@ import pl.lodz.hubertgaw.mapper.SportObjectMapper;
 import pl.lodz.hubertgaw.repository.RentEquipmentRepository;
 import pl.lodz.hubertgaw.repository.TennisCourtRepository;
 import pl.lodz.hubertgaw.repository.entity.sports_objects.TennisCourtEntity;
-import pl.lodz.hubertgaw.service.exception.ServiceException;
+import pl.lodz.hubertgaw.service.exception.SportObjectException;
+import pl.lodz.hubertgaw.service.exception.TennisCourtException;
+import pl.lodz.hubertgaw.service.utils.ServiceUtils;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
@@ -21,15 +23,18 @@ public class TennisCourtService {
     private final SportObjectMapper sportObjectMapper;
     private final Logger logger;
     private final RentEquipmentRepository rentEquipmentRepository;
+    private final ServiceUtils serviceUtils;
 
     public TennisCourtService(TennisCourtRepository tennisCourtRepository,
                               SportObjectMapper sportObjectMapper,
                               Logger logger,
-                              RentEquipmentRepository rentEquipmentRepository) {
+                              RentEquipmentRepository rentEquipmentRepository,
+                              ServiceUtils serviceUtils) {
         this.tennisCourtRepository = tennisCourtRepository;
         this.sportObjectMapper = sportObjectMapper;
         this.logger = logger;
         this.rentEquipmentRepository = rentEquipmentRepository;
+        this.serviceUtils = serviceUtils;
     }
 
     public List<TennisCourt> findAll() {
@@ -56,13 +61,13 @@ public class TennisCourtService {
     @Transactional
     public TennisCourt update(TennisCourt tennisCourt) {
         if (tennisCourt.getId() == null) {
-            throw new ServiceException("Customer does not have a customerId");
+            throw TennisCourtException.tennisCourtEmptyIdException();
         }
-        Optional<TennisCourtEntity> optional = tennisCourtRepository.findByIdOptional(tennisCourt.getId());
-        if (optional.isEmpty()) {
-            throw new ServiceException(String.format("No Court found for Id[%s]", tennisCourt.getId()));
+        TennisCourtEntity entity = tennisCourtRepository.findByIdOptional(tennisCourt.getId()).
+                orElseThrow(TennisCourtException::tennisCourtNotFoundException);
+        if (serviceUtils.compareSportObjectNameWithExisted(entity.getName())) {
+            throw SportObjectException.sportObjectDuplicateNameException();
         }
-        TennisCourtEntity entity = optional.get();
         entity.setFullPrice(tennisCourt.getFullPrice());
         entity.setName(tennisCourt.getName());
         tennisCourtRepository.persist(entity);

@@ -6,7 +6,9 @@ import pl.lodz.hubertgaw.mapper.SportObjectMapper;
 import pl.lodz.hubertgaw.repository.DartRoomRepository;
 import pl.lodz.hubertgaw.repository.RentEquipmentRepository;
 import pl.lodz.hubertgaw.repository.entity.sports_objects.DartRoomEntity;
-import pl.lodz.hubertgaw.service.exception.ServiceException;
+import pl.lodz.hubertgaw.service.exception.DartRoomException;
+import pl.lodz.hubertgaw.service.exception.SportObjectException;
+import pl.lodz.hubertgaw.service.utils.ServiceUtils;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
@@ -20,15 +22,18 @@ public class DartRoomService {
     private final SportObjectMapper sportObjectMapper;
     private final Logger logger;
     private final RentEquipmentRepository rentEquipmentRepository;
+    private final ServiceUtils serviceUtils;
 
     public DartRoomService(DartRoomRepository dartRoomRepository,
-                                       SportObjectMapper sportObjectMapper,
-                                       Logger logger,
-                                       RentEquipmentRepository rentEquipmentRepository) {
+                           SportObjectMapper sportObjectMapper,
+                           Logger logger,
+                           RentEquipmentRepository rentEquipmentRepository,
+                           ServiceUtils serviceUtils) {
         this.dartRoomRepository = dartRoomRepository;
         this.sportObjectMapper = sportObjectMapper;
         this.logger = logger;
         this.rentEquipmentRepository = rentEquipmentRepository;
+        this.serviceUtils = serviceUtils;
     }
 
     public List<DartRoom> findAll() {
@@ -55,13 +60,13 @@ public class DartRoomService {
     @Transactional
     public DartRoom update(DartRoom dartRoom) {
         if (dartRoom.getId() == null) {
-            throw new ServiceException("Customer does not have a customerId");
+            throw DartRoomException.dartRoomEmptyIdException();
         }
-        Optional<DartRoomEntity> optional = dartRoomRepository.findByIdOptional(dartRoom.getId());
-        if (optional.isEmpty()) {
-            throw new ServiceException(String.format("No Court found for Id[%s]", dartRoom.getId()));
+        DartRoomEntity entity = dartRoomRepository.findByIdOptional(dartRoom.getId())
+                .orElseThrow(DartRoomException::dartRoomNotFoundException);
+        if (serviceUtils.compareSportObjectNameWithExisted(entity.getName())) {
+            throw SportObjectException.sportObjectDuplicateNameException();
         }
-        DartRoomEntity entity = optional.get();
         entity.setFullPrice(dartRoom.getFullPrice());
         entity.setName(dartRoom.getName());
         entity.setStandPrice(dartRoom.getStandPrice());

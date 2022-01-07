@@ -7,7 +7,9 @@ import pl.lodz.hubertgaw.mapper.SportObjectMapper;
 import pl.lodz.hubertgaw.repository.ClimbingWallRepository;
 import pl.lodz.hubertgaw.repository.RentEquipmentRepository;
 import pl.lodz.hubertgaw.repository.entity.sports_objects.ClimbingWallEntity;
-import pl.lodz.hubertgaw.service.exception.ServiceException;
+import pl.lodz.hubertgaw.service.exception.ClimbingWallException;
+import pl.lodz.hubertgaw.service.exception.SportObjectException;
+import pl.lodz.hubertgaw.service.utils.ServiceUtils;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
@@ -21,15 +23,18 @@ public class ClimbingWallService {
     private final SportObjectMapper sportObjectMapper;
     private final Logger logger;
     private final RentEquipmentRepository rentEquipmentRepository;
+    private final ServiceUtils serviceUtils;
 
     public ClimbingWallService(ClimbingWallRepository climbingWallRepository,
                                SportObjectMapper sportObjectMapper,
                                Logger logger,
-                               RentEquipmentRepository rentEquipmentRepository) {
+                               RentEquipmentRepository rentEquipmentRepository,
+                               ServiceUtils serviceUtils) {
         this.climbingWallRepository = climbingWallRepository;
         this.sportObjectMapper = sportObjectMapper;
         this.logger = logger;
         this.rentEquipmentRepository = rentEquipmentRepository;
+        this.serviceUtils = serviceUtils;
     }
 
     public List<ClimbingWall> findAll() {
@@ -56,13 +61,13 @@ public class ClimbingWallService {
     @Transactional
     public ClimbingWall update(ClimbingWall climbingWall) {
         if (climbingWall.getId() == null) {
-            throw new ServiceException("Customer does not have a customerId");
+            throw ClimbingWallException.climbingWallEmptyIdException();
         }
-        Optional<ClimbingWallEntity> optional = climbingWallRepository.findByIdOptional(climbingWall.getId());
-        if (optional.isEmpty()) {
-            throw new ServiceException(String.format("No Court found for Id[%s]", climbingWall.getId()));
+        ClimbingWallEntity entity = climbingWallRepository.findByIdOptional(climbingWall.getId())
+                .orElseThrow(ClimbingWallException::climbingWallNotFoundException);
+        if (serviceUtils.compareSportObjectNameWithExisted(entity.getName())) {
+            throw SportObjectException.sportObjectDuplicateNameException();
         }
-        ClimbingWallEntity entity = optional.get();
         entity.setFullPrice(climbingWall.getFullPrice());
         entity.setName(climbingWall.getName());
         entity.setCapacity(climbingWall.getCapacity());
