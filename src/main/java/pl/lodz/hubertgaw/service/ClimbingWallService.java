@@ -2,12 +2,13 @@ package pl.lodz.hubertgaw.service;
 
 import org.slf4j.Logger;
 import pl.lodz.hubertgaw.dto.ClimbingWall;
-import pl.lodz.hubertgaw.dto.DartRoom;
 import pl.lodz.hubertgaw.mapper.SportObjectMapper;
 import pl.lodz.hubertgaw.repository.ClimbingWallRepository;
 import pl.lodz.hubertgaw.repository.RentEquipmentRepository;
+import pl.lodz.hubertgaw.repository.entity.RentEquipmentEntity;
 import pl.lodz.hubertgaw.repository.entity.sports_objects.ClimbingWallEntity;
 import pl.lodz.hubertgaw.service.exception.ClimbingWallException;
+import pl.lodz.hubertgaw.service.exception.RentEquipmentException;
 import pl.lodz.hubertgaw.service.exception.SportObjectException;
 import pl.lodz.hubertgaw.service.utils.ServiceUtils;
 
@@ -53,6 +54,9 @@ public class ClimbingWallService {
 
     @Transactional
     public ClimbingWall save(ClimbingWall climbingWall) {
+        if (serviceUtils.compareSportObjectNameWithExisting(climbingWall.getName())) {
+            throw SportObjectException.sportObjectDuplicateNameException();
+        }
         ClimbingWallEntity entity = (ClimbingWallEntity) sportObjectMapper.toEntity(climbingWall);
         climbingWallRepository.persist(entity);
         return (ClimbingWall) sportObjectMapper.toDomain(entity);
@@ -65,7 +69,7 @@ public class ClimbingWallService {
         }
         ClimbingWallEntity entity = climbingWallRepository.findByIdOptional(climbingWall.getId())
                 .orElseThrow(ClimbingWallException::climbingWallNotFoundException);
-        if (serviceUtils.compareSportObjectNameWithExisted(entity.getName())) {
+        if (serviceUtils.compareSportObjectNameWithExisting(entity.getName())) {
             throw SportObjectException.sportObjectDuplicateNameException();
         }
         entity.setFullPrice(climbingWall.getFullPrice());
@@ -79,7 +83,14 @@ public class ClimbingWallService {
     @Transactional
     public ClimbingWall putEquipmentToObject(Integer sportObjectId, Integer rentEquipmentId) {
         ClimbingWallEntity climbingWallToUpdate = climbingWallRepository.findById(sportObjectId);
-        climbingWallToUpdate.addRentEquipment(rentEquipmentRepository.findById(rentEquipmentId));
+        if (climbingWallToUpdate == null) {
+            throw ClimbingWallException.climbingWallNotFoundException();
+        }
+        RentEquipmentEntity rentEquipmentToAdd = rentEquipmentRepository.findById(rentEquipmentId);
+        if (rentEquipmentToAdd == null) {
+            throw RentEquipmentException.rentEquipmentNotFoundException();
+        }
+        climbingWallToUpdate.addRentEquipment(rentEquipmentToAdd);
         climbingWallRepository.persistAndFlush(climbingWallToUpdate);
         return (ClimbingWall) sportObjectMapper.toDomain(climbingWallToUpdate);
     }

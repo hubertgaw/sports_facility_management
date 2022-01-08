@@ -1,13 +1,14 @@
 package pl.lodz.hubertgaw.service;
 
 import org.slf4j.Logger;
-import pl.lodz.hubertgaw.dto.DartRoom;
 import pl.lodz.hubertgaw.dto.Gym;
 import pl.lodz.hubertgaw.mapper.SportObjectMapper;
 import pl.lodz.hubertgaw.repository.GymRepository;
 import pl.lodz.hubertgaw.repository.RentEquipmentRepository;
+import pl.lodz.hubertgaw.repository.entity.RentEquipmentEntity;
 import pl.lodz.hubertgaw.repository.entity.sports_objects.GymEntity;
 import pl.lodz.hubertgaw.service.exception.GymException;
+import pl.lodz.hubertgaw.service.exception.RentEquipmentException;
 import pl.lodz.hubertgaw.service.exception.SportObjectException;
 import pl.lodz.hubertgaw.service.utils.ServiceUtils;
 
@@ -53,6 +54,9 @@ public class GymService {
 
     @Transactional
     public Gym save(Gym gym) {
+        if (serviceUtils.compareSportObjectNameWithExisting(gym.getName())) {
+            throw SportObjectException.sportObjectDuplicateNameException();
+        }
         GymEntity entity = (GymEntity) sportObjectMapper.toEntity(gym);
         gymRepository.persist(entity);
         return (Gym) sportObjectMapper.toDomain(entity);
@@ -65,7 +69,7 @@ public class GymService {
         }
         GymEntity entity = gymRepository.findByIdOptional(gym.getId())
                 .orElseThrow(GymException::gymNotFoundException);
-        if (serviceUtils.compareSportObjectNameWithExisted(entity.getName())) {
+        if (serviceUtils.compareSportObjectNameWithExisting(entity.getName())) {
             throw SportObjectException.sportObjectDuplicateNameException();
         }
         entity.setFullPrice(gym.getFullPrice());
@@ -79,7 +83,14 @@ public class GymService {
     @Transactional
     public Gym putEquipmentToObject(Integer sportObjectId, Integer rentEquipmentId) {
         GymEntity gymToUpdate = gymRepository.findById(sportObjectId);
-        gymToUpdate.addRentEquipment(rentEquipmentRepository.findById(rentEquipmentId));
+        if (gymToUpdate == null) {
+            throw GymException.gymNotFoundException();
+        }
+        RentEquipmentEntity rentEquipmentToAdd = rentEquipmentRepository.findById(rentEquipmentId);
+        if (rentEquipmentToAdd == null) {
+            throw RentEquipmentException.rentEquipmentNotFoundException();
+        }
+        gymToUpdate.addRentEquipment(rentEquipmentToAdd);
         gymRepository.persistAndFlush(gymToUpdate);
         return (Gym) sportObjectMapper.toDomain(gymToUpdate);
     }

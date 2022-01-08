@@ -2,12 +2,13 @@ package pl.lodz.hubertgaw.service;
 
 import org.slf4j.Logger;
 import pl.lodz.hubertgaw.dto.BeachVolleyballCourt;
-import pl.lodz.hubertgaw.dto.DartRoom;
 import pl.lodz.hubertgaw.mapper.SportObjectMapper;
 import pl.lodz.hubertgaw.repository.BeachVolleyballCourtRepository;
 import pl.lodz.hubertgaw.repository.RentEquipmentRepository;
+import pl.lodz.hubertgaw.repository.entity.RentEquipmentEntity;
 import pl.lodz.hubertgaw.repository.entity.sports_objects.BeachVolleyballCourtEntity;
 import pl.lodz.hubertgaw.service.exception.BeachVolleyballCourtException;
+import pl.lodz.hubertgaw.service.exception.RentEquipmentException;
 import pl.lodz.hubertgaw.service.exception.SportObjectException;
 import pl.lodz.hubertgaw.service.utils.ServiceUtils;
 
@@ -53,6 +54,9 @@ public class BeachVolleyballCourtService {
 
     @Transactional
     public BeachVolleyballCourt save(BeachVolleyballCourt beachVolleyballCourt) {
+        if (serviceUtils.compareSportObjectNameWithExisting(beachVolleyballCourt.getName())) {
+            throw SportObjectException.sportObjectDuplicateNameException();
+        }
         BeachVolleyballCourtEntity entity = (BeachVolleyballCourtEntity) sportObjectMapper.toEntity(beachVolleyballCourt);
         beachVolleyballCourtRepository.persist(entity);
         return (BeachVolleyballCourt) sportObjectMapper.toDomain(entity);
@@ -65,7 +69,7 @@ public class BeachVolleyballCourtService {
         }
         BeachVolleyballCourtEntity entity = beachVolleyballCourtRepository.findByIdOptional(beachVolleyballCourt.getId())
                 .orElseThrow(BeachVolleyballCourtException::beachVolleyballCourtNotFoundException);
-        if (serviceUtils.compareSportObjectNameWithExisted(entity.getName())) {
+        if (serviceUtils.compareSportObjectNameWithExisting(entity.getName())) {
             throw SportObjectException.sportObjectDuplicateNameException();
         }
         entity.setFullPrice(beachVolleyballCourt.getFullPrice());
@@ -77,7 +81,15 @@ public class BeachVolleyballCourtService {
     @Transactional
     public BeachVolleyballCourt putEquipmentToObject(Integer sportObjectId, Integer rentEquipmentId) {
         BeachVolleyballCourtEntity beachVolleyballCourtToUpdate = beachVolleyballCourtRepository.findById(sportObjectId);
-        beachVolleyballCourtToUpdate.addRentEquipment(rentEquipmentRepository.findById(rentEquipmentId));
+        if (beachVolleyballCourtToUpdate == null) {
+            throw BeachVolleyballCourtException.beachVolleyballCourtNotFoundException();
+        }
+        RentEquipmentEntity rentEquipmentToAdd = rentEquipmentRepository.findById(rentEquipmentId);
+        if (rentEquipmentToAdd == null) {
+            throw RentEquipmentException.rentEquipmentNotFoundException();
+        }
+
+        beachVolleyballCourtToUpdate.addRentEquipment(rentEquipmentToAdd);
         beachVolleyballCourtRepository.persistAndFlush(beachVolleyballCourtToUpdate);
         return (BeachVolleyballCourt) sportObjectMapper.toDomain(beachVolleyballCourtToUpdate);
     }

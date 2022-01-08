@@ -1,14 +1,15 @@
 package pl.lodz.hubertgaw.service;
 
 import org.slf4j.Logger;
-import pl.lodz.hubertgaw.dto.DartRoom;
 import pl.lodz.hubertgaw.dto.SportsHall;
 //import pl.lodz.hubertgaw.mapper.BeachVolleyballCourtMapper;
 //import pl.lodz.hubertgaw.mapper.SportsHallMapper;
 import pl.lodz.hubertgaw.mapper.SportObjectMapper;
 import pl.lodz.hubertgaw.repository.RentEquipmentRepository;
 import pl.lodz.hubertgaw.repository.SportsHallRepository;
+import pl.lodz.hubertgaw.repository.entity.RentEquipmentEntity;
 import pl.lodz.hubertgaw.repository.entity.sports_objects.SportsHallEntity;
+import pl.lodz.hubertgaw.service.exception.RentEquipmentException;
 import pl.lodz.hubertgaw.service.exception.SportObjectException;
 import pl.lodz.hubertgaw.service.exception.SportsHallException;
 import pl.lodz.hubertgaw.service.utils.ServiceUtils;
@@ -55,6 +56,9 @@ public class SportsHallService {
 
     @Transactional
     public SportsHall save(SportsHall sportsHall) {
+        if (serviceUtils.compareSportObjectNameWithExisting(sportsHall.getName())) {
+            throw SportObjectException.sportObjectDuplicateNameException();
+        }
         SportsHallEntity entity = (SportsHallEntity) sportObjectMapper.toEntity(sportsHall);
         sportsHallRepository.persist(entity);
         return (SportsHall) sportObjectMapper.toDomain(entity);
@@ -67,7 +71,7 @@ public class SportsHallService {
         }
         SportsHallEntity entity = sportsHallRepository.findByIdOptional(sportsHall.getId())
                 .orElseThrow(SportsHallException::sportsHallNotFoundException);
-        if (serviceUtils.compareSportObjectNameWithExisted(entity.getName())) {
+        if (serviceUtils.compareSportObjectNameWithExisting(entity.getName())) {
             throw SportObjectException.sportObjectDuplicateNameException();
         }
         entity.setFullPrice(sportsHall.getFullPrice());
@@ -81,7 +85,14 @@ public class SportsHallService {
     @Transactional
     public SportsHall putEquipmentToObject(Integer sportObjectId, Integer rentEquipmentId) {
         SportsHallEntity sportsHallToUpdate = sportsHallRepository.findById(sportObjectId);
-        sportsHallToUpdate.addRentEquipment(rentEquipmentRepository.findById(rentEquipmentId));
+        if (sportsHallToUpdate == null) {
+            throw SportsHallException.sportsHallNotFoundException();
+        }
+        RentEquipmentEntity rentEquipmentToAdd = rentEquipmentRepository.findById(rentEquipmentId);
+        if (rentEquipmentToAdd == null) {
+            throw RentEquipmentException.rentEquipmentNotFoundException();
+        }
+        sportsHallToUpdate.addRentEquipment(rentEquipmentToAdd);
         sportsHallRepository.persistAndFlush(sportsHallToUpdate);
         return (SportsHall) sportObjectMapper.toDomain(sportsHallToUpdate);
     }

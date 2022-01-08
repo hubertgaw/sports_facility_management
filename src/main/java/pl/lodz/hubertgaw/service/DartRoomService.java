@@ -5,8 +5,10 @@ import pl.lodz.hubertgaw.dto.DartRoom;
 import pl.lodz.hubertgaw.mapper.SportObjectMapper;
 import pl.lodz.hubertgaw.repository.DartRoomRepository;
 import pl.lodz.hubertgaw.repository.RentEquipmentRepository;
+import pl.lodz.hubertgaw.repository.entity.RentEquipmentEntity;
 import pl.lodz.hubertgaw.repository.entity.sports_objects.DartRoomEntity;
 import pl.lodz.hubertgaw.service.exception.DartRoomException;
+import pl.lodz.hubertgaw.service.exception.RentEquipmentException;
 import pl.lodz.hubertgaw.service.exception.SportObjectException;
 import pl.lodz.hubertgaw.service.utils.ServiceUtils;
 
@@ -52,6 +54,9 @@ public class DartRoomService {
 
     @Transactional
     public DartRoom save(DartRoom dartRoom) {
+        if (serviceUtils.compareSportObjectNameWithExisting(dartRoom.getName())) {
+            throw SportObjectException.sportObjectDuplicateNameException();
+        }
         DartRoomEntity entity = (DartRoomEntity) sportObjectMapper.toEntity(dartRoom);
         dartRoomRepository.persist(entity);
         return (DartRoom) sportObjectMapper.toDomain(entity);
@@ -64,7 +69,7 @@ public class DartRoomService {
         }
         DartRoomEntity entity = dartRoomRepository.findByIdOptional(dartRoom.getId())
                 .orElseThrow(DartRoomException::dartRoomNotFoundException);
-        if (serviceUtils.compareSportObjectNameWithExisted(entity.getName())) {
+        if (serviceUtils.compareSportObjectNameWithExisting(entity.getName())) {
             throw SportObjectException.sportObjectDuplicateNameException();
         }
         entity.setFullPrice(dartRoom.getFullPrice());
@@ -78,7 +83,14 @@ public class DartRoomService {
     @Transactional
     public DartRoom putEquipmentToObject(Integer sportObjectId, Integer rentEquipmentId) {
         DartRoomEntity dartRoomToUpdate = dartRoomRepository.findById(sportObjectId);
-        dartRoomToUpdate.addRentEquipment(rentEquipmentRepository.findById(rentEquipmentId));
+        if (dartRoomToUpdate == null) {
+            throw DartRoomException.dartRoomNotFoundException();
+        }
+        RentEquipmentEntity rentEquipmentToAdd = rentEquipmentRepository.findById(rentEquipmentId);
+        if (rentEquipmentToAdd == null) {
+            throw RentEquipmentException.rentEquipmentNotFoundException();
+        }
+        dartRoomToUpdate.addRentEquipment(rentEquipmentToAdd);
         dartRoomRepository.persistAndFlush(dartRoomToUpdate);
         return (DartRoom) sportObjectMapper.toDomain(dartRoomToUpdate);
     }

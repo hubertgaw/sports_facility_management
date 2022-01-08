@@ -8,6 +8,7 @@ import pl.lodz.hubertgaw.repository.entity.RentEquipmentEntity;
 import pl.lodz.hubertgaw.repository.entity.RentEquipmentEntity;
 import pl.lodz.hubertgaw.repository.entity.sports_objects.SportObjectEntity;
 import pl.lodz.hubertgaw.service.exception.RentEquipmentException;
+import pl.lodz.hubertgaw.service.utils.ServiceUtils;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
@@ -21,13 +22,16 @@ public class RentEquipmentService {
     private final RentEquipmentRepository rentEquipmentRepository;
     private final RentEquipmentMapper rentEquipmentMapper;
     private final Logger logger;
+    private final ServiceUtils serviceUtils;
 
     public RentEquipmentService(RentEquipmentRepository rentEquipmentRepository,
                                 RentEquipmentMapper rentEquipmentMapper,
-                                Logger logger) {
+                                Logger logger,
+                                ServiceUtils serviceUtils) {
         this.rentEquipmentRepository = rentEquipmentRepository;
         this.rentEquipmentMapper = rentEquipmentMapper;
         this.logger = logger;
+        this.serviceUtils = serviceUtils;
     }
 
     public List<RentEquipment> findAll() {
@@ -51,6 +55,9 @@ public class RentEquipmentService {
 
     @Transactional
     public RentEquipment save(RentEquipment rentEquipment) {
+        if (serviceUtils.compareRentEquipmentNameWithExisting(rentEquipment.getName())) {
+            throw RentEquipmentException.rentEquipmentDuplicateNameException();
+        }
         RentEquipmentEntity entity = rentEquipmentMapper.toEntity(rentEquipment);
         rentEquipmentRepository.persist(entity);
         return rentEquipmentMapper.toDomain(entity);
@@ -63,6 +70,11 @@ public class RentEquipmentService {
         }
         RentEquipmentEntity entity = rentEquipmentRepository.findByIdOptional(rentEquipment.getId())
                 .orElseThrow(RentEquipmentException::rentEquipmentNotFoundException);
+
+        if (serviceUtils.compareRentEquipmentNameWithExisting(entity.getName())) {
+            throw RentEquipmentException.rentEquipmentDuplicateNameException();
+        }
+
         entity.setName(rentEquipment.getName());
         entity.setPrice(rentEquipment.getPrice());
         return rentEquipmentMapper.toDomain(entity);

@@ -1,12 +1,13 @@
 package pl.lodz.hubertgaw.service;
 
 import org.slf4j.Logger;
-import pl.lodz.hubertgaw.dto.DartRoom;
 import pl.lodz.hubertgaw.dto.TennisCourt;
 import pl.lodz.hubertgaw.mapper.SportObjectMapper;
 import pl.lodz.hubertgaw.repository.RentEquipmentRepository;
 import pl.lodz.hubertgaw.repository.TennisCourtRepository;
+import pl.lodz.hubertgaw.repository.entity.RentEquipmentEntity;
 import pl.lodz.hubertgaw.repository.entity.sports_objects.TennisCourtEntity;
+import pl.lodz.hubertgaw.service.exception.RentEquipmentException;
 import pl.lodz.hubertgaw.service.exception.SportObjectException;
 import pl.lodz.hubertgaw.service.exception.TennisCourtException;
 import pl.lodz.hubertgaw.service.utils.ServiceUtils;
@@ -53,6 +54,9 @@ public class TennisCourtService {
 
     @Transactional
     public TennisCourt save(TennisCourt tennisCourt) {
+        if (serviceUtils.compareSportObjectNameWithExisting(tennisCourt.getName())) {
+            throw SportObjectException.sportObjectDuplicateNameException();
+        }
         TennisCourtEntity entity = (TennisCourtEntity) sportObjectMapper.toEntity(tennisCourt);
         tennisCourtRepository.persist(entity);
         return (TennisCourt) sportObjectMapper.toDomain(entity);
@@ -65,7 +69,7 @@ public class TennisCourtService {
         }
         TennisCourtEntity entity = tennisCourtRepository.findByIdOptional(tennisCourt.getId()).
                 orElseThrow(TennisCourtException::tennisCourtNotFoundException);
-        if (serviceUtils.compareSportObjectNameWithExisted(entity.getName())) {
+        if (serviceUtils.compareSportObjectNameWithExisting(entity.getName())) {
             throw SportObjectException.sportObjectDuplicateNameException();
         }
         entity.setFullPrice(tennisCourt.getFullPrice());
@@ -77,7 +81,14 @@ public class TennisCourtService {
     @Transactional
     public TennisCourt putEquipmentToObject(Integer sportObjectId, Integer rentEquipmentId) {
         TennisCourtEntity tennisCourtToUpdate = tennisCourtRepository.findById(sportObjectId);
-        tennisCourtToUpdate.addRentEquipment(rentEquipmentRepository.findById(rentEquipmentId));
+        if (tennisCourtToUpdate == null) {
+            throw TennisCourtException.tennisCourtNotFoundException();
+        }
+        RentEquipmentEntity rentEquipmentToAdd = rentEquipmentRepository.findById(rentEquipmentId);
+        if (rentEquipmentToAdd == null) {
+            throw RentEquipmentException.rentEquipmentNotFoundException();
+        }
+        tennisCourtToUpdate.addRentEquipment(rentEquipmentToAdd);
         tennisCourtRepository.persistAndFlush(tennisCourtToUpdate);
         return (TennisCourt) sportObjectMapper.toDomain(tennisCourtToUpdate);
     }

@@ -2,15 +2,13 @@ package pl.lodz.hubertgaw.service;
 
 import org.slf4j.Logger;
 import pl.lodz.hubertgaw.dto.AthleticsTrack;
-import pl.lodz.hubertgaw.dto.DartRoom;
 import pl.lodz.hubertgaw.mapper.SportObjectMapper;
 import pl.lodz.hubertgaw.repository.AthleticsTrackRepository;
 import pl.lodz.hubertgaw.repository.RentEquipmentRepository;
-import pl.lodz.hubertgaw.repository.SportObjectRepository;
+import pl.lodz.hubertgaw.repository.entity.RentEquipmentEntity;
 import pl.lodz.hubertgaw.repository.entity.sports_objects.AthleticsTrackEntity;
-import pl.lodz.hubertgaw.repository.entity.sports_objects.SportObjectEntity;
 import pl.lodz.hubertgaw.service.exception.AthleticsTrackException;
-import pl.lodz.hubertgaw.service.exception.ServiceException;
+import pl.lodz.hubertgaw.service.exception.RentEquipmentException;
 import pl.lodz.hubertgaw.service.exception.SportObjectException;
 import pl.lodz.hubertgaw.service.utils.ServiceUtils;
 
@@ -58,6 +56,9 @@ public class AthleticsTrackService {
 
     @Transactional
     public AthleticsTrack save(AthleticsTrack athleticsTrack) {
+        if (serviceUtils.compareSportObjectNameWithExisting(athleticsTrack.getName())) {
+            throw SportObjectException.sportObjectDuplicateNameException();
+        }
         AthleticsTrackEntity entity = (AthleticsTrackEntity) sportObjectMapper.toEntity(athleticsTrack);
         athleticsTrackRepository.persist(entity);
         return (AthleticsTrack) sportObjectMapper.toDomain(entity);
@@ -72,7 +73,7 @@ public class AthleticsTrackService {
         AthleticsTrackEntity entity = athleticsTrackRepository.findByIdOptional(athleticsTrack.getId())
                 .orElseThrow(AthleticsTrackException::athleticsTrackNotFoundException);
 
-        if (serviceUtils.compareSportObjectNameWithExisted(entity.getName())) {
+        if (serviceUtils.compareSportObjectNameWithExisting(entity.getName())) {
             throw SportObjectException.sportObjectDuplicateNameException();
         }
 
@@ -89,7 +90,14 @@ public class AthleticsTrackService {
     @Transactional
     public AthleticsTrack putEquipmentToObject(Integer sportObjectId, Integer rentEquipmentId) {
         AthleticsTrackEntity athleticsTrackToUpdate = athleticsTrackRepository.findById(sportObjectId);
-        athleticsTrackToUpdate.addRentEquipment(rentEquipmentRepository.findById(rentEquipmentId));
+        if (athleticsTrackToUpdate == null) {
+            throw AthleticsTrackException.athleticsTrackNotFoundException();
+        }
+        RentEquipmentEntity rentEquipmentToAdd = rentEquipmentRepository.findById(rentEquipmentId);
+        if (rentEquipmentToAdd == null) {
+            throw RentEquipmentException.rentEquipmentNotFoundException();
+        }
+        athleticsTrackToUpdate.addRentEquipment(rentEquipmentToAdd);
         athleticsTrackRepository.persistAndFlush(athleticsTrackToUpdate);
         return (AthleticsTrack) sportObjectMapper.toDomain(athleticsTrackToUpdate);
 //        return null;

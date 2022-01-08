@@ -1,12 +1,13 @@
 package pl.lodz.hubertgaw.service;
 
 import org.slf4j.Logger;
-import pl.lodz.hubertgaw.dto.DartRoom;
 import pl.lodz.hubertgaw.dto.SmallPitch;
 import pl.lodz.hubertgaw.mapper.SportObjectMapper;
 import pl.lodz.hubertgaw.repository.RentEquipmentRepository;
 import pl.lodz.hubertgaw.repository.SmallPitchRepository;
+import pl.lodz.hubertgaw.repository.entity.RentEquipmentEntity;
 import pl.lodz.hubertgaw.repository.entity.sports_objects.SmallPitchEntity;
+import pl.lodz.hubertgaw.service.exception.RentEquipmentException;
 import pl.lodz.hubertgaw.service.exception.SmallPitchException;
 import pl.lodz.hubertgaw.service.exception.SportObjectException;
 import pl.lodz.hubertgaw.service.utils.ServiceUtils;
@@ -53,6 +54,9 @@ public class SmallPitchService {
 
     @Transactional
     public SmallPitch save(SmallPitch smallPitch) {
+        if (serviceUtils.compareRentEquipmentNameWithExisting(smallPitch.getName())) {
+            throw SportObjectException.sportObjectDuplicateNameException();
+        }
         SmallPitchEntity entity = (SmallPitchEntity) sportObjectMapper.toEntity(smallPitch);
         smallPitchRepository.persist(entity);
         return (SmallPitch) sportObjectMapper.toDomain(entity);
@@ -65,7 +69,7 @@ public class SmallPitchService {
         }
         SmallPitchEntity entity = smallPitchRepository.findByIdOptional(smallPitch.getId()).
                 orElseThrow(SmallPitchException::smallPitchNotFoundException);
-        if (serviceUtils.compareSportObjectNameWithExisted(entity.getName())) {
+        if (serviceUtils.compareSportObjectNameWithExisting(entity.getName())) {
             throw SportObjectException.sportObjectDuplicateNameException();
         }
         entity.setFullPrice(smallPitch.getFullPrice());
@@ -79,7 +83,14 @@ public class SmallPitchService {
     @Transactional
     public SmallPitch putEquipmentToObject(Integer sportObjectId, Integer rentEquipmentId) {
         SmallPitchEntity smallPitchToUpdate = smallPitchRepository.findById(sportObjectId);
-        smallPitchToUpdate.addRentEquipment(rentEquipmentRepository.findById(rentEquipmentId));
+        if (smallPitchToUpdate == null) {
+            throw SmallPitchException.smallPitchNotFoundException();
+        }
+        RentEquipmentEntity rentEquipmentToAdd = rentEquipmentRepository.findById(rentEquipmentId);
+        if (rentEquipmentToAdd == null) {
+            throw RentEquipmentException.rentEquipmentNotFoundException();
+        }
+        smallPitchToUpdate.addRentEquipment(rentEquipmentToAdd);
         smallPitchRepository.persistAndFlush(smallPitchToUpdate);
         return (SmallPitch) sportObjectMapper.toDomain(smallPitchToUpdate);
     }

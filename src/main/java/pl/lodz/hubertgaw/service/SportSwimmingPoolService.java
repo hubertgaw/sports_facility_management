@@ -1,12 +1,13 @@
 package pl.lodz.hubertgaw.service;
 
 import org.slf4j.Logger;
-import pl.lodz.hubertgaw.dto.DartRoom;
 import pl.lodz.hubertgaw.dto.SportSwimmingPool;
 import pl.lodz.hubertgaw.mapper.SportObjectMapper;
 import pl.lodz.hubertgaw.repository.RentEquipmentRepository;
 import pl.lodz.hubertgaw.repository.SportSwimmingPoolRepository;
+import pl.lodz.hubertgaw.repository.entity.RentEquipmentEntity;
 import pl.lodz.hubertgaw.repository.entity.sports_objects.SportSwimmingPoolEntity;
+import pl.lodz.hubertgaw.service.exception.RentEquipmentException;
 import pl.lodz.hubertgaw.service.exception.SportObjectException;
 import pl.lodz.hubertgaw.service.exception.SportSwimmingPoolException;
 import pl.lodz.hubertgaw.service.utils.ServiceUtils;
@@ -53,6 +54,9 @@ public class SportSwimmingPoolService {
 
     @Transactional
     public SportSwimmingPool save(SportSwimmingPool sportSwimmingPool) {
+        if (serviceUtils.compareSportObjectNameWithExisting(sportSwimmingPool.getName())) {
+            throw SportObjectException.sportObjectDuplicateNameException();
+        }
         SportSwimmingPoolEntity entity = (SportSwimmingPoolEntity) sportObjectMapper.toEntity(sportSwimmingPool);
         sportSwimmingPoolRepository.persist(entity);
         return (SportSwimmingPool) sportObjectMapper.toDomain(entity);
@@ -65,7 +69,7 @@ public class SportSwimmingPoolService {
         }
         SportSwimmingPoolEntity entity = sportSwimmingPoolRepository.findByIdOptional(sportSwimmingPool.getId())
                 .orElseThrow(SportSwimmingPoolException::sportSwimmingPoolNotFoundException);
-        if (serviceUtils.compareSportObjectNameWithExisted(entity.getName())) {
+        if (serviceUtils.compareSportObjectNameWithExisting(entity.getName())) {
             throw SportObjectException.sportObjectDuplicateNameException();
         }
         entity.setFullPrice(sportSwimmingPool.getFullPrice());
@@ -79,7 +83,14 @@ public class SportSwimmingPoolService {
     @Transactional
     public SportSwimmingPool putEquipmentToObject(Integer sportObjectId, Integer rentEquipmentId) {
         SportSwimmingPoolEntity sportSwimmingPoolToUpdate = sportSwimmingPoolRepository.findById(sportObjectId);
-        sportSwimmingPoolToUpdate.addRentEquipment(rentEquipmentRepository.findById(rentEquipmentId));
+        if (sportSwimmingPoolToUpdate == null) {
+            throw SportSwimmingPoolException.sportSwimmingPoolNotFoundException();
+        }
+        RentEquipmentEntity rentEquipmentToAdd = rentEquipmentRepository.findById(rentEquipmentId);
+        if (rentEquipmentToAdd == null) {
+            throw RentEquipmentException.rentEquipmentNotFoundException();
+        }
+        sportSwimmingPoolToUpdate.addRentEquipment(rentEquipmentToAdd);
         sportSwimmingPoolRepository.persistAndFlush(sportSwimmingPoolToUpdate);
         return (SportSwimmingPool) sportObjectMapper.toDomain(sportSwimmingPoolToUpdate);
     }
