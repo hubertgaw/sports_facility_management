@@ -46,10 +46,10 @@ public class ClimbingWallService {
                 .collect(Collectors.toList());
     }
 
-    public Optional<ClimbingWall> findById(Integer wallId) {
-        return climbingWallRepository.findByIdOptional(wallId)
-                .map(sportObjectMapper::toDomain)
-                .map(ClimbingWall.class::cast);
+    public ClimbingWall findById(Integer wallId) {
+        ClimbingWallEntity entity = climbingWallRepository.findByIdOptional(wallId)
+                .orElseThrow(ClimbingWallException::climbingWallNotFoundException);
+        return (ClimbingWall) sportObjectMapper.toDomain(entity);
     }
 
     @Transactional
@@ -69,7 +69,7 @@ public class ClimbingWallService {
         }
         ClimbingWallEntity entity = climbingWallRepository.findByIdOptional(climbingWall.getId())
                 .orElseThrow(ClimbingWallException::climbingWallNotFoundException);
-        if (serviceUtils.compareSportObjectNameWithExisting(entity.getName())) {
+        if (serviceUtils.compareSportObjectNameWithExisting(climbingWall.getName())) {
             throw SportObjectException.sportObjectDuplicateNameException();
         }
         entity.setFullPrice(climbingWall.getFullPrice());

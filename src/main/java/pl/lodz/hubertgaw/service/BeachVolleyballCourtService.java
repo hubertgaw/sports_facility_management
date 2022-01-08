@@ -46,10 +46,10 @@ public class BeachVolleyballCourtService {
                 .collect(Collectors.toList());
     }
 
-    public Optional<BeachVolleyballCourt> findById(Integer courtId) {
-        return beachVolleyballCourtRepository.findByIdOptional(courtId)
-                .map(sportObjectMapper::toDomain)
-                .map(BeachVolleyballCourt.class::cast);
+    public BeachVolleyballCourt findById(Integer courtId) {
+        BeachVolleyballCourtEntity entity = beachVolleyballCourtRepository.findByIdOptional(courtId)
+                .orElseThrow(BeachVolleyballCourtException::beachVolleyballCourtNotFoundException);
+        return (BeachVolleyballCourt) sportObjectMapper.toDomain(entity);
     }
 
     @Transactional
@@ -69,7 +69,7 @@ public class BeachVolleyballCourtService {
         }
         BeachVolleyballCourtEntity entity = beachVolleyballCourtRepository.findByIdOptional(beachVolleyballCourt.getId())
                 .orElseThrow(BeachVolleyballCourtException::beachVolleyballCourtNotFoundException);
-        if (serviceUtils.compareSportObjectNameWithExisting(entity.getName())) {
+        if (serviceUtils.compareSportObjectNameWithExisting(beachVolleyballCourt.getName())) {
             throw SportObjectException.sportObjectDuplicateNameException();
         }
         entity.setFullPrice(beachVolleyballCourt.getFullPrice());

@@ -46,10 +46,10 @@ public class GymService {
                 .collect(Collectors.toList());
     }
 
-    public Optional<Gym> findById(Integer courtId) {
-        return gymRepository.findByIdOptional(courtId)
-                .map(sportObjectMapper::toDomain)
-                .map(Gym.class::cast);
+    public Gym findById(Integer courtId) {
+        GymEntity entity = gymRepository.findByIdOptional(courtId)
+                .orElseThrow(GymException::gymNotFoundException);
+        return (Gym) sportObjectMapper.toDomain(entity);
     }
 
     @Transactional
@@ -69,7 +69,7 @@ public class GymService {
         }
         GymEntity entity = gymRepository.findByIdOptional(gym.getId())
                 .orElseThrow(GymException::gymNotFoundException);
-        if (serviceUtils.compareSportObjectNameWithExisting(entity.getName())) {
+        if (serviceUtils.compareSportObjectNameWithExisting(gym.getName())) {
             throw SportObjectException.sportObjectDuplicateNameException();
         }
         entity.setFullPrice(gym.getFullPrice());

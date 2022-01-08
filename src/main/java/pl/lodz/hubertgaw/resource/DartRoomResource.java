@@ -13,18 +13,17 @@ import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.Optional;
 
 @Path("/api/dart_rooms")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class DartRoomResource {
 
-    private final pl.lodz.hubertgaw.service.DartRoomService DartRoomService;
+    private final pl.lodz.hubertgaw.service.DartRoomService dartRoomService;
     private final Logger logger;
 
     public DartRoomResource(DartRoomService DartRoomService, Logger logger) {
-        this.DartRoomService = DartRoomService;
+        this.dartRoomService = DartRoomService;
         this.logger = logger;
     }
 
@@ -39,7 +38,7 @@ public class DartRoomResource {
             }
     )
     public Response get() {
-        return Response.ok(DartRoomService.findAll()).build();
+        return Response.ok(dartRoomService.findAll()).build();
     }
 
     @GET
@@ -58,8 +57,7 @@ public class DartRoomResource {
             }
     )
     public Response getById(@PathParam("sportObjectId") Integer sportObjectId) {
-        Optional<DartRoom> optional = DartRoomService.findById(sportObjectId);
-        return !optional.isEmpty() ? Response.ok(optional.get()).build() : Response.status(Response.Status.NOT_FOUND).build();
+        return Response.ok(dartRoomService.findById(sportObjectId)).build();
     }
 
     @POST
@@ -78,7 +76,7 @@ public class DartRoomResource {
     )
     public Response post(@Valid DartRoom DartRoom) {
         logger.info("post");
-        final DartRoom saved = DartRoomService.save(DartRoom);
+        final DartRoom saved = dartRoomService.save(DartRoom);
         return Response.status(Response.Status.CREATED).entity(saved).build();
     }
 
@@ -97,7 +95,7 @@ public class DartRoomResource {
             }
     )
     public Response put(@Valid DartRoom DartRoom) {
-        final DartRoom saved = DartRoomService.update(DartRoom);
+        final DartRoom saved = dartRoomService.update(DartRoom);
         return Response.ok(saved).build();
     }
 
@@ -118,7 +116,7 @@ public class DartRoomResource {
     )
     public Response putEquipmentToObject(@PathParam("sportObjectId") Integer sportObjectId,
                                          @PathParam("rentEquipmentId") Integer rentEquipmentId) {
-        final DartRoom saved = DartRoomService.putEquipmentToObject(sportObjectId, rentEquipmentId);
+        final DartRoom saved = dartRoomService.putEquipmentToObject(sportObjectId, rentEquipmentId);
         return Response.ok(saved).build();
     }
 

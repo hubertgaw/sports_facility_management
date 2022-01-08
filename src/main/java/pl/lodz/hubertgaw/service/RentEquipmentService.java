@@ -71,7 +71,7 @@ public class RentEquipmentService {
         RentEquipmentEntity entity = rentEquipmentRepository.findByIdOptional(rentEquipment.getId())
                 .orElseThrow(RentEquipmentException::rentEquipmentNotFoundException);
 
-        if (serviceUtils.compareRentEquipmentNameWithExisting(entity.getName())) {
+        if (serviceUtils.compareRentEquipmentNameWithExisting(rentEquipment.getName())) {
             throw RentEquipmentException.rentEquipmentDuplicateNameException();
         }
 
@@ -83,6 +83,9 @@ public class RentEquipmentService {
     @Transactional
     public void deleteRentEquipmentById(Integer rentEquipmentId) {
         RentEquipmentEntity rentEquipmentToDelete = rentEquipmentRepository.findById(rentEquipmentId);
+        if (rentEquipmentToDelete == null) {
+            throw RentEquipmentException.rentEquipmentNotFoundException();
+        }
         Set<SportObjectEntity> sportObjectsToDelete = rentEquipmentToDelete.getSportObjects();
         for (SportObjectEntity sportObject : sportObjectsToDelete) {
             sportObject.removeRentEquipment(rentEquipmentToDelete);

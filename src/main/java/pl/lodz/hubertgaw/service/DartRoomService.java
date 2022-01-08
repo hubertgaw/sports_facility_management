@@ -46,10 +46,10 @@ public class DartRoomService {
                 .collect(Collectors.toList());
     }
 
-    public Optional<DartRoom> findById(Integer roomId) {
-        return dartRoomRepository.findByIdOptional(roomId)
-                .map(sportObjectMapper::toDomain)
-                .map(DartRoom.class::cast);
+    public DartRoom findById(Integer roomId) {
+        DartRoomEntity entity = dartRoomRepository.findByIdOptional(roomId)
+                .orElseThrow(DartRoomException::dartRoomNotFoundException);
+        return (DartRoom) sportObjectMapper.toDomain(entity);
     }
 
     @Transactional
@@ -69,7 +69,7 @@ public class DartRoomService {
         }
         DartRoomEntity entity = dartRoomRepository.findByIdOptional(dartRoom.getId())
                 .orElseThrow(DartRoomException::dartRoomNotFoundException);
-        if (serviceUtils.compareSportObjectNameWithExisting(entity.getName())) {
+        if (serviceUtils.compareSportObjectNameWithExisting(dartRoom.getName())) {
             throw SportObjectException.sportObjectDuplicateNameException();
         }
         entity.setFullPrice(dartRoom.getFullPrice());

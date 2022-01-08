@@ -12,18 +12,17 @@ import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.Optional;
 
 @Path("/api/small_pitches")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class SmallPitchResource {
 
-    private final pl.lodz.hubertgaw.service.SmallPitchService SmallPitchService;
+    private final pl.lodz.hubertgaw.service.SmallPitchService smallPitchService;
     private final Logger logger;
 
     public SmallPitchResource(pl.lodz.hubertgaw.service.SmallPitchService SmallPitchService, Logger logger) {
-        this.SmallPitchService = SmallPitchService;
+        this.smallPitchService = SmallPitchService;
         this.logger = logger;
     }
 
@@ -38,7 +37,7 @@ public class SmallPitchResource {
             }
     )
     public Response get() {
-        return Response.ok(SmallPitchService.findAll()).build();
+        return Response.ok(smallPitchService.findAll()).build();
     }
 
     @GET
@@ -57,8 +56,7 @@ public class SmallPitchResource {
             }
     )
     public Response getById(@PathParam("sportObjectId") Integer sportObjectId) {
-        Optional<SmallPitch> optional = SmallPitchService.findById(sportObjectId);
-        return !optional.isEmpty() ? Response.ok(optional.get()).build() : Response.status(Response.Status.NOT_FOUND).build();
+        return Response.ok(smallPitchService.findById(sportObjectId)).build();
     }
 
     @POST
@@ -77,7 +75,7 @@ public class SmallPitchResource {
     )
     public Response post(@Valid SmallPitch SmallPitch) {
         logger.info("post");
-        final SmallPitch saved = SmallPitchService.save(SmallPitch);
+        final SmallPitch saved = smallPitchService.save(SmallPitch);
         return Response.status(Response.Status.CREATED).entity(saved).build();
     }
 
@@ -96,7 +94,7 @@ public class SmallPitchResource {
             }
     )
     public Response put(@Valid SmallPitch SmallPitch) {
-        final SmallPitch saved = SmallPitchService.update(SmallPitch);
+        final SmallPitch saved = smallPitchService.update(SmallPitch);
         return Response.ok(saved).build();
     }
 
@@ -117,7 +115,7 @@ public class SmallPitchResource {
     )
     public Response putEquipmentToObject(@PathParam("sportObjectId") Integer sportObjectId,
                                          @PathParam("rentEquipmentId") Integer rentEquipmentId) {
-        final SmallPitch saved = SmallPitchService.putEquipmentToObject(sportObjectId, rentEquipmentId);
+        final SmallPitch saved = smallPitchService.putEquipmentToObject(sportObjectId, rentEquipmentId);
         return Response.ok(saved).build();
     }
 

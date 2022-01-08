@@ -7,24 +7,22 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 import org.slf4j.Logger;
 import pl.lodz.hubertgaw.dto.Gym;
-import pl.lodz.hubertgaw.dto.SportObject;
 
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.Optional;
 
 @Path("/api/gyms")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class GymResource {
 
-    private final pl.lodz.hubertgaw.service.GymService GymService;
+    private final pl.lodz.hubertgaw.service.GymService gymService;
     private final Logger logger;
 
     public GymResource(pl.lodz.hubertgaw.service.GymService GymService, Logger logger) {
-        this.GymService = GymService;
+        this.gymService = GymService;
         this.logger = logger;
     }
 
@@ -39,7 +37,7 @@ public class GymResource {
             }
     )
     public Response get() {
-        return Response.ok(GymService.findAll()).build();
+        return Response.ok(gymService.findAll()).build();
     }
 
     @GET
@@ -58,8 +56,7 @@ public class GymResource {
             }
     )
     public Response getById(@PathParam("sportObjectId") Integer sportObjectId) {
-        Optional<Gym> optional = GymService.findById(sportObjectId);
-        return !optional.isEmpty() ? Response.ok(optional.get()).build() : Response.status(Response.Status.NOT_FOUND).build();
+        return Response.ok(gymService.findById(sportObjectId)).build();
     }
 
     @POST
@@ -78,7 +75,7 @@ public class GymResource {
     )
     public Response post(@Valid Gym Gym) {
         logger.info("post");
-        final Gym saved = GymService.save(Gym);
+        final Gym saved = gymService.save(Gym);
         return Response.status(Response.Status.CREATED).entity(saved).build();
     }
 
@@ -97,7 +94,7 @@ public class GymResource {
             }
     )
     public Response put(@Valid Gym Gym) {
-        final Gym saved = GymService.update(Gym);
+        final Gym saved = gymService.update(Gym);
         return Response.ok(saved).build();
     }
 
@@ -118,7 +115,7 @@ public class GymResource {
     )
     public Response putEquipmentToObject(@PathParam("sportObjectId") Integer sportObjectId,
                                          @PathParam("rentEquipmentId") Integer rentEquipmentId) {
-        final Gym saved = GymService.putEquipmentToObject(sportObjectId, rentEquipmentId);
+        final Gym saved = gymService.putEquipmentToObject(sportObjectId, rentEquipmentId);
         return Response.ok(saved).build();
     }
 

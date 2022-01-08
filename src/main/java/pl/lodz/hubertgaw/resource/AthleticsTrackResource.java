@@ -58,8 +58,8 @@ public class AthleticsTrackResource {
             }
     )
     public Response getById(@PathParam("athleticsTrackId") Integer athleticsTrackId) {
-        Optional<AthleticsTrack> optional = athleticsTrackService.findById(athleticsTrackId);
-        return !optional.isEmpty() ? Response.ok(optional.get()).build() : Response.status(Response.Status.NOT_FOUND).build();
+//        Optional<AthleticsTrack> optional = athleticsTrackService.findById(athleticsTrackId);
+        return Response.ok(athleticsTrackService.findById(athleticsTrackId)).build();
     }
 
     @POST

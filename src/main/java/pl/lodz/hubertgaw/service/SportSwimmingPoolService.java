@@ -46,10 +46,10 @@ public class SportSwimmingPoolService {
                 .collect(Collectors.toList());
     }
 
-    public Optional<SportSwimmingPool> findById(Integer courtId) {
-        return sportSwimmingPoolRepository.findByIdOptional(courtId)
-                .map(sportObjectMapper::toDomain)
-                .map(SportSwimmingPool.class::cast);
+    public SportSwimmingPool findById(Integer courtId) {
+        SportSwimmingPoolEntity entity = sportSwimmingPoolRepository.findByIdOptional(courtId)
+                .orElseThrow(SportSwimmingPoolException::sportSwimmingPoolNotFoundException);
+        return (SportSwimmingPool) sportObjectMapper.toDomain(entity);
     }
 
     @Transactional
@@ -69,7 +69,7 @@ public class SportSwimmingPoolService {
         }
         SportSwimmingPoolEntity entity = sportSwimmingPoolRepository.findByIdOptional(sportSwimmingPool.getId())
                 .orElseThrow(SportSwimmingPoolException::sportSwimmingPoolNotFoundException);
-        if (serviceUtils.compareSportObjectNameWithExisting(entity.getName())) {
+        if (serviceUtils.compareSportObjectNameWithExisting(sportSwimmingPool.getName())) {
             throw SportObjectException.sportObjectDuplicateNameException();
         }
         entity.setFullPrice(sportSwimmingPool.getFullPrice());

@@ -109,6 +109,9 @@ public class SportObjectService {
     @Transactional
     public void deleteSportObjectById(Integer sportObjectId) {
         SportObjectEntity sportObjectToDelete = sportObjectRepository.findById(sportObjectId);
+        if (sportObjectToDelete == null) {
+            throw SportObjectException.sportObjectNotFoundException();
+        }
         Set<RentEquipmentEntity> rentEquipmentToDelete = sportObjectToDelete.getRentEquipment();
         for (RentEquipmentEntity rentEquipment : rentEquipmentToDelete) {
             rentEquipment.removeSportObject(sportObjectToDelete);

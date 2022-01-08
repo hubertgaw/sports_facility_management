@@ -47,11 +47,11 @@ public class AthleticsTrackService {
                 .collect(Collectors.toList());
     }
 
-    public Optional<AthleticsTrack> findById(Integer trackId) {
-        return athleticsTrackRepository.findByIdOptional(trackId)
-                .map(sportObjectMapper::toDomain)
-                .map(AthleticsTrack.class::cast);
-//    return null;
+    public AthleticsTrack findById(Integer trackId) {
+        AthleticsTrackEntity entity = athleticsTrackRepository.findByIdOptional(trackId)
+                .orElseThrow(AthleticsTrackException::athleticsTrackNotFoundException);
+
+        return (AthleticsTrack) sportObjectMapper.toDomain(entity);
     }
 
     @Transactional
@@ -62,7 +62,6 @@ public class AthleticsTrackService {
         AthleticsTrackEntity entity = (AthleticsTrackEntity) sportObjectMapper.toEntity(athleticsTrack);
         athleticsTrackRepository.persist(entity);
         return (AthleticsTrack) sportObjectMapper.toDomain(entity);
-//    return null;
     }
 
     @Transactional
@@ -72,11 +71,9 @@ public class AthleticsTrackService {
         }
         AthleticsTrackEntity entity = athleticsTrackRepository.findByIdOptional(athleticsTrack.getId())
                 .orElseThrow(AthleticsTrackException::athleticsTrackNotFoundException);
-
-        if (serviceUtils.compareSportObjectNameWithExisting(entity.getName())) {
+        if (serviceUtils.compareSportObjectNameWithExisting(athleticsTrack.getName())) {
             throw SportObjectException.sportObjectDuplicateNameException();
         }
-
         entity.setName(athleticsTrack.getName());
         entity.setCapacity(athleticsTrack.getCapacity());
         entity.setSingleTrackPrice(athleticsTrack.getSingleTrackPrice());

@@ -9,4 +9,6 @@ public class EmptyPropertyException extends BaseException{
     public static EmptyPropertyException emptyId(String message) {
         return new EmptyPropertyException(message);
     }
+
+    //empty name and other properties are handled by @NotNull and @NotEmpty annotations
 }

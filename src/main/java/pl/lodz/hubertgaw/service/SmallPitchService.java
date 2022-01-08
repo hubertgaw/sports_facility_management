@@ -46,10 +46,10 @@ public class SmallPitchService {
                 .collect(Collectors.toList());
     }
 
-    public Optional<SmallPitch> findById(Integer pitchId) {
-        return smallPitchRepository.findByIdOptional(pitchId)
-                .map(sportObjectMapper::toDomain)
-                .map(SmallPitch.class::cast);
+    public SmallPitch findById(Integer pitchId) {
+        SmallPitchEntity entity = smallPitchRepository.findByIdOptional(pitchId)
+                .orElseThrow(SmallPitchException::smallPitchNotFoundException);
+        return (SmallPitch) sportObjectMapper.toDomain(entity);
     }
 
     @Transactional
@@ -69,7 +69,7 @@ public class SmallPitchService {
         }
         SmallPitchEntity entity = smallPitchRepository.findByIdOptional(smallPitch.getId()).
                 orElseThrow(SmallPitchException::smallPitchNotFoundException);
-        if (serviceUtils.compareSportObjectNameWithExisting(entity.getName())) {
+        if (serviceUtils.compareSportObjectNameWithExisting(smallPitch.getName())) {
             throw SportObjectException.sportObjectDuplicateNameException();
         }
         entity.setFullPrice(smallPitch.getFullPrice());

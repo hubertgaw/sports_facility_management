@@ -46,11 +46,11 @@ public class TennisCourtService {
                 .collect(Collectors.toList());
     }
 
-    public Optional<TennisCourt> findById(Integer courtId) {
-        return tennisCourtRepository.findByIdOptional(courtId)
-                .map(sportObjectMapper::toDomain)
-                .map(TennisCourt.class::cast);
-    }
+    public TennisCourt findById(Integer courtId) {
+        TennisCourtEntity entity = tennisCourtRepository.findByIdOptional(courtId)
+                .orElseThrow(TennisCourtException::tennisCourtNotFoundException);
+        return (TennisCourt) sportObjectMapper.toDomain(entity);
+      }
 
     @Transactional
     public TennisCourt save(TennisCourt tennisCourt) {
@@ -69,7 +69,7 @@ public class TennisCourtService {
         }
         TennisCourtEntity entity = tennisCourtRepository.findByIdOptional(tennisCourt.getId()).
                 orElseThrow(TennisCourtException::tennisCourtNotFoundException);
-        if (serviceUtils.compareSportObjectNameWithExisting(entity.getName())) {
+        if (serviceUtils.compareSportObjectNameWithExisting(tennisCourt.getName())) {
             throw SportObjectException.sportObjectDuplicateNameException();
         }
         entity.setFullPrice(tennisCourt.getFullPrice());

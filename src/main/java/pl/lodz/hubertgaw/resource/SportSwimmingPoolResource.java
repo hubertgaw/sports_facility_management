@@ -12,18 +12,17 @@ import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.Optional;
 
 @Path("/api/sport_swimming_pools")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class SportSwimmingPoolResource {
 
-    private final pl.lodz.hubertgaw.service.SportSwimmingPoolService SportSwimmingPoolService;
+    private final pl.lodz.hubertgaw.service.SportSwimmingPoolService sportSwimmingPoolService;
     private final Logger logger;
 
     public SportSwimmingPoolResource(pl.lodz.hubertgaw.service.SportSwimmingPoolService SportSwimmingPoolService, Logger logger) {
-        this.SportSwimmingPoolService = SportSwimmingPoolService;
+        this.sportSwimmingPoolService = SportSwimmingPoolService;
         this.logger = logger;
     }
 
@@ -38,7 +37,7 @@ public class SportSwimmingPoolResource {
             }
     )
     public Response get() {
-        return Response.ok(SportSwimmingPoolService.findAll()).build();
+        return Response.ok(sportSwimmingPoolService.findAll()).build();
     }
 
     @GET
@@ -57,8 +56,7 @@ public class SportSwimmingPoolResource {
             }
     )
     public Response getById(@PathParam("sportObjectId") Integer sportObjectId) {
-        Optional<SportSwimmingPool> optional = SportSwimmingPoolService.findById(sportObjectId);
-        return !optional.isEmpty() ? Response.ok(optional.get()).build() : Response.status(Response.Status.NOT_FOUND).build();
+        return Response.ok(sportSwimmingPoolService.findById(sportObjectId)).build();
     }
 
     @POST
@@ -77,7 +75,7 @@ public class SportSwimmingPoolResource {
     )
     public Response post(@Valid SportSwimmingPool SportSwimmingPool) {
         logger.info("post");
-        final SportSwimmingPool saved = SportSwimmingPoolService.save(SportSwimmingPool);
+        final SportSwimmingPool saved = sportSwimmingPoolService.save(SportSwimmingPool);
         return Response.status(Response.Status.CREATED).entity(saved).build();
     }
 
@@ -96,7 +94,7 @@ public class SportSwimmingPoolResource {
             }
     )
     public Response put(@Valid SportSwimmingPool SportSwimmingPool) {
-        final SportSwimmingPool saved = SportSwimmingPoolService.update(SportSwimmingPool);
+        final SportSwimmingPool saved = sportSwimmingPoolService.update(SportSwimmingPool);
         return Response.ok(saved).build();
     }
 
@@ -117,7 +115,7 @@ public class SportSwimmingPoolResource {
     )
     public Response putEquipmentToObject(@PathParam("sportObjectId") Integer sportObjectId,
                                          @PathParam("rentEquipmentId") Integer rentEquipmentId) {
-        final SportSwimmingPool saved = SportSwimmingPoolService.putEquipmentToObject(sportObjectId, rentEquipmentId);
+        final SportSwimmingPool saved = sportSwimmingPoolService.putEquipmentToObject(sportObjectId, rentEquipmentId);
         return Response.ok(saved).build();
     }
 

@@ -46,10 +46,10 @@ public class FullSizePitchService {
                 .collect(Collectors.toList());
     }
 
-    public Optional<FullSizePitch> findById(Integer pitchId) {
-        return fullSizePitchRepository.findByIdOptional(pitchId)
-                .map(sportObjectMapper::toDomain)
-                .map(FullSizePitch.class::cast);
+    public FullSizePitch findById(Integer pitchId) {
+        FullSizePitchEntity entity = fullSizePitchRepository.findByIdOptional(pitchId)
+                .orElseThrow(FullSizePitchException::fullSizePitchNotFoundException);
+        return (FullSizePitch) sportObjectMapper.toDomain(entity);
     }
 
     @Transactional
@@ -69,7 +69,7 @@ public class FullSizePitchService {
         }
         FullSizePitchEntity entity = fullSizePitchRepository.findByIdOptional(fullSizePitch.getId())
                 .orElseThrow(FullSizePitchException::fullSizePitchNotFoundException);
-        if (serviceUtils.compareSportObjectNameWithExisting(entity.getName())) {
+        if (serviceUtils.compareSportObjectNameWithExisting(fullSizePitch.getName())) {
             throw SportObjectException.sportObjectDuplicateNameException();
         }
         entity.setFullPrice(fullSizePitch.getFullPrice());

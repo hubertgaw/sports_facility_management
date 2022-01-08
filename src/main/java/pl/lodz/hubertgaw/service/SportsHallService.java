@@ -48,10 +48,10 @@ public class SportsHallService {
                 .collect(Collectors.toList());
     }
 
-    public Optional<SportsHall> findById(Integer courtId) {
-        return sportsHallRepository.findByIdOptional(courtId)
-                .map(sportObjectMapper::toDomain)
-                .map(SportsHall.class::cast);
+    public SportsHall findById(Integer courtId) {
+        SportsHallEntity entity = sportsHallRepository.findByIdOptional(courtId)
+                .orElseThrow(SportsHallException::sportsHallNotFoundException);
+        return (SportsHall) sportObjectMapper.toDomain(entity);
     }
 
     @Transactional
@@ -71,7 +71,7 @@ public class SportsHallService {
         }
         SportsHallEntity entity = sportsHallRepository.findByIdOptional(sportsHall.getId())
                 .orElseThrow(SportsHallException::sportsHallNotFoundException);
-        if (serviceUtils.compareSportObjectNameWithExisting(entity.getName())) {
+        if (serviceUtils.compareSportObjectNameWithExisting(sportsHall.getName())) {
             throw SportObjectException.sportObjectDuplicateNameException();
         }
         entity.setFullPrice(sportsHall.getFullPrice());

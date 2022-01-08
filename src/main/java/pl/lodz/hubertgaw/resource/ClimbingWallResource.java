@@ -21,11 +21,11 @@ import java.util.Optional;
 @Consumes(MediaType.APPLICATION_JSON)
 public class ClimbingWallResource {
 
-    private final ClimbingWallService ClimbingWallService;
+    private final ClimbingWallService climbingWallService;
     private final Logger logger;
 
     public ClimbingWallResource(ClimbingWallService ClimbingWallService, Logger logger) {
-        this.ClimbingWallService = ClimbingWallService;
+        this.climbingWallService = ClimbingWallService;
         this.logger = logger;
     }
 
@@ -40,7 +40,7 @@ public class ClimbingWallResource {
             }
     )
     public Response get() {
-        return Response.ok(ClimbingWallService.findAll()).build();
+        return Response.ok(climbingWallService.findAll()).build();
     }
 
     @GET
@@ -59,8 +59,7 @@ public class ClimbingWallResource {
             }
     )
     public Response getById(@PathParam("sportObjectId") Integer sportObjectId) {
-        Optional<ClimbingWall> optional = ClimbingWallService.findById(sportObjectId);
-        return !optional.isEmpty() ? Response.ok(optional.get()).build() : Response.status(Response.Status.NOT_FOUND).build();
+        return Response.ok(climbingWallService.findById(sportObjectId)).build();
     }
 
     @POST
@@ -79,7 +78,7 @@ public class ClimbingWallResource {
     )
     public Response post(@Valid ClimbingWall ClimbingWall) {
         logger.info("post");
-        final ClimbingWall saved = ClimbingWallService.save(ClimbingWall);
+        final ClimbingWall saved = climbingWallService.save(ClimbingWall);
         return Response.status(Response.Status.CREATED).entity(saved).build();
     }
 
@@ -98,7 +97,7 @@ public class ClimbingWallResource {
             }
     )
     public Response put(@Valid ClimbingWall ClimbingWall) {
-        final ClimbingWall saved = ClimbingWallService.update(ClimbingWall);
+        final ClimbingWall saved = climbingWallService.update(ClimbingWall);
         return Response.ok(saved).build();
     }
 
@@ -119,7 +118,7 @@ public class ClimbingWallResource {
     )
     public Response putEquipmentToObject(@PathParam("sportObjectId") Integer sportObjectId,
                                          @PathParam("rentEquipmentId") Integer rentEquipmentId) {
-        final ClimbingWall saved = ClimbingWallService.putEquipmentToObject(sportObjectId, rentEquipmentId);
+        final ClimbingWall saved = climbingWallService.putEquipmentToObject(sportObjectId, rentEquipmentId);
         return Response.ok(saved).build();
     }
 

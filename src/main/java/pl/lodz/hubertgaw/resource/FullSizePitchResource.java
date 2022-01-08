@@ -7,24 +7,22 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 import org.slf4j.Logger;
 import pl.lodz.hubertgaw.dto.FullSizePitch;
-import pl.lodz.hubertgaw.service.FullSizePitchService;
 
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.Optional;
 
 @Path("/api/full_size_pitches")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class FullSizePitchResource {
 
-    private final pl.lodz.hubertgaw.service.FullSizePitchService FullSizePitchService;
+    private final pl.lodz.hubertgaw.service.FullSizePitchService fullSizePitchService;
     private final Logger logger;
 
     public FullSizePitchResource(pl.lodz.hubertgaw.service.FullSizePitchService FullSizePitchService, Logger logger) {
-        this.FullSizePitchService = FullSizePitchService;
+        this.fullSizePitchService = FullSizePitchService;
         this.logger = logger;
     }
 
@@ -39,7 +37,7 @@ public class FullSizePitchResource {
             }
     )
     public Response get() {
-        return Response.ok(FullSizePitchService.findAll()).build();
+        return Response.ok(fullSizePitchService.findAll()).build();
     }
 
     @GET
@@ -58,8 +56,7 @@ public class FullSizePitchResource {
             }
     )
     public Response getById(@PathParam("sportObjectId") Integer sportObjectId) {
-        Optional<FullSizePitch> optional = FullSizePitchService.findById(sportObjectId);
-        return !optional.isEmpty() ? Response.ok(optional.get()).build() : Response.status(Response.Status.NOT_FOUND).build();
+        return Response.ok(fullSizePitchService.findById(sportObjectId)).build();
     }
 
     @POST
@@ -78,7 +75,7 @@ public class FullSizePitchResource {
     )
     public Response post(@Valid FullSizePitch FullSizePitch) {
         logger.info("post");
-        final FullSizePitch saved = FullSizePitchService.save(FullSizePitch);
+        final FullSizePitch saved = fullSizePitchService.save(FullSizePitch);
         return Response.status(Response.Status.CREATED).entity(saved).build();
     }
 
@@ -97,7 +94,7 @@ public class FullSizePitchResource {
             }
     )
     public Response put(@Valid FullSizePitch fullSizePitch) {
-        final FullSizePitch saved = FullSizePitchService.update(fullSizePitch);
+        final FullSizePitch saved = fullSizePitchService.update(fullSizePitch);
         return Response.ok(saved).build();
     }
 
@@ -118,7 +115,7 @@ public class FullSizePitchResource {
     )
     public Response putEquipmentToObject(@PathParam("sportObjectId") Integer sportObjectId,
                                          @PathParam("rentEquipmentId") Integer rentEquipmentId) {
-        final FullSizePitch saved = FullSizePitchService.putEquipmentToObject(sportObjectId, rentEquipmentId);
+        final FullSizePitch saved = fullSizePitchService.putEquipmentToObject(sportObjectId, rentEquipmentId);
         return Response.ok(saved).build();
     }
 

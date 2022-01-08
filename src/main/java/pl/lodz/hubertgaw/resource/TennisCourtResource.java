@@ -13,18 +13,17 @@ import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.Optional;
 
 @Path("/api/tennis_courts")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class TennisCourtResource {
 
-    private final pl.lodz.hubertgaw.service.TennisCourtService TennisCourtService;
+    private final pl.lodz.hubertgaw.service.TennisCourtService tennisCourtService;
     private final Logger logger;
 
     public TennisCourtResource(pl.lodz.hubertgaw.service.TennisCourtService TennisCourtService, Logger logger) {
-        this.TennisCourtService = TennisCourtService;
+        this.tennisCourtService = TennisCourtService;
         this.logger = logger;
     }
 
@@ -39,7 +38,7 @@ public class TennisCourtResource {
             }
     )
     public Response get() {
-        return Response.ok(TennisCourtService.findAll()).build();
+        return Response.ok(tennisCourtService.findAll()).build();
     }
 
     @GET
@@ -58,8 +57,7 @@ public class TennisCourtResource {
             }
     )
     public Response getById(@PathParam("sportObjectId") Integer sportObjectId) {
-        Optional<TennisCourt> optional = TennisCourtService.findById(sportObjectId);
-        return !optional.isEmpty() ? Response.ok(optional.get()).build() : Response.status(Response.Status.NOT_FOUND).build();
+        return Response.ok(tennisCourtService.findById(sportObjectId)).build();
     }
 
     @POST
@@ -78,7 +76,7 @@ public class TennisCourtResource {
     )
     public Response post(@Valid TennisCourt TennisCourt) {
         logger.info("post");
-        final TennisCourt saved = TennisCourtService.save(TennisCourt);
+        final TennisCourt saved = tennisCourtService.save(TennisCourt);
         return Response.status(Response.Status.CREATED).entity(saved).build();
     }
 
@@ -97,7 +95,7 @@ public class TennisCourtResource {
             }
     )
     public Response put(@Valid TennisCourt TennisCourt) {
-        final TennisCourt saved = TennisCourtService.update(TennisCourt);
+        final TennisCourt saved = tennisCourtService.update(TennisCourt);
         return Response.ok(saved).build();
     }
 
@@ -118,7 +116,7 @@ public class TennisCourtResource {
     )
     public Response putEquipmentToObject(@PathParam("sportObjectId") Integer sportObjectId,
                                          @PathParam("rentEquipmentId") Integer rentEquipmentId) {
-        final TennisCourt saved = TennisCourtService.putEquipmentToObject(sportObjectId, rentEquipmentId);
+        final TennisCourt saved = tennisCourtService.putEquipmentToObject(sportObjectId, rentEquipmentId);
         return Response.ok(saved).build();
     }
 
