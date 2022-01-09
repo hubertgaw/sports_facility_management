@@ -71,8 +71,10 @@ public class AthleticsTrackService {
         }
         AthleticsTrackEntity entity = athleticsTrackRepository.findByIdOptional(athleticsTrack.getId())
                 .orElseThrow(AthleticsTrackException::athleticsTrackNotFoundException);
-        if (serviceUtils.compareSportObjectNameWithExisting(athleticsTrack.getName())) {
-            throw SportObjectException.sportObjectDuplicateNameException();
+        if (!athleticsTrack.getName().equals(entity.getName())) {
+            if (serviceUtils.compareSportObjectNameWithExisting(athleticsTrack.getName())) {
+                throw SportObjectException.sportObjectDuplicateNameException();
+            }
         }
         entity.setName(athleticsTrack.getName());
         entity.setCapacity(athleticsTrack.getCapacity());

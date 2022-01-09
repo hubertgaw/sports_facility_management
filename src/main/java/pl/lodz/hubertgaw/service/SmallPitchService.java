@@ -69,8 +69,10 @@ public class SmallPitchService {
         }
         SmallPitchEntity entity = smallPitchRepository.findByIdOptional(smallPitch.getId()).
                 orElseThrow(SmallPitchException::smallPitchNotFoundException);
-        if (serviceUtils.compareSportObjectNameWithExisting(smallPitch.getName())) {
-            throw SportObjectException.sportObjectDuplicateNameException();
+        if (!smallPitch.getName().equals(entity.getName())) {
+            if (serviceUtils.compareSportObjectNameWithExisting(smallPitch.getName())) {
+                throw SportObjectException.sportObjectDuplicateNameException();
+            }
         }
         entity.setFullPrice(smallPitch.getFullPrice());
         entity.setName(smallPitch.getName());

@@ -107,7 +107,7 @@ public class SportObjectResourceTest {
                 .when()
                 .delete("api/sport_objects/{sportObjectId}", saved.getId())
                 .then()
-                .statusCode(200);
+                .statusCode(204);
         //check if sportObject with that id is not found:
         given()
                 .when().get("/api/sport_objects/{sportObjectId}", saved.getId())

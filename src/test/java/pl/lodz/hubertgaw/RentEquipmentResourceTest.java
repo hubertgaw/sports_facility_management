@@ -137,7 +137,7 @@ public class RentEquipmentResourceTest {
                 .when()
                 .delete("api/rent_equipments/{rentEquipmentId}", saved.getId())
                 .then()
-                .statusCode(200);
+                .statusCode(204);
         //check if rentEquipment with that id is not found:
         given()
                 .when().get("/api/rent_equipments/{rentEquipmentId}", saved.getId())

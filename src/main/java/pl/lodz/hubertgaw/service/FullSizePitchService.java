@@ -69,8 +69,10 @@ public class FullSizePitchService {
         }
         FullSizePitchEntity entity = fullSizePitchRepository.findByIdOptional(fullSizePitch.getId())
                 .orElseThrow(FullSizePitchException::fullSizePitchNotFoundException);
-        if (serviceUtils.compareSportObjectNameWithExisting(fullSizePitch.getName())) {
-            throw SportObjectException.sportObjectDuplicateNameException();
+        if (!fullSizePitch.getName().equals(entity.getName())) {
+            if (serviceUtils.compareSportObjectNameWithExisting(fullSizePitch.getName())) {
+                throw SportObjectException.sportObjectDuplicateNameException();
+            }
         }
         entity.setFullPrice(fullSizePitch.getFullPrice());
         entity.setName(fullSizePitch.getName());

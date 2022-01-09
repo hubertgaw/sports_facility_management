@@ -69,8 +69,10 @@ public class ClimbingWallService {
         }
         ClimbingWallEntity entity = climbingWallRepository.findByIdOptional(climbingWall.getId())
                 .orElseThrow(ClimbingWallException::climbingWallNotFoundException);
-        if (serviceUtils.compareSportObjectNameWithExisting(climbingWall.getName())) {
-            throw SportObjectException.sportObjectDuplicateNameException();
+        if (!climbingWall.getName().equals(entity.getName())) {
+            if (serviceUtils.compareSportObjectNameWithExisting(climbingWall.getName())) {
+                throw SportObjectException.sportObjectDuplicateNameException();
+            }
         }
         entity.setFullPrice(climbingWall.getFullPrice());
         entity.setName(climbingWall.getName());

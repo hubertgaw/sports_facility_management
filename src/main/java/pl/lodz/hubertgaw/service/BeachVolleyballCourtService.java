@@ -69,8 +69,10 @@ public class BeachVolleyballCourtService {
         }
         BeachVolleyballCourtEntity entity = beachVolleyballCourtRepository.findByIdOptional(beachVolleyballCourt.getId())
                 .orElseThrow(BeachVolleyballCourtException::beachVolleyballCourtNotFoundException);
-        if (serviceUtils.compareSportObjectNameWithExisting(beachVolleyballCourt.getName())) {
-            throw SportObjectException.sportObjectDuplicateNameException();
+        if (!beachVolleyballCourt.getName().equals(entity.getName())) {
+            if (serviceUtils.compareSportObjectNameWithExisting(beachVolleyballCourt.getName())) {
+                throw SportObjectException.sportObjectDuplicateNameException();
+            }
         }
         entity.setFullPrice(beachVolleyballCourt.getFullPrice());
         entity.setName(beachVolleyballCourt.getName());

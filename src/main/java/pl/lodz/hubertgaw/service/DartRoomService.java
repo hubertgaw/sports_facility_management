@@ -69,8 +69,10 @@ public class DartRoomService {
         }
         DartRoomEntity entity = dartRoomRepository.findByIdOptional(dartRoom.getId())
                 .orElseThrow(DartRoomException::dartRoomNotFoundException);
-        if (serviceUtils.compareSportObjectNameWithExisting(dartRoom.getName())) {
-            throw SportObjectException.sportObjectDuplicateNameException();
+        if (!dartRoom.getName().equals(entity.getName())) {
+            if (serviceUtils.compareSportObjectNameWithExisting(dartRoom.getName())) {
+                throw SportObjectException.sportObjectDuplicateNameException();
+            }
         }
         entity.setFullPrice(dartRoom.getFullPrice());
         entity.setName(dartRoom.getName());

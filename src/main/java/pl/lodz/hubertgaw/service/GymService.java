@@ -69,8 +69,10 @@ public class GymService {
         }
         GymEntity entity = gymRepository.findByIdOptional(gym.getId())
                 .orElseThrow(GymException::gymNotFoundException);
-        if (serviceUtils.compareSportObjectNameWithExisting(gym.getName())) {
-            throw SportObjectException.sportObjectDuplicateNameException();
+        if (!gym.getName().equals(entity.getName())) {
+            if (serviceUtils.compareSportObjectNameWithExisting(gym.getName())) {
+                throw SportObjectException.sportObjectDuplicateNameException();
+            }
         }
         entity.setFullPrice(gym.getFullPrice());
         entity.setName(gym.getName());

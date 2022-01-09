@@ -71,8 +71,10 @@ public class RentEquipmentService {
         RentEquipmentEntity entity = rentEquipmentRepository.findByIdOptional(rentEquipment.getId())
                 .orElseThrow(RentEquipmentException::rentEquipmentNotFoundException);
 
-        if (serviceUtils.compareRentEquipmentNameWithExisting(rentEquipment.getName())) {
-            throw RentEquipmentException.rentEquipmentDuplicateNameException();
+        if (!rentEquipment.getName().equals(entity.getName())) {
+            if (serviceUtils.compareRentEquipmentNameWithExisting(rentEquipment.getName())) {
+                throw RentEquipmentException.rentEquipmentDuplicateNameException();
+            }
         }
 
         entity.setName(rentEquipment.getName());
