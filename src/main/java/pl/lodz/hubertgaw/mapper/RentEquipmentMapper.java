@@ -1,7 +1,6 @@
 package pl.lodz.hubertgaw.mapper;
 
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import pl.lodz.hubertgaw.dto.RentEquipment;
 import pl.lodz.hubertgaw.repository.*;
 import pl.lodz.hubertgaw.repository.entity.RentEquipmentEntity;
@@ -12,7 +11,6 @@ import java.util.Locale;
 @Mapper(componentModel = "cdi")
 public interface RentEquipmentMapper {
 
-//    @Mapping(target = "id", ignore = true)
     RentEquipmentEntity toEntity(RentEquipment domain);
 
     RentEquipment toDomain(RentEquipmentEntity entity);

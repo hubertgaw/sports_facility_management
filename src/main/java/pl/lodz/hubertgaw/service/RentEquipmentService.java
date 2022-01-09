@@ -5,7 +5,6 @@ import pl.lodz.hubertgaw.dto.RentEquipment;
 import pl.lodz.hubertgaw.mapper.RentEquipmentMapper;
 import pl.lodz.hubertgaw.repository.RentEquipmentRepository;
 import pl.lodz.hubertgaw.repository.entity.RentEquipmentEntity;
-import pl.lodz.hubertgaw.repository.entity.RentEquipmentEntity;
 import pl.lodz.hubertgaw.repository.entity.sports_objects.SportObjectEntity;
 import pl.lodz.hubertgaw.service.exception.RentEquipmentException;
 import pl.lodz.hubertgaw.service.utils.ServiceUtils;
@@ -13,7 +12,6 @@ import pl.lodz.hubertgaw.service.utils.ServiceUtils;
 import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -35,10 +33,6 @@ public class RentEquipmentService {
     }
 
     public List<RentEquipment> findAll() {
-//        return rentEquipmentRepository.findAll().stream()
-//                .map(rentEquipmentMapper::toDomain)
-//                .collect(Collectors.toList());
-
         return rentEquipmentRepository.listAll()
                 .stream()
                 .map(rentEquipmentMapper::toDomain)
@@ -46,7 +40,6 @@ public class RentEquipmentService {
     }
 
     public RentEquipment findById(Integer equipmentId) {
-//        return rentEquipmentRepository.findByIdOptional(equipmentId).map(rentEquipmentMapper::toDomain);
         RentEquipmentEntity entity = rentEquipmentRepository.findByIdOptional(equipmentId)
                 .orElseThrow(RentEquipmentException::rentEquipmentNotFoundException);
 
@@ -93,8 +86,6 @@ public class RentEquipmentService {
             sportObject.removeRentEquipment(rentEquipmentToDelete);
         }
         rentEquipmentRepository.delete(rentEquipmentToDelete);
-//        sportObjectRepository.delete(sportObjectRepository.findById(sportObjectId));
-//        return sportObjectRepository.deleteById(sportObjectId);
     }
 
 }

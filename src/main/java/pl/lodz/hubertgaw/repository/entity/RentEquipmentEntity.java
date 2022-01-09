@@ -3,8 +3,6 @@ package pl.lodz.hubertgaw.repository.entity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
 import pl.lodz.hubertgaw.repository.entity.sports_objects.SportObjectEntity;
 
 import javax.persistence.*;
@@ -42,7 +40,7 @@ public class RentEquipmentEntity {
     }
 
     public void removeSportObject(SportObjectEntity sportObjectEntity) {
-        //            sportObjectEntity.getRentEquipment().remove(this);
         this.sportObjects.remove(sportObjectEntity);
+//        sportObjectEntity.getRentEquipment().remove(this);
     }
 }

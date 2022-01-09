@@ -2,8 +2,6 @@ package pl.lodz.hubertgaw.service;
 
 import org.slf4j.Logger;
 import pl.lodz.hubertgaw.dto.SportsHall;
-//import pl.lodz.hubertgaw.mapper.BeachVolleyballCourtMapper;
-//import pl.lodz.hubertgaw.mapper.SportsHallMapper;
 import pl.lodz.hubertgaw.mapper.SportObjectMapper;
 import pl.lodz.hubertgaw.repository.RentEquipmentRepository;
 import pl.lodz.hubertgaw.repository.SportsHallRepository;
@@ -17,7 +15,6 @@ import pl.lodz.hubertgaw.service.utils.ServiceUtils;
 import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @ApplicationScoped

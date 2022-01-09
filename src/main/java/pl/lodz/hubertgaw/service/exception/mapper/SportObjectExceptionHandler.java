@@ -1,6 +1,5 @@
 package pl.lodz.hubertgaw.service.exception.mapper;
 
-import pl.lodz.hubertgaw.service.exception.SportObjectException;
 import pl.lodz.hubertgaw.service.exception.core.BaseException;
 
 import javax.ws.rs.core.Response;
@@ -15,8 +14,4 @@ public class SportObjectExceptionHandler implements ExceptionMapper<BaseExceptio
         return MapperUtils.convertExceptionToResponse(e);
     }
 
-//    @Override
-//    public Response toResponse(Throwable throwable) {
-//        return null;
-//    }
 }

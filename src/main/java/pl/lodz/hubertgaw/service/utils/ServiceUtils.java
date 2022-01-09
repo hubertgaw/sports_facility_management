@@ -4,7 +4,6 @@ import pl.lodz.hubertgaw.repository.RentEquipmentRepository;
 import pl.lodz.hubertgaw.repository.SportObjectRepository;
 import pl.lodz.hubertgaw.repository.entity.RentEquipmentEntity;
 import pl.lodz.hubertgaw.repository.entity.sports_objects.SportObjectEntity;
-import pl.lodz.hubertgaw.service.exception.SportObjectException;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.util.stream.Collectors;

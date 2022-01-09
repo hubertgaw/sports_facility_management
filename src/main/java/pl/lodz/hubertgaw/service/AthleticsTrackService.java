@@ -15,7 +15,6 @@ import pl.lodz.hubertgaw.service.utils.ServiceUtils;
 import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
@@ -80,10 +79,8 @@ public class AthleticsTrackService {
         entity.setCapacity(athleticsTrack.getCapacity());
         entity.setSingleTrackPrice(athleticsTrack.getSingleTrackPrice());
         entity.setFullPrice(athleticsTrack.getFullPrice());
-//        entity.setRentEquipment(athleticsTrack.getRentEquipments());
         athleticsTrackRepository.persist(entity);
         return (AthleticsTrack) sportObjectMapper.toDomain(entity);
-//        return null;
     }
 
     @Transactional
@@ -99,6 +96,5 @@ public class AthleticsTrackService {
         athleticsTrackToUpdate.addRentEquipment(rentEquipmentToAdd);
         athleticsTrackRepository.persistAndFlush(athleticsTrackToUpdate);
         return (AthleticsTrack) sportObjectMapper.toDomain(athleticsTrackToUpdate);
-//        return null;
     }
 }
