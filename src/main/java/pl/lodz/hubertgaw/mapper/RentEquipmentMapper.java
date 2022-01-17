@@ -26,7 +26,7 @@ public interface RentEquipmentMapper {
         SmallPitchRepository smallPitchRepository = new SmallPitchRepository();
         SportsHallRepository sportsHallRepository = new SportsHallRepository();
         SportSwimmingPoolRepository sportSwimmingPoolRepository = new SportSwimmingPoolRepository();
-        TennisCourtRepository tennisCourtRepository =new TennisCourtRepository();
+        TennisCourtRepository tennisCourtRepository = new TennisCourtRepository();
 
         String convertedString = value.toLowerCase(Locale.ROOT);
         if (convertedString.contains("tor lekkoatletyczny")) {

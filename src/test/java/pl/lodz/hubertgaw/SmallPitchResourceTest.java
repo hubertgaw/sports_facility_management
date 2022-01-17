@@ -147,6 +147,8 @@ public class SmallPitchResourceTest {
         clearSmallPitchAfterTest(saved.getId());
     }
 
+
+
     private SmallPitch createSmallPitch() {
         SmallPitch smallPitch = new SmallPitch();
         smallPitch.setName(RandomStringUtils.randomAlphabetic(10));
