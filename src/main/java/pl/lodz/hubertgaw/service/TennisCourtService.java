@@ -68,11 +68,7 @@ public class TennisCourtService {
         }
         TennisCourtEntity entity = tennisCourtRepository.findByIdOptional(tennisCourt.getId()).
                 orElseThrow(TennisCourtException::tennisCourtNotFoundException);
-        if (!tennisCourt.getName().equals(entity.getName())) {
-            if (serviceUtils.compareSportObjectNameWithExisting(tennisCourt.getName())) {
-                throw SportObjectException.sportObjectDuplicateNameException();
-            }
-        }
+
         entity.setFullPrice(tennisCourt.getFullPrice());
         entity.setName(tennisCourt.getName());
         tennisCourtRepository.persist(entity);

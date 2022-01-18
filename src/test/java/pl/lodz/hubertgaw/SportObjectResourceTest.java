@@ -2,6 +2,7 @@ package pl.lodz.hubertgaw;
 
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
+import io.restassured.response.Response;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Test;
 import pl.lodz.hubertgaw.dto.AthleticsTrack;
@@ -9,11 +10,14 @@ import pl.lodz.hubertgaw.dto.RentEquipment;
 import pl.lodz.hubertgaw.dto.SportObject;
 import pl.lodz.hubertgaw.service.RentEquipmentService;
 import pl.lodz.hubertgaw.service.SportObjectService;
+import pl.lodz.hubertgaw.utils.TestUtils;
 
 import javax.inject.Inject;
 
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
+import static pl.lodz.hubertgaw.utils.TestUtils.createAthleticsTrack;
+import static pl.lodz.hubertgaw.utils.TestUtils.createRentEquipment;
 
 @QuarkusTest
 public class SportObjectResourceTest {
@@ -115,24 +119,90 @@ public class SportObjectResourceTest {
                 .statusCode(404);
     }
 
+    @Test
+    public void deleteFailNotFound() {
+        //there will never be id 0 in repo.
+        Response response = given()
+                .when()
+                .delete("api/sport_objects/0")
+                .then()
+                .statusCode(404)
+                .extract().response();
 
-
-    //athletics track is used because we need specific implementation of SportObject (can be anything else for example DartRoom etc.)
-    private AthleticsTrack createAthleticsTrack() {
-        AthleticsTrack athleticsTrack = new AthleticsTrack();
-        athleticsTrack.setName(RandomStringUtils.randomAlphabetic(10));
-        athleticsTrack.setFullPrice(Double.valueOf(RandomStringUtils.randomNumeric(2)));
-        athleticsTrack.setCapacity(Integer.valueOf(RandomStringUtils.randomNumeric(2)));
-        athleticsTrack.setSingleTrackPrice(Double.valueOf(RandomStringUtils.randomNumeric(1)));
-        return athleticsTrack;
+        String responseMessage = response.getBody().asString();
+        String actualExceptionMessage = TestUtils.getActualExceptionMessage(responseMessage);
+        assertThat(response.statusCode()).isEqualTo(404);
+        assertThat(actualExceptionMessage).isEqualTo("Sport object for given id not found");
     }
 
-    private RentEquipment createRentEquipment() {
-        RentEquipment rentEquipment = new RentEquipment();
-        rentEquipment.setName(RandomStringUtils.randomAlphabetic(10));
-        rentEquipment.setPrice(Double.valueOf(RandomStringUtils.randomNumeric(2)));
-        return rentEquipment;
+    @Test
+    public void putEquipmentToSportObjectSportObjectNotFound() {
+        AthleticsTrack sportObject = TestUtils.createAthleticsTrack();
+        RentEquipment rentEquipment = TestUtils.createRentEquipment();
+
+        RentEquipment savedEquipment = given()
+                .contentType(ContentType.JSON)
+                .accept(ContentType.JSON)
+                .body(rentEquipment)
+                .post("/api/rent_equipments")
+                .then()
+                .statusCode(201)
+                .extract().as(RentEquipment.class);
+
+        Response response = given()
+                .contentType(ContentType.JSON)
+                .accept(ContentType.JSON)
+                .body(sportObject)
+                .put("/api/sport_objects/0/rent_equipment/{rentEquipmentId}",
+                        savedEquipment.getId())
+                .then()
+                .statusCode(404)
+                .extract().response();
+
+        //compare name of rent equipment
+//        assertThat(new ArrayList<>(trackAfterPut.getRentEquipmentNames()).get(0)).isEqualTo(savedEquipment.getName());
+
+        String responseMessage = response.getBody().asString();
+        String actualExceptionMessage = TestUtils.getActualExceptionMessage(responseMessage);
+        assertThat(response.statusCode()).isEqualTo(404);
+        assertThat(actualExceptionMessage).isEqualTo("Sport object for given id not found");
+
+
+        clearRentEquipmentAfterTest(savedEquipment.getId());
+//        clearAthleticsTrackAfterTest(savedTrack.getId());
     }
+
+    @Test
+    public void putEquipmentToSportObjectRentEquipmentNotFound() {
+        AthleticsTrack sportObject = TestUtils.createAthleticsTrack();
+
+        AthleticsTrack savedTrack = given()
+                .contentType(ContentType.JSON)
+                .accept(ContentType.JSON)
+                .body(sportObject)
+                .post("/api/athletics_tracks")
+                .then()
+                .statusCode(201)
+                .extract().as(AthleticsTrack.class);
+
+        Response response = given()
+                .contentType(ContentType.JSON)
+                .accept(ContentType.JSON)
+                .body(sportObject)
+                .put("/api/sport_objects/{athleticsTrackId}/rent_equipment/0",
+                        savedTrack.getId())
+                .then()
+                .statusCode(404)
+                .extract().response();
+
+        String responseMessage = response.getBody().asString();
+        String actualExceptionMessage = TestUtils.getActualExceptionMessage(responseMessage);
+        assertThat(response.statusCode()).isEqualTo(404);
+        assertThat(actualExceptionMessage).isEqualTo("Rent equipment for given id not found!");
+
+        clearAthleticsTrackAfterTest(savedTrack.getId());
+    }
+
 
     private void clearAthleticsTrackAfterTest(Integer id) {
         sportObjectService.deleteSportObjectById(id);

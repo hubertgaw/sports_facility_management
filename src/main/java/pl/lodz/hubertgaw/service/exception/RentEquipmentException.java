@@ -17,7 +17,7 @@ public class RentEquipmentException extends BaseException {
 
     public static RentEquipmentException rentEquipmentEmptyIdException() {
         return new RentEquipmentException(
-                EmptyPropertyException.emptyId("Id for updating rent equipment track cannot be null"));
+                EmptyPropertyException.emptyId("Id for updating rent equipment cannot be null"));
     }
 
     public static RentEquipmentException rentEquipmentDuplicateNameException() {

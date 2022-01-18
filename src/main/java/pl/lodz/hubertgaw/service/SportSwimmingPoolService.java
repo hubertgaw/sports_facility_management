@@ -68,11 +68,7 @@ public class SportSwimmingPoolService {
         }
         SportSwimmingPoolEntity entity = sportSwimmingPoolRepository.findByIdOptional(sportSwimmingPool.getId())
                 .orElseThrow(SportSwimmingPoolException::sportSwimmingPoolNotFoundException);
-        if (!sportSwimmingPool.getName().equals(entity.getName())) {
-            if (serviceUtils.compareSportObjectNameWithExisting(sportSwimmingPool.getName())) {
-                throw SportObjectException.sportObjectDuplicateNameException();
-            }
-        }
+
         entity.setFullPrice(sportSwimmingPool.getFullPrice());
         entity.setName(sportSwimmingPool.getName());
         entity.setTrackPrice(sportSwimmingPool.getTrackPrice());

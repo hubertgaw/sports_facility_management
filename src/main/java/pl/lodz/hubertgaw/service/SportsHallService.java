@@ -68,11 +68,7 @@ public class SportsHallService {
         }
         SportsHallEntity entity = sportsHallRepository.findByIdOptional(sportsHall.getId())
                 .orElseThrow(SportsHallException::sportsHallNotFoundException);
-        if (!sportsHall.getName().equals(entity.getName())) {
-            if (serviceUtils.compareSportObjectNameWithExisting(sportsHall.getName())) {
-                throw SportObjectException.sportObjectDuplicateNameException();
-            }
-        }
+
         entity.setFullPrice(sportsHall.getFullPrice());
         entity.setName(sportsHall.getName());
         entity.setSectorPrice(sportsHall.getSectorPrice());

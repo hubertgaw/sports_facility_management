@@ -53,7 +53,7 @@ public class SmallPitchService {
 
     @Transactional
     public SmallPitch save(SmallPitch smallPitch) {
-        if (serviceUtils.compareRentEquipmentNameWithExisting(smallPitch.getName())) {
+        if (serviceUtils.compareSportObjectNameWithExisting(smallPitch.getName())) {
             throw SportObjectException.sportObjectDuplicateNameException();
         }
         SmallPitchEntity entity = (SmallPitchEntity) sportObjectMapper.toEntity(smallPitch);
@@ -68,11 +68,7 @@ public class SmallPitchService {
         }
         SmallPitchEntity entity = smallPitchRepository.findByIdOptional(smallPitch.getId()).
                 orElseThrow(SmallPitchException::smallPitchNotFoundException);
-        if (!smallPitch.getName().equals(entity.getName())) {
-            if (serviceUtils.compareSportObjectNameWithExisting(smallPitch.getName())) {
-                throw SportObjectException.sportObjectDuplicateNameException();
-            }
-        }
+
         entity.setFullPrice(smallPitch.getFullPrice());
         entity.setName(smallPitch.getName());
         entity.setHalfPitchPrice(smallPitch.getHalfPitchPrice());
