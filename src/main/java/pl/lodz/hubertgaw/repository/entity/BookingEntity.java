@@ -24,7 +24,7 @@ public class BookingEntity {
     @Column(name = "booking_id")
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sport_object_id")
