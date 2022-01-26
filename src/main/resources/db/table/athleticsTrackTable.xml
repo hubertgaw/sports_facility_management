@@ -9,7 +9,7 @@
             </not>
         </preConditions>
         <createTable tableName="athletics_track">
-            <column name="id" type="bigint" autoIncrement="true">
+            <column name="sport_object_id" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true"/>
             </column>
             <column name="capacity" type="int">

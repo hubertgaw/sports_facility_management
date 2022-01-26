@@ -8,7 +8,9 @@ import pl.lodz.hubertgaw.repository.entity.sports_objects.SportObjectEntity;
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
@@ -33,6 +35,9 @@ public class RentEquipmentEntity {
 
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "rentEquipment")
     private Set<SportObjectEntity> sportObjects = new HashSet<>();
+
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "rentEquipment")
+    private List<BookingEntity> bookings = new ArrayList<>();
 
     public void addSportObject(SportObjectEntity sportObjectEntity) {
         this.sportObjects.add(sportObjectEntity);

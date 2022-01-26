@@ -1,0 +1,41 @@
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+    <changeSet author="hubertgaw" id="2">
+        <preConditions onFail="CONTINUE">
+            <not>
+                <tableExists tableName="booking"/>
+            </not>
+        </preConditions>
+        <createTable tableName="booking">
+            <column name="booking_id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="sport_object_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="from_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="to_date" type="timestamp">
+                <constraints nullable="true"/>
+            </column>
+            <column name="hours" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="first_name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="phone_number" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

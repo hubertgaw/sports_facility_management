@@ -154,6 +154,11 @@
             <artifactId>cxf-rt-frontend-jaxrs</artifactId>
             <version>3.4.2</version>
         </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-jacoco</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

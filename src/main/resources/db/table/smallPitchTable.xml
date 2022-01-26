@@ -9,7 +9,7 @@
             </not>
         </preConditions>
         <createTable tableName="small_pitch">
-            <column name="id" type="bigint" autoIncrement="true">
+            <column name="sport_object_id" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true"/>
             </column>
             <column name="half_pitch_price" type="float">

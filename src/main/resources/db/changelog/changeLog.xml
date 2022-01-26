@@ -20,6 +20,8 @@
     <include file="db/table/sportsHallTable.xml"/>
     <include file="db/table/sportSwimmingPoolTable.xml"/>
     <include file="db/table/tennisCourtTable.xml"/>
+    <include file="db/table/bookingTable.xml"/>
     <include file="db/table/objectEquipmentTable.xml"/>
+    <include file="db/table/bookingEquipmentTable.xml"/>
 </databaseChangeLog>
 

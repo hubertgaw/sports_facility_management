@@ -5,16 +5,16 @@
     <changeSet author="hubertgaw" id="2">
         <preConditions onFail="CONTINUE">
             <not>
-                <tableExists tableName="SPORT_OBJECT_RENT_EQUIPMENT"/>
+                <tableExists tableName="BOOKING_RENT_EQUIPMENT"/>
             </not>
         </preConditions>
-        <createTable tableName="SPORT_OBJECT_RENT_EQUIPMENT">
-            <column name="sport_object_id" type="bigint">
-                <constraints foreignKeyName="fk_equipment_sport_object_id" references="sport_object(sport_object_id)"
+        <createTable tableName="BOOKING_RENT_EQUIPMENT">
+            <column name="booking_id" type="bigint">
+                <constraints foreignKeyName="fk_equipment_booking_id" references="booking(booking_id)"
                              nullable="false"/>
             </column>
             <column name="equipment_id" type="bigint">
-                <constraints foreignKeyName="fk_sport_object_equipment_id" references="rent_equipment(equipment_id)"
+                <constraints foreignKeyName="fk_booking_equipment_id" references="rent_equipment(equipment_id)"
                              nullable="false"/>
             </column>
         </createTable>
