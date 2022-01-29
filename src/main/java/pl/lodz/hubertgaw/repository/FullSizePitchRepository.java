@@ -9,8 +9,8 @@ import java.util.Optional;
 @ApplicationScoped
 public class FullSizePitchRepository implements PanacheRepositoryBase<FullSizePitchEntity, Integer> {
 
-    public Optional<FullSizePitchEntity> findByName(String name){
-        return Optional.of(find("name", name).firstResult());
+    public FullSizePitchEntity findByName(String name){
+        return find("name", name).firstResult();
     }
 
 }

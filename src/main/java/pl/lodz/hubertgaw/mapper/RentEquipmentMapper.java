@@ -30,27 +30,27 @@ public interface RentEquipmentMapper {
 
         String convertedString = value.toLowerCase(Locale.ROOT);
         if (convertedString.contains("tor lekkoatletyczny")) {
-            return athleticsTrackRepository.findByName(convertedString).get();
+            return athleticsTrackRepository.findByName(convertedString);
         } else if (convertedString.contains("boisko do siatkówki plażowej")) {
-            return beachVolleyballCourtRepository.findByName(convertedString).get();
+            return beachVolleyballCourtRepository.findByName(convertedString);
         } else if (convertedString.contains("ścianka wspinaczkowa")) {
-            return climbingWallRepository.findByName(convertedString).get();
+            return climbingWallRepository.findByName(convertedString);
         } else if (convertedString.contains("pokój do gry w dart")) {
-            return dartRoomRepository.findByName(convertedString).get();
+            return dartRoomRepository.findByName(convertedString);
         } else if (convertedString.contains("boisko pełnowymiarowe")) {
-            return fullSizePitchRepository.findByName(convertedString).get();
+            return fullSizePitchRepository.findByName(convertedString);
         } else if (convertedString.contains("siłownia")) {
-            return gymRepository.findByName(convertedString).get();
+            return gymRepository.findByName(convertedString);
         } else if (convertedString.contains("boisko orlik")) {
-            return smallPitchRepository.findByName(convertedString).get();
+            return smallPitchRepository.findByName(convertedString);
         } else if (convertedString.contains("hala sportowa")) {
-            return sportsHallRepository.findByName(convertedString).get();
+            return sportsHallRepository.findByName(convertedString);
         } else if (convertedString.contains("basen sportowy")) {
-            return sportSwimmingPoolRepository.findByName(convertedString).get();
+            return sportSwimmingPoolRepository.findByName(convertedString);
         } else if (convertedString.contains("kort tenisowy")) {
-            return tennisCourtRepository.findByName(convertedString).get();
+            return tennisCourtRepository.findByName(convertedString);
         } else {
-            return beachVolleyballCourtRepository.findByName(convertedString).get();
+            return beachVolleyballCourtRepository.findByName(convertedString);
         }
     }
 

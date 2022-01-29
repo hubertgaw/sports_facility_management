@@ -9,8 +9,8 @@ import java.util.Optional;
 @ApplicationScoped
 public class BeachVolleyballCourtRepository implements PanacheRepositoryBase<BeachVolleyballCourtEntity,Integer> {
 
-    public Optional<BeachVolleyballCourtEntity> findByName(String name){
-        return Optional.of(find("name", name).firstResult());
+    public BeachVolleyballCourtEntity findByName(String name){
+        return find("name", name).firstResult();
     }
 
 }

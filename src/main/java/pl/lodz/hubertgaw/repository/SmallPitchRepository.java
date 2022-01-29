@@ -9,8 +9,8 @@ import java.util.Optional;
 @ApplicationScoped
 public class SmallPitchRepository implements PanacheRepositoryBase<SmallPitchEntity, Integer> {
 
-    public Optional<SmallPitchEntity> findByName(String name){
-        return Optional.of(find("name", name).firstResult());
+    public SmallPitchEntity findByName(String name){
+        return find("name", name).firstResult();
     }
 
 }

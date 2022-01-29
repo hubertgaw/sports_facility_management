@@ -48,7 +48,7 @@ public interface SportObjectMapper {
 
         RentEquipmentRepository rentEquipmentRepository = new RentEquipmentRepository();
         String convertedString = value.toLowerCase(Locale.ROOT);
-        return rentEquipmentRepository.findByName(convertedString).get();
+        return rentEquipmentRepository.findByName(convertedString);
 
     }
 

@@ -12,7 +12,7 @@ public class Booking {
     private Integer id;
 
     @NotNull
-    private SportObject sportObject;
+    private Integer sportObjectId;
 
     @NotNull
     private LocalDateTime fromDate;
@@ -34,6 +34,7 @@ public class Booking {
     @Email
     private String email;
 
+    @Digits(integer = 9, fraction = 0)
     @Size(min = 9, max = 9)
     private String phoneNumber;
 }

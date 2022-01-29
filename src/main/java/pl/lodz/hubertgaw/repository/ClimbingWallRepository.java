@@ -9,7 +9,7 @@ import java.util.Optional;
 @ApplicationScoped
 public class ClimbingWallRepository implements PanacheRepositoryBase<ClimbingWallEntity, Integer> {
 
-    public Optional<ClimbingWallEntity> findByName(String name){
-        return Optional.of(find("name", name).firstResult());
+    public ClimbingWallEntity findByName(String name){
+        return find("name", name).firstResult();
     }
 }

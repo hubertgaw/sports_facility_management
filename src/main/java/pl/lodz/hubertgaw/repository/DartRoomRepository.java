@@ -9,8 +9,8 @@ import java.util.Optional;
 @ApplicationScoped
 public class DartRoomRepository implements PanacheRepositoryBase<DartRoomEntity, Integer> {
 
-    public Optional<DartRoomEntity> findByName(String name){
-        return Optional.of(find("name", name).firstResult());
+    public DartRoomEntity findByName(String name){
+        return find("name", name).firstResult();
     }
 
 }

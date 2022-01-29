@@ -9,8 +9,8 @@ import java.util.Optional;
 @ApplicationScoped
 public class SportSwimmingPoolRepository implements PanacheRepositoryBase<SportSwimmingPoolEntity, Integer> {
 
-    public Optional<SportSwimmingPoolEntity> findByName(String name){
-        return Optional.of(find("name", name).firstResult());
+    public SportSwimmingPoolEntity findByName(String name){
+        return find("name", name).firstResult();
     }
 
 }

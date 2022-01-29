@@ -64,8 +64,13 @@ public class BookingEntity {
     @Column(name = "phone_number")
     private String phoneNumber;
 
-    @PrePersist
-    private void onPrePersist() {
-        toDate = fromDate.plusHours(hours);
+    public void addRentEquipment(RentEquipmentEntity rentEquipmentEntity) {
+        this.rentEquipment.add(rentEquipmentEntity);
+        rentEquipmentEntity.getBookings().add(this);
+    }
+
+    public void removeRentEquipment(RentEquipmentEntity rentEquipmentEntity) {
+        this.rentEquipment.remove(rentEquipmentEntity);
+//        rentEquipmentEntity.getSportObjects().remove(this);
     }
 }

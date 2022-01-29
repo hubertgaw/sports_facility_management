@@ -48,4 +48,14 @@ public class RentEquipmentEntity {
         this.sportObjects.remove(sportObjectEntity);
 //        sportObjectEntity.getRentEquipment().remove(this);
     }
+
+    public void addBooking(BookingEntity bookingEntity) {
+        this.bookings.add(bookingEntity);
+//        bookingEntity.setSportObject(this);
+    }
+
+    public void removeBooking(BookingEntity bookingEntity) {
+        this.bookings.remove(bookingEntity);
+//        bookingEntity.setSportObject(null);
+    }
 }
