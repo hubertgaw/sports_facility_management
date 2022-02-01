@@ -9,4 +9,8 @@ public class DuplicateEntryException extends BaseException {
     public static DuplicateEntryException duplicateName(String message) {
         return new DuplicateEntryException(message);
     }
+
+    public static DuplicateEntryException duplicateBooking (String message) {
+        return new DuplicateEntryException(message);
+    }
 }

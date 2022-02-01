@@ -1,6 +1,8 @@
 package pl.lodz.hubertgaw.service;
 
+import pl.lodz.hubertgaw.dto.Booking;
 import pl.lodz.hubertgaw.dto.SportObject;
+import pl.lodz.hubertgaw.mapper.BookingMapper;
 import pl.lodz.hubertgaw.mapper.SportObjectMapper;
 import pl.lodz.hubertgaw.repository.RentEquipmentRepository;
 import pl.lodz.hubertgaw.repository.SportObjectRepository;
@@ -22,15 +24,18 @@ import pl.lodz.hubertgaw.service.exception.SportObjectException;
 public class SportObjectService {
     private final SportObjectRepository sportObjectRepository;
     private final SportObjectMapper sportObjectMapper;
+    private final BookingMapper bookingMapper;
     private final Logger logger;
     private final RentEquipmentRepository rentEquipmentRepository;
 
     public SportObjectService(SportObjectRepository sportObjectRepository,
                               SportObjectMapper sportObjectMapper,
+                              BookingMapper bookingMapper,
                               Logger logger,
                               RentEquipmentRepository rentEquipmentRepository) {
         this.sportObjectRepository = sportObjectRepository;
         this.sportObjectMapper = sportObjectMapper;
+        this.bookingMapper = bookingMapper;
         this.logger = logger;
         this.rentEquipmentRepository = rentEquipmentRepository;
     }
@@ -76,5 +81,17 @@ public class SportObjectService {
             rentEquipment.removeSportObject(sportObjectToDelete);
         }
         sportObjectRepository.delete(sportObjectToDelete);
+    }
+
+    public List<Booking> findBookingsForSportObject(Integer sportObjectId) {
+        SportObjectEntity entity = sportObjectRepository.findByIdOptional(sportObjectId)
+                .orElseThrow(SportObjectException::sportObjectNotFoundException);
+
+        return entity.getBookings()
+                .stream()
+                .map(bookingMapper::toDomain)
+                .map(Booking.class::cast)
+                .collect(Collectors.toList());
+
     }
 }

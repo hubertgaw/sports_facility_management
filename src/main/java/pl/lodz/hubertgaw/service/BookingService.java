@@ -26,19 +26,22 @@ public class BookingService {
     private final BookingRepository bookingRepository;
     private final RentEquipmentRepository rentEquipmentRepository;
     private final SportObjectRepository sportObjectRepository;
+    private final SportObjectService sportObjectService;
     private final BookingMapper bookingMapper;
     private final Logger logger;
     private final ServiceUtils serviceUtils;
 
     public BookingService(BookingRepository bookingRepository,
-                                RentEquipmentRepository rentEquipmentRepository,
-                                SportObjectRepository sportObjectRepository,
-                                BookingMapper bookingMapper,
-                                Logger logger,
-                                ServiceUtils serviceUtils) {
+                          RentEquipmentRepository rentEquipmentRepository,
+                          SportObjectRepository sportObjectRepository,
+                          SportObjectService sportObjectService,
+                          BookingMapper bookingMapper,
+                          Logger logger,
+                          ServiceUtils serviceUtils) {
         this.bookingRepository = bookingRepository;
         this.rentEquipmentRepository = rentEquipmentRepository;
         this.sportObjectRepository = sportObjectRepository;
+        this.sportObjectService = sportObjectService;
         this.bookingMapper = bookingMapper;
         this.logger = logger;
         this.serviceUtils = serviceUtils;
@@ -60,28 +63,9 @@ public class BookingService {
 
     @Transactional
     public Booking save(Booking booking) {
-        if (sportObjectRepository.findByIdOptional(booking.getSportObjectId()).isEmpty()) {
-            throw SportObjectException.sportObjectNotFoundException();
-        }
-
-        List<String> equipmentInSportObjectNames = sportObjectRepository
-                .findById(booking.getSportObjectId())
-                .getRentEquipment().stream()
-                .map(RentEquipmentEntity::getName)
-                .collect(Collectors.toList());
-        List<String> equipmentFromRequestNames = booking.getRentEquipmentNames();
-        if (!equipmentInSportObjectNames.containsAll(equipmentFromRequestNames)) {
-            throw BookingException.rentEquipmentForSportObjectNotFoundException();
-        }
-
-        LocalDateTime fromDate = booking.getFromDate();
-        if (fromDate.isBefore(LocalDateTime.now())) {
-            throw BookingException.wrongDatePastException();
-        }
-        if (!(fromDate.getMinute() == 0 || fromDate.getMinute() == 30)) {
-            throw BookingException.wrongDateTimeException();
-        }
-
+        booking.setFromDate(serviceUtils.convertTime(booking.getFromDate()));
+        List<Booking> bookings = sportObjectService.findBookingsForSportObject(booking.getSportObjectId());
+        validateBooking(booking, bookings);
         BookingEntity entity = bookingMapper.toEntity(booking);
         bookingRepository.persist(entity);
         return bookingMapper.toDomain(entity);
@@ -89,11 +73,17 @@ public class BookingService {
 
     @Transactional
     public Booking update(Booking booking) {
+        booking.setFromDate(serviceUtils.convertTime(booking.getFromDate()));
         if (booking.getId() == null) {
             throw BookingException.bookingEmptyIdException();
         }
         BookingEntity entity = bookingRepository.findByIdOptional(booking.getId())
                 .orElseThrow(BookingException::bookingNotFoundException);
+
+        List<Booking> bookings = sportObjectService.findBookingsForSportObject(booking.getSportObjectId());
+        bookings.remove(bookingMapper.toDomain(entity)); // in put we romove booking that we update from list
+
+        validateBooking(booking, bookings);
 
         BookingEntity entityToUpdate = bookingMapper.toEntity(booking);
         entity.setSportObject(entityToUpdate.getSportObject());
@@ -121,5 +111,43 @@ public class BookingService {
         }
         bookingRepository.delete(bookingToDelete);
     }
+
+
+    private void validateBooking(Booking booking, List<Booking> bookings) {
+        if (sportObjectRepository.findByIdOptional(booking.getSportObjectId()).isEmpty()) {
+            throw SportObjectException.sportObjectNotFoundException();
+        }
+
+        List<String> equipmentInSportObjectNames = sportObjectRepository
+                .findById(booking.getSportObjectId())
+                .getRentEquipment().stream()
+                .map(RentEquipmentEntity::getName)
+                .collect(Collectors.toList());
+        List<String> equipmentFromRequestNames = booking.getRentEquipmentNames();
+        if (!equipmentInSportObjectNames.containsAll(equipmentFromRequestNames)) {
+            throw BookingException.rentEquipmentForSportObjectNotFoundException();
+        }
+
+        LocalDateTime fromDate = booking.getFromDate();
+        if (fromDate.isBefore(LocalDateTime.now())) {
+            throw BookingException.wrongDatePastException();
+        }
+        if (!(fromDate.getMinute() == 0 || fromDate.getMinute() == 30)) {
+            throw BookingException.wrongDateTimeException();
+        }
+
+        for (Booking existingBooking : bookings) {
+            if (((booking.getFromDate().isAfter(existingBooking.getFromDate()))
+                    && (booking.getFromDate().isBefore(existingBooking.getFromDate().plusHours(existingBooking.getHours()))))
+                    ||
+                    ((booking.getFromDate().plusHours(booking.getHours()).isBefore(existingBooking.getFromDate().plusHours(existingBooking.getHours())))
+                    && (booking.getFromDate().plusHours(booking.getHours()).isAfter(existingBooking.getFromDate())))
+                    ||
+                    booking.getFromDate().isEqual(existingBooking.getFromDate())) {
+                throw BookingException.duplicateBookingTimeException();
+            }
+        }
+    }
+
 
 }

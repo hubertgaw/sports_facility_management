@@ -1,9 +1,6 @@
 package pl.lodz.hubertgaw.service.exception;
 
-import pl.lodz.hubertgaw.service.exception.core.BaseException;
-import pl.lodz.hubertgaw.service.exception.core.EmptyPropertyException;
-import pl.lodz.hubertgaw.service.exception.core.NotFoundException;
-import pl.lodz.hubertgaw.service.exception.core.WrongFormatException;
+import pl.lodz.hubertgaw.service.exception.core.*;
 
 public class BookingException extends BaseException {
 
@@ -32,5 +29,10 @@ public class BookingException extends BaseException {
     public static BookingException wrongDateTimeException() {
         return new BookingException(
                 WrongFormatException.wrongFormat("Time in the date must be a full hour or half past hour"));
+    }
+
+    public static BookingException duplicateBookingTimeException() {
+        return new BookingException(
+                DuplicateEntryException.duplicateBooking("There is already booking for this object in given time"));
     }
 }

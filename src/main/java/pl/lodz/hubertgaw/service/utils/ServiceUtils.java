@@ -6,6 +6,8 @@ import pl.lodz.hubertgaw.repository.entity.RentEquipmentEntity;
 import pl.lodz.hubertgaw.repository.entity.sports_objects.SportObjectEntity;
 
 import javax.enterprise.context.ApplicationScoped;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
@@ -40,5 +42,9 @@ public class ServiceUtils {
                 .map(RentEquipmentEntity::getName)
                 .collect(Collectors.toList())
                 .contains(name);
+    }
+
+    public LocalDateTime convertTime (LocalDateTime time) {
+        return time.truncatedTo(ChronoUnit.MINUTES);
     }
 }

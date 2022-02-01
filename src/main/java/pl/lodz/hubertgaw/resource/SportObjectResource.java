@@ -7,6 +7,7 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 import org.slf4j.Logger;
 import pl.lodz.hubertgaw.dto.SportObject;
+import pl.lodz.hubertgaw.service.BookingService;
 import pl.lodz.hubertgaw.service.SportObjectService;
 
 import javax.ws.rs.*;
@@ -19,10 +20,12 @@ import javax.ws.rs.core.Response;
 public class SportObjectResource {
 
     private final SportObjectService sportObjectService;
+    private final BookingService bookingService;
     private final Logger logger;
 
-    public SportObjectResource(SportObjectService sportObjectService, Logger logger) {
+    public SportObjectResource(SportObjectService sportObjectService, BookingService bookingService, Logger logger) {
         this.sportObjectService = sportObjectService;
+        this.bookingService = bookingService;
         this.logger = logger;
     }
 
@@ -104,4 +107,24 @@ public class SportObjectResource {
         return Response.noContent().build();
 
     }
+
+    @GET
+    @Path("/{sportObjectId}/bookings")
+    @APIResponses(
+            value = {
+                    @APIResponse(
+                            responseCode = "200",
+                            description = "Get Bookings from SportObject by id",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(type = SchemaType.OBJECT, implementation = SportObject.class))),
+                    @APIResponse(
+                            responseCode = "404",
+                            description = "No SportObject found for id provided",
+                            content = @Content(mediaType = "application/json")),
+            }
+    )
+    public Response getBookingsFromSportObject(@PathParam("sportObjectId") Integer sportObjectId) {
+        return Response.ok(sportObjectService.findBookingsForSportObject(sportObjectId)).build();
+    }
+
 }

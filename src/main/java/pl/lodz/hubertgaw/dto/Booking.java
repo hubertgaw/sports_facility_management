@@ -4,6 +4,7 @@ import lombok.Data;
 
 import javax.validation.constraints.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -22,7 +23,7 @@ public class Booking {
     @Max(12)
     private Integer hours;
 
-    private List<String> rentEquipmentNames;
+    private List<String> rentEquipmentNames = new ArrayList<>();
 
     @NotBlank
     private String firstName;
