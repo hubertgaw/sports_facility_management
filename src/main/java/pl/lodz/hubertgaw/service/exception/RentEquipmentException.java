@@ -15,6 +15,10 @@ public class RentEquipmentException extends BaseException {
         return new RentEquipmentException(NotFoundException.notFound("Rent equipment for given id not found!"));
     }
 
+    public static RentEquipmentException rentEquipmentForNameNotFoundException() {
+        return new RentEquipmentException(NotFoundException.notFound("No rent equipment found for specified name"));
+    }
+
     public static RentEquipmentException rentEquipmentEmptyIdException() {
         return new RentEquipmentException(
                 EmptyPropertyException.emptyId("Id for updating rent equipment cannot be null"));

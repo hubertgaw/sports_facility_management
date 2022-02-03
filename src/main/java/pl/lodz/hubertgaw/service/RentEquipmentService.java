@@ -46,6 +46,15 @@ public class RentEquipmentService {
         return rentEquipmentMapper.toDomain(entity);
     }
 
+    public RentEquipment findByName(String name) {
+        RentEquipmentEntity entity = rentEquipmentRepository.findByName(name);
+        if (entity == null) {
+
+        }
+
+        return rentEquipmentMapper.toDomain(entity);
+    }
+
     @Transactional
     public RentEquipment save(RentEquipment rentEquipment) {
         if (serviceUtils.compareRentEquipmentNameWithExisting(rentEquipment.getName())) {

@@ -3,6 +3,11 @@ package pl.lodz.hubertgaw.utils;
 import org.apache.commons.lang3.RandomStringUtils;
 import pl.lodz.hubertgaw.dto.*;
 
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class TestUtils {
     public static String getActualExceptionMessage(String response) {
         String[] parts = response.split(" ", 2);
@@ -110,6 +115,22 @@ public class TestUtils {
         customObject.setFullPrice(Double.valueOf(RandomStringUtils.randomNumeric(2)));
         customObject.setCapacity(Integer.valueOf(RandomStringUtils.randomNumeric(2)));
         return customObject;
+    }
+
+    public static Booking createBooking(Integer sportObjectId, List<RentEquipment> rentEquipments) {
+        Booking booking = new Booking();
+        booking.setSportObjectId(sportObjectId);
+        int nowMinutes = LocalDateTime.now().getMinute();
+        int minutesToAdd = 30 - (nowMinutes % 30); // we need time in format with 30 or 00 minutes
+        booking.setFromDate(LocalDateTime.now().plusMinutes(minutesToAdd));
+        booking.setHours(3);
+        booking.setRentEquipmentNames(rentEquipments.stream().map(RentEquipment::getName).collect(Collectors.toList()));
+        booking.setFirstName("Andrzej");
+        booking.setLastName("Kowalski");
+        booking.setEmail("test@mail.com");
+        booking.setPhoneNumber("123456789");
+
+        return booking;
     }
 
 }

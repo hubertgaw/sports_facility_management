@@ -330,6 +330,7 @@ public class CustomObjectResourceTest {
                 .contentType(ContentType.JSON)
                 .accept(ContentType.JSON)
                 .body(saved)
+                .body(saved)
                 .put("/api/custom_objects")
                 .then()
                 .statusCode(400)
@@ -339,6 +340,8 @@ public class CustomObjectResourceTest {
         String actualExceptionMessage = TestUtils.getActualExceptionMessage(responseMessage);
         assertThat(response.statusCode()).isEqualTo(400);
         assertThat(actualExceptionMessage).isEqualTo("Type can contains only letters and digits (no space allowed)");
+
+        clearCustomObjectAfterTest(saved.getId());
     }
 
 

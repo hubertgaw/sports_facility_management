@@ -114,9 +114,6 @@ public class BookingService {
 
 
     private void validateBooking(Booking booking, List<Booking> bookings) {
-        if (sportObjectRepository.findByIdOptional(booking.getSportObjectId()).isEmpty()) {
-            throw SportObjectException.sportObjectNotFoundException();
-        }
 
         List<String> equipmentInSportObjectNames = sportObjectRepository
                 .findById(booking.getSportObjectId())
