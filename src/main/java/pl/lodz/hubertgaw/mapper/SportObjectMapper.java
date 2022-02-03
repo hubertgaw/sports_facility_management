@@ -24,6 +24,7 @@ public interface SportObjectMapper {
     @SubclassMapping(source = SportsHall.class, target = SportsHallEntity.class)
     @SubclassMapping(source = SportSwimmingPool.class, target = SportSwimmingPoolEntity.class)
     @SubclassMapping(source = TennisCourt.class, target = TennisCourtEntity.class)
+    @SubclassMapping(source = CustomObject.class, target = CustomObjectEntity.class)
     @Mappings({
             @Mapping(source = "rentEquipmentNames", target = "rentEquipment")
     })
@@ -39,6 +40,7 @@ public interface SportObjectMapper {
     @SubclassMapping(source = SportsHallEntity.class, target = SportsHall.class)
     @SubclassMapping(source = SportSwimmingPoolEntity.class, target = SportSwimmingPool.class)
     @SubclassMapping(source = TennisCourtEntity.class, target = TennisCourt.class)
+    @SubclassMapping(source = CustomObjectEntity.class, target = CustomObject.class)
     @Mappings({
             @Mapping(source = "rentEquipment", target = "rentEquipmentNames")
     })

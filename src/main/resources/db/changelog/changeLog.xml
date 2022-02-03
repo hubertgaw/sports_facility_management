@@ -13,6 +13,7 @@
     <include file="db/table/athleticsTrackTable.xml"/>
     <include file="db/table/beachVolleyballCourtTable.xml"/>
     <include file="db/table/climbingWallTable.xml"/>
+    <include file="db/table/customObjectTable.xml"/>
     <include file="db/table/dartRoomTable.xml"/>
     <include file="db/table/fullSizePitchTable.xml"/>
     <include file="db/table/gymTable.xml"/>

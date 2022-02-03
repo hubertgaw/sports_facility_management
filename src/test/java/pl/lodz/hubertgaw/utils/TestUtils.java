@@ -103,5 +103,13 @@ public class TestUtils {
         return tennisCourt;
     }
 
+    public static CustomObject createCustomObject() {
+        CustomObject customObject = new CustomObject();
+        customObject.setType(RandomStringUtils.randomAlphabetic(5));
+        customObject.setName(RandomStringUtils.randomAlphabetic(10));
+        customObject.setFullPrice(Double.valueOf(RandomStringUtils.randomNumeric(2)));
+        customObject.setCapacity(Integer.valueOf(RandomStringUtils.randomNumeric(2)));
+        return customObject;
+    }
 
 }
