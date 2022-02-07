@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
 @Data
 public class SmallPitch extends SportObject {
 
-    @NotNull
+    @NotNull(message = "half pitch price cannot be null")
     private Double halfPitchPrice;
 
     private Boolean isFullRented;

@@ -15,31 +15,31 @@ public class Booking implements Cloneable {
 
     private Integer id;
 
-    @NotNull
+    @NotNull(message = "sport object id cannot be null")
     private Integer sportObjectId;
 
-    @NotNull
+    @NotNull(message = "from date cannot be null")
     private LocalDateTime fromDate;
 
-    @NotNull
-    @Min(1)
-    @Max(12)
+    @NotNull(message = "hours cannot be null")
+    @Min(value = 1, message = "hours value cannot be less than 1")
+    @Max(value = 12, message = "hours value cannot be more than 12")
     private Integer hours;
 
     private List<String> rentEquipmentNames = new ArrayList<>();
 
-    @NotBlank
+    @NotBlank(message = "first name cannot be blank")
     private String firstName;
 
-    @NotBlank
+    @NotBlank(message = "last name cannot be blank")
     private String lastName;
 
-    @NotBlank
-    @Email
+    @NotBlank(message = "email value cannot be blank")
+    @Email(message = "email must be in proper format")
     private String email;
 
-    @Digits(integer = 9, fraction = 0)
-    @Size(min = 9, max = 9)
+    @Digits(integer = 9, fraction = 0, message = "phone number can contain only digits")
+    @Size(min = 9, max = 9, message = "phone number must be 9 digits long")
     private String phoneNumber;
 
     public void addRentEquipmentName(String rentEquipmentName) {

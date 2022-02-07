@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
 @Data
 public class CustomObject extends SportObject {
 
-    @NotNull
+    @NotNull(message = "type cannot be null")
     private String type;
 
     private Integer capacity;

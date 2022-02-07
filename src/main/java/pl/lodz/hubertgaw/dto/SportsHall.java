@@ -9,9 +9,9 @@ import javax.validation.constraints.NotNull;
 @Data
 public class SportsHall extends SportObject {
 
-    @NotNull
+    @NotNull(message = "sectors number cannot be null")
     private Integer sectorsNumber;
 
-    @NotNull
+    @NotNull(message = "sector price cannot be null")
     private Double sectorPrice;
 }

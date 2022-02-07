@@ -14,10 +14,10 @@ public class RentEquipment {
 
     private Integer id;
 
-    @NotBlank
+    @NotBlank(message = "name cannot be blank")
     private String name;
 
-    @NotNull
+    @NotNull(message = "price cannot be null")
     private Double price;
 
     private Set<String> sportObjects = new HashSet<>();
