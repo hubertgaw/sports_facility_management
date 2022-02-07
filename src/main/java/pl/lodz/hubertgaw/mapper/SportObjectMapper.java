@@ -26,7 +26,8 @@ public interface SportObjectMapper {
     @SubclassMapping(source = TennisCourt.class, target = TennisCourtEntity.class)
     @SubclassMapping(source = CustomObject.class, target = CustomObjectEntity.class)
     @Mappings({
-            @Mapping(source = "rentEquipmentNames", target = "rentEquipment")
+            @Mapping(source = "rentEquipmentNames", target = "rentEquipment", ignore = true),
+            @Mapping(target = "bookings", ignore = true)
     })
     SportObjectEntity toEntity(SportObject domain);
 
