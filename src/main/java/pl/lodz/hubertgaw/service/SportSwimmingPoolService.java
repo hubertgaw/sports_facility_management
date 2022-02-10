@@ -72,7 +72,7 @@ public class SportSwimmingPoolService {
         entity.setFullPrice(sportSwimmingPool.getFullPrice());
         entity.setName(sportSwimmingPool.getName());
         entity.setTrackPrice(sportSwimmingPool.getTrackPrice());
-        entity.setTracksNumber(sportSwimmingPool.getTracksNumber());
+        entity.setTracksNumber(sportSwimmingPool.getCapacity());
         sportSwimmingPoolRepository.persist(entity);
         return (SportSwimmingPool) sportObjectMapper.toDomain(entity);
     }

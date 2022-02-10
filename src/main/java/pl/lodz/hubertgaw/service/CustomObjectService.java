@@ -95,7 +95,6 @@ public class CustomObjectService {
         entity.setType(customObject.getType());
         entity.setCapacity(customObject.getCapacity());
         entity.setSinglePrice(customObject.getSinglePrice());
-        entity.setStandsNumber(customObject.getStandsNumber());
         customObjectRepository.persist(entity);
         return (CustomObject) sportObjectMapper.toDomain(entity);
     }

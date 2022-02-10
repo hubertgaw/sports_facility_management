@@ -36,6 +36,12 @@
             <column name="phone_number" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
+            <column name="number_of_places" type="int">
+                <constraints nullable="true"/>
+            </column>
+            <column name="half_rent" type="boolean">
+                <constraints nullable="true"/>
+            </column>
         </createTable>
     </changeSet>
 </databaseChangeLog>

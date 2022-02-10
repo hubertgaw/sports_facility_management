@@ -15,7 +15,8 @@
             <column name="half_pitch_price" type="float">
                 <constraints nullable="false"/>
             </column>
-            <column name="is_full_rented" type="boolean">
+            <column name="is_half_rentable" type="boolean">
+                <constraints nullable="true"/>
             </column>
         </createTable>
     </changeSet>

@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Set;
 
 @Data
-public class SportObject {
+public class SportObject implements BookingPossibilities {
 
     private Integer id;
 
@@ -23,4 +23,14 @@ public class SportObject {
     private Set<String> rentEquipmentNames = new HashSet<>();
 
     private List<Booking> bookings = new ArrayList<>();
+
+    @Override
+    public Integer getCapacity() {
+        return null;
+    }
+
+    @Override
+    public Boolean getIsHalfRentable() {
+        return false;
+    }
 }

@@ -72,7 +72,7 @@ public class DartRoomService {
         entity.setFullPrice(dartRoom.getFullPrice());
         entity.setName(dartRoom.getName());
         entity.setStandPrice(dartRoom.getStandPrice());
-        entity.setStandsNumber(dartRoom.getStandsNumber());
+        entity.setStandsNumber(dartRoom.getCapacity());
         dartRoomRepository.persist(entity);
         return (DartRoom) sportObjectMapper.toDomain(entity);
     }

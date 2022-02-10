@@ -24,7 +24,7 @@ public class CustomObjectEntity extends SportObjectEntity {
     @Column(name = "single_price")
     private Double singlePrice;
 
-    @Column(name = "stands_number")
-    private Integer standsNumber;
+    @Column(name = "is_half_rentable")
+    private Boolean isHalfRentable;
 
 }

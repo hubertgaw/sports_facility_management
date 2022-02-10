@@ -18,6 +18,6 @@ public class SmallPitchEntity extends SportObjectEntity {
     @NotNull
     private Double halfPitchPrice;
 
-    @Column(name = "is_full_rented")
-    private Boolean isFullRented;
+    @Column(name = "is_half_rentable")
+    private Boolean isHalfRentable;
 }

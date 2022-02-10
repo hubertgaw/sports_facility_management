@@ -8,4 +8,8 @@ public class WrongFormatException extends BaseException {
     public static WrongFormatException wrongFormat(String message) {
         return new WrongFormatException(message);
     }
+
+    public static WrongFormatException invalidField(String message) {
+        return new WrongFormatException(message);
+    }
 }

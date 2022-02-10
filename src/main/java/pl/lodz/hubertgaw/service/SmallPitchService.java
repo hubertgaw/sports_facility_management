@@ -72,7 +72,7 @@ public class SmallPitchService {
         entity.setFullPrice(smallPitch.getFullPrice());
         entity.setName(smallPitch.getName());
         entity.setHalfPitchPrice(smallPitch.getHalfPitchPrice());
-        entity.setIsFullRented(smallPitch.getIsFullRented());
+        entity.setIsHalfRentable(smallPitch.getIsHalfRentable());
         smallPitchRepository.persist(entity);
         return (SmallPitch) sportObjectMapper.toDomain(entity);
     }

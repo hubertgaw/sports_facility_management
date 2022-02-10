@@ -3,12 +3,9 @@ package pl.lodz.hubertgaw;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
-import org.apache.commons.lang3.RandomStringUtils;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import pl.lodz.hubertgaw.dto.SmallPitch;
 import pl.lodz.hubertgaw.dto.RentEquipment;
-import pl.lodz.hubertgaw.dto.SmallPitch;
 import pl.lodz.hubertgaw.service.RentEquipmentService;
 import pl.lodz.hubertgaw.service.SportObjectService;
 import pl.lodz.hubertgaw.utils.TestUtils;
@@ -121,7 +118,7 @@ public class SmallPitchResourceTest {
                 .then()
                 .statusCode(201)
                 .extract().as(SmallPitch.class);
-        saved.setIsFullRented(null);
+        saved.setIsHalfRentable(null);
         SmallPitch updated = given()
                 .contentType(ContentType.JSON)
                 .accept(ContentType.JSON)
@@ -130,7 +127,7 @@ public class SmallPitchResourceTest {
                 .then()
                 .statusCode(200)
                 .extract().as(SmallPitch.class);
-        assertThat(updated.getIsFullRented()).isEqualTo(null);
+        assertThat(updated.getIsHalfRentable()).isEqualTo(null);
         clearSmallPitchAfterTest(saved.getId());
     }
 

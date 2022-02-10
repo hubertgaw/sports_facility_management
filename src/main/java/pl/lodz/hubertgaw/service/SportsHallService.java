@@ -72,7 +72,7 @@ public class SportsHallService {
         entity.setFullPrice(sportsHall.getFullPrice());
         entity.setName(sportsHall.getName());
         entity.setSectorPrice(sportsHall.getSectorPrice());
-        sportsHall.setSectorsNumber(sportsHall.getSectorsNumber());
+        sportsHall.setSectorsNumber(sportsHall.getCapacity());
         sportsHallRepository.persist(entity);
         return (SportsHall) sportObjectMapper.toDomain(entity);
     }

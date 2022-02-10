@@ -72,7 +72,7 @@ public class FullSizePitchService {
         entity.setFullPrice(fullSizePitch.getFullPrice());
         entity.setName(fullSizePitch.getName());
         entity.setHalfPitchPrice(fullSizePitch.getHalfPitchPrice());
-        entity.setIsFullRented(fullSizePitch.getIsFullRented());
+        entity.setIsHalfRentable(fullSizePitch.getIsHalfRentable());
         fullSizePitchRepository.persist(entity);
         return (FullSizePitch) sportObjectMapper.toDomain(entity);
     }

@@ -4,7 +4,6 @@ import org.apache.commons.lang3.RandomStringUtils;
 import pl.lodz.hubertgaw.dto.*;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -59,7 +58,7 @@ public class TestUtils {
         FullSizePitch fullSizePitch = new FullSizePitch();
         fullSizePitch.setName(RandomStringUtils.randomAlphabetic(10));
         fullSizePitch.setFullPrice(Double.valueOf(RandomStringUtils.randomNumeric(2)));
-        fullSizePitch.setIsFullRented(Boolean.valueOf(RandomStringUtils.randomNumeric(2)));
+        fullSizePitch.setIsHalfRentable(Boolean.valueOf(RandomStringUtils.randomNumeric(2)));
         fullSizePitch.setHalfPitchPrice(Double.valueOf(RandomStringUtils.randomNumeric(1)));
         return fullSizePitch;
     }
@@ -77,7 +76,7 @@ public class TestUtils {
         SmallPitch smallPitch = new SmallPitch();
         smallPitch.setName(RandomStringUtils.randomAlphabetic(10));
         smallPitch.setFullPrice(Double.valueOf(RandomStringUtils.randomNumeric(2)));
-        smallPitch.setIsFullRented(Boolean.valueOf(RandomStringUtils.randomNumeric(2)));
+        smallPitch.setIsHalfRentable(Boolean.valueOf(RandomStringUtils.randomNumeric(2)));
         smallPitch.setHalfPitchPrice(Double.valueOf(RandomStringUtils.randomNumeric(1)));
         return smallPitch;
     }

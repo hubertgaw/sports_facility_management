@@ -1,7 +1,9 @@
 package pl.lodz.hubertgaw.dto;
 
+import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
 import javax.validation.constraints.NotNull;
 
@@ -14,4 +16,9 @@ public class SportsHall extends SportObject {
 
     @NotNull(message = "sector price cannot be null")
     private Double sectorPrice;
+
+    @Override
+    public Integer getCapacity() {
+        return this.sectorsNumber;
+    }
 }

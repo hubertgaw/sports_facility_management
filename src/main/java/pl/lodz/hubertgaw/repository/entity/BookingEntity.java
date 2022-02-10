@@ -6,10 +6,7 @@ import lombok.Setter;
 import pl.lodz.hubertgaw.repository.entity.sports_objects.SportObjectEntity;
 
 import javax.persistence.*;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -63,6 +60,12 @@ public class BookingEntity {
 
     @Column(name = "phone_number")
     private String phoneNumber;
+
+    @Column(name = "number_of_places")
+    private Integer numberOfPlaces;
+
+    @Column(name = "half_rent")
+    private Boolean halfRent;
 
     public void addRentEquipment(RentEquipmentEntity rentEquipmentEntity) {
         this.rentEquipment.add(rentEquipmentEntity);

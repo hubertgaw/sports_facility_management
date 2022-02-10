@@ -42,6 +42,12 @@ public class Booking implements Cloneable {
     @Size(min = 9, max = 9, message = "phone number must be 9 digits long")
     private String phoneNumber;
 
+    @Min(value = 0, message = "number of places cannot be less than 0")
+    @Max(value = 50, message = "number of places cannot be more than 50")
+    private Integer numberOfPlaces;
+
+    private Boolean halfRent;
+
     public void addRentEquipmentName(String rentEquipmentName) {
         this.rentEquipmentNames.add(rentEquipmentName);
     }

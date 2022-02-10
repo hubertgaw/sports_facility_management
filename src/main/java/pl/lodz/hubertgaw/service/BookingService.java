@@ -2,23 +2,20 @@ package pl.lodz.hubertgaw.service;
 
 import org.slf4j.Logger;
 import pl.lodz.hubertgaw.dto.Booking;
+import pl.lodz.hubertgaw.dto.SportObject;
 import pl.lodz.hubertgaw.mapper.BookingMapper;
 import pl.lodz.hubertgaw.repository.BookingRepository;
 import pl.lodz.hubertgaw.repository.RentEquipmentRepository;
 import pl.lodz.hubertgaw.repository.SportObjectRepository;
 import pl.lodz.hubertgaw.repository.entity.BookingEntity;
 import pl.lodz.hubertgaw.repository.entity.RentEquipmentEntity;
-import pl.lodz.hubertgaw.repository.entity.sports_objects.SportObjectEntity;
 import pl.lodz.hubertgaw.service.exception.BookingException;
-import pl.lodz.hubertgaw.service.exception.SportObjectException;
 import pl.lodz.hubertgaw.service.utils.ServiceUtils;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
@@ -64,6 +61,9 @@ public class BookingService {
     @Transactional
     public Booking save(Booking booking) {
         booking.setFromDate(serviceUtils.convertTime(booking.getFromDate()));
+        if (null == booking.getHalfRent()) {
+            booking.setHalfRent(false);
+        }
         List<Booking> bookings = sportObjectService.findBookingsForSportObject(booking.getSportObjectId());
         validateBooking(booking, bookings);
         BookingEntity entity = bookingMapper.toEntity(booking);
@@ -133,18 +133,89 @@ public class BookingService {
             throw BookingException.wrongDateTimeException();
         }
 
-        for (Booking existingBooking : bookings) {
-            if (((booking.getFromDate().isAfter(existingBooking.getFromDate()))
-                    && (booking.getFromDate().isBefore(existingBooking.getFromDate().plusHours(existingBooking.getHours()))))
-                    ||
-                    ((booking.getFromDate().plusHours(booking.getHours()).isBefore(existingBooking.getFromDate().plusHours(existingBooking.getHours())))
-                    && (booking.getFromDate().plusHours(booking.getHours()).isAfter(existingBooking.getFromDate())))
-                    ||
-                    booking.getFromDate().isEqual(existingBooking.getFromDate())) {
-                throw BookingException.duplicateBookingTimeException();
+        if (null != booking.getNumberOfPlaces() && booking.getHalfRent()) {
+            throw BookingException.numberOfPlacesHalfRentExcludeException();
+        }
+
+        SportObject sportObject = sportObjectService.findById(booking.getSportObjectId());
+
+        if (sportObject.getCapacity() == null && booking.getNumberOfPlaces() != null) {
+            throw BookingException.invalidNumberOfPlacesForObject();
+        }
+
+        if (!sportObject.getIsHalfRentable() && booking.getHalfRent()) {
+            throw BookingException.invalidHalfRentedForObject();
+        }
+
+        // we set 1 to enable validating, when number of places is not specified we assume 1
+        if (booking.getNumberOfPlaces() == null) {
+            booking.setNumberOfPlaces(1);
+        }
+
+        if (null == sportObject.getCapacity() && !booking.getHalfRent()) {
+            for (Booking existingBooking : bookings) {
+                if (((booking.getFromDate().isAfter(existingBooking.getFromDate()))
+                        && (booking.getFromDate().isBefore(existingBooking.getFromDate().plusHours(existingBooking.getHours()))))
+                        ||
+                        ((booking.getFromDate().plusHours(booking.getHours()).isBefore(existingBooking.getFromDate().plusHours(existingBooking.getHours())))
+                                && (booking.getFromDate().plusHours(booking.getHours()).isAfter(existingBooking.getFromDate())))
+                        ||
+                        booking.getFromDate().isEqual(existingBooking.getFromDate())) {
+                    throw BookingException.duplicateBookingTimeException();
+                }
             }
         }
+        int counter = 0;
+        if (null != sportObject.getCapacity()) {
+            for (Booking existingBooking : bookings) {
+                if (((booking.getFromDate().isAfter(existingBooking.getFromDate()))
+                        && (booking.getFromDate().isBefore(existingBooking.getFromDate().plusHours(existingBooking.getHours()))))
+                        ||
+                        ((booking.getFromDate().plusHours(booking.getHours()).isBefore(existingBooking.getFromDate().plusHours(existingBooking.getHours())))
+                                && (booking.getFromDate().plusHours(booking.getHours()).isAfter(existingBooking.getFromDate())))
+                        ||
+                        booking.getFromDate().isEqual(existingBooking.getFromDate())) {
+                    counter += existingBooking.getNumberOfPlaces();
+                    if (counter + booking.getNumberOfPlaces() > sportObject.getCapacity()) {
+                        throw BookingException.duplicateBookingTimeException();
+                    }
+                }
+            }
+        }
+
+        int counterHalfRent = 0;
+        if (booking.getHalfRent()) {
+            for (Booking existingBooking : bookings) {
+                if ((((booking.getFromDate().isAfter(existingBooking.getFromDate()))
+                        && (booking.getFromDate().isBefore(existingBooking.getFromDate().plusHours(existingBooking.getHours()))))
+                        ||
+                        ((booking.getFromDate().plusHours(booking.getHours()).isBefore(existingBooking.getFromDate().plusHours(existingBooking.getHours())))
+                                && (booking.getFromDate().plusHours(booking.getHours()).isAfter(existingBooking.getFromDate())))
+                        ||
+                        booking.getFromDate().isEqual(existingBooking.getFromDate()))
+                        && !existingBooking.getHalfRent()) {
+                    throw BookingException.duplicateBookingTimeException();
+                }
+                if ((((booking.getFromDate().isAfter(existingBooking.getFromDate()))
+                        && (booking.getFromDate().isBefore(existingBooking.getFromDate().plusHours(existingBooking.getHours()))))
+                        ||
+                        ((booking.getFromDate().plusHours(booking.getHours()).isBefore(existingBooking.getFromDate().plusHours(existingBooking.getHours())))
+                                && (booking.getFromDate().plusHours(booking.getHours()).isAfter(existingBooking.getFromDate())))
+                        ||
+                        booking.getFromDate().isEqual(existingBooking.getFromDate()))
+                        && existingBooking.getHalfRent()) {
+                    counterHalfRent ++;
+                    if (counterHalfRent >= 2) {
+                        throw BookingException.duplicateBookingTimeException();
+                    }
+                }
+            }
+        }
+
+        //todo zwweryfikowac
     }
+
+
 
 
 }

@@ -35,4 +35,19 @@ public class BookingException extends BaseException {
         return new BookingException(
                 DuplicateEntryException.duplicateBooking("There is already booking for this object in given time"));
     }
+
+    public static BookingException invalidNumberOfPlacesForObject() {
+        return new BookingException(
+                WrongFormatException.invalidField("Field number of places cannot be applicable to provided object"));
+    }
+
+    public static BookingException invalidHalfRentedForObject() {
+        return new BookingException(
+                WrongFormatException.invalidField("Field half rented cannot be applicable to provided object"));
+    }
+
+    public static BookingException numberOfPlacesHalfRentExcludeException() {
+        return new BookingException(
+                WrongFormatException.invalidField("Number of people cannot be provided along with half rent"));
+    }
 }
