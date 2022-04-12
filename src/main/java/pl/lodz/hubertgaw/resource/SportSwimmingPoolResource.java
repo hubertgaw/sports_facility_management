@@ -8,6 +8,7 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 import org.slf4j.Logger;
 import pl.lodz.hubertgaw.dto.SportSwimmingPool;
 
+import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -73,6 +74,7 @@ public class SportSwimmingPoolResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
+    @RolesAllowed("admin")
     public Response post(@Valid SportSwimmingPool SportSwimmingPool) {
         logger.info("post");
         final SportSwimmingPool saved = sportSwimmingPoolService.save(SportSwimmingPool);
@@ -93,6 +95,7 @@ public class SportSwimmingPoolResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
+    @RolesAllowed("admin")
     public Response put(@Valid SportSwimmingPool SportSwimmingPool) {
         final SportSwimmingPool saved = sportSwimmingPoolService.update(SportSwimmingPool);
         return Response.ok(saved).build();
@@ -113,6 +116,7 @@ public class SportSwimmingPoolResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
+    @RolesAllowed("admin")
     public Response putEquipmentToObject(@PathParam("sportObjectId") Integer sportObjectId,
                                          @PathParam("rentEquipmentId") Integer rentEquipmentId) {
         final SportSwimmingPool saved = sportSwimmingPoolService.putEquipmentToObject(sportObjectId, rentEquipmentId);

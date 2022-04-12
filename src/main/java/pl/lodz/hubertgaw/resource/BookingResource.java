@@ -10,6 +10,7 @@ import pl.lodz.hubertgaw.dto.Booking;
 import pl.lodz.hubertgaw.dto.RentEquipment;
 import pl.lodz.hubertgaw.service.BookingService;
 
+import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 
@@ -39,6 +40,7 @@ public class BookingResource {
                                     schema = @Schema(type = SchemaType.ARRAY, implementation = Booking.class)))
             }
     )
+    @RolesAllowed("admin")
     public Response get() {
         return Response.ok(bookingService.findAll()).build();
     }
@@ -58,6 +60,7 @@ public class BookingResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
+    @RolesAllowed("admin")
     public Response getById(@PathParam("bookingId") Integer bookingId) {
 //        Optional<RentEquipment> optional =
         return Response.ok(bookingService.findById(bookingId)).build();
@@ -117,6 +120,7 @@ public class BookingResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
+    @RolesAllowed("admin")
     public Response deleteBooking(@PathParam("bookingId") Integer bookingId) {
         bookingService.deleteBookingById(bookingId);
         return Response.noContent().build();

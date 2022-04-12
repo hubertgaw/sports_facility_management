@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import pl.lodz.hubertgaw.dto.BeachVolleyballCourt;
 import pl.lodz.hubertgaw.service.BeachVolleyballCourtService;
 
+import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -52,7 +53,7 @@ public class BeachVolleyballCourtResource {
                                     schema = @Schema(type = SchemaType.OBJECT, implementation = BeachVolleyballCourt.class))),
                     @APIResponse(
                             responseCode = "404",
-                            description = "No Beach Volleyball Court found for id provided",
+                            description = "No Beach Volleyball Court found for Id provided",
                             content = @Content(mediaType = "application/json")),
             }
     )
@@ -74,6 +75,7 @@ public class BeachVolleyballCourtResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
+    @RolesAllowed("admin")
     public Response post(@Valid BeachVolleyballCourt beachVolleyballCourt) {
         logger.info("post");
         final BeachVolleyballCourt saved = beachVolleyballCourtService.save(beachVolleyballCourt);
@@ -90,10 +92,11 @@ public class BeachVolleyballCourtResource {
                                     schema = @Schema(type = SchemaType.OBJECT, implementation = BeachVolleyballCourt.class))),
                     @APIResponse(
                             responseCode = "404",
-                            description = "No Beach Volleyball Court found for athleticsTrackId provided",
+                            description = "No Beach Volleyball Court found for Id provided",
                             content = @Content(mediaType = "application/json")),
             }
     )
+    @RolesAllowed("admin")
     public Response put(@Valid BeachVolleyballCourt beachVolleyballCourt) {
         final BeachVolleyballCourt saved = beachVolleyballCourtService.update(beachVolleyballCourt);
         return Response.ok(saved).build();
@@ -114,6 +117,7 @@ public class BeachVolleyballCourtResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
+    @RolesAllowed("admin")
     public Response putEquipmentToObject(@PathParam("sportObjectId") Integer sportObjectId,
                                          @PathParam("rentEquipmentId") Integer rentEquipmentId) {
         final BeachVolleyballCourt saved = beachVolleyballCourtService.putEquipmentToObject(sportObjectId, rentEquipmentId);

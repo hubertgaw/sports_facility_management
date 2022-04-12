@@ -10,6 +10,7 @@ import pl.lodz.hubertgaw.dto.SportObject;
 import pl.lodz.hubertgaw.service.BookingService;
 import pl.lodz.hubertgaw.service.SportObjectService;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -78,6 +79,7 @@ public class SportObjectResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
+    @RolesAllowed("admin")
     public Response putEquipmentToObject(@PathParam("sportObjectId") Integer sportObjectId,
                                          @PathParam("rentEquipmentId") Integer rentEquipmentId) {
         final SportObject saved = sportObjectService.putEquipmentToObject(sportObjectId, rentEquipmentId);
@@ -101,6 +103,7 @@ public class SportObjectResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
+    @RolesAllowed("admin")
     public Response deleteSportObject(@PathParam("sportObjectId") Integer sportObjectId) {
         sportObjectService.deleteSportObjectById(sportObjectId);
 //        bez tego return byłoby to samo - jax-rs automatycznie ogarnia podstawowe responsy
@@ -123,6 +126,7 @@ public class SportObjectResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
+    @RolesAllowed("admin")
     public Response getBookingsFromSportObject(@PathParam("sportObjectId") Integer sportObjectId) {
         return Response.ok(sportObjectService.findBookingsForSportObject(sportObjectId)).build();
     }

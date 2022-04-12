@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import pl.lodz.hubertgaw.dto.RentEquipment;
 import pl.lodz.hubertgaw.service.RentEquipmentService;
 
+import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -75,6 +76,7 @@ public class RentEquipmentResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
+    @RolesAllowed("admin")
     public Response post(@Valid RentEquipment rentEquipment) {
         logger.info("post");
         final RentEquipment saved = rentEquipmentService.save(rentEquipment);
@@ -95,6 +97,7 @@ public class RentEquipmentResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
+    @RolesAllowed("admin")
     public Response put(@Valid RentEquipment rentEquipment) {
         final RentEquipment saved = rentEquipmentService.update(rentEquipment);
         return Response.ok(saved).build();
@@ -115,6 +118,7 @@ public class RentEquipmentResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
+    @RolesAllowed("admin")
     public Response deleteRentEquipment(@PathParam("rentEquipmentId") Integer rentEquipmentId) {
         rentEquipmentService.deleteRentEquipmentById(rentEquipmentId);
         return Response.noContent().build();

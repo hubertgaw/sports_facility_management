@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import pl.lodz.hubertgaw.dto.SportsHall;
 import pl.lodz.hubertgaw.service.SportsHallService;
 
+import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -74,6 +75,7 @@ public class SportsHallResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
+    @RolesAllowed("admin")
     public Response post(@Valid SportsHall SportsHall) {
         logger.info("post");
         final SportsHall saved = sportsHallService.save(SportsHall);
@@ -94,6 +96,7 @@ public class SportsHallResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
+    @RolesAllowed("admin")
     public Response put(@Valid SportsHall SportsHall) {
         final SportsHall saved = sportsHallService.update(SportsHall);
         return Response.ok(saved).build();
@@ -114,6 +117,7 @@ public class SportsHallResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
+    @RolesAllowed("admin")
     public Response putEquipmentToObject(@PathParam("sportObjectId") Integer sportObjectId,
                                          @PathParam("rentEquipmentId") Integer rentEquipmentId) {
         final SportsHall saved = sportsHallService.putEquipmentToObject(sportObjectId, rentEquipmentId);

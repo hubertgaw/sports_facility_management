@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import pl.lodz.hubertgaw.dto.CustomObject;
 import pl.lodz.hubertgaw.service.CustomObjectService;
 
+import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -94,6 +95,7 @@ public class CustomObjectResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
+    @RolesAllowed("admin")
     public Response post(@Valid CustomObject CustomObject) {
         logger.info("post");
         final CustomObject saved = customObjectService.save(CustomObject);
@@ -110,10 +112,11 @@ public class CustomObjectResource {
                                     schema = @Schema(type = SchemaType.OBJECT, implementation = CustomObject.class))),
                     @APIResponse(
                             responseCode = "404",
-                            description = "No CustomObject found for athleticsTrackId provided",
+                            description = "No CustomObject found for Id provided",
                             content = @Content(mediaType = "application/json")),
             }
     )
+    @RolesAllowed("admin")
     public Response put(@Valid CustomObject CustomObject) {
         final CustomObject saved = customObjectService.update(CustomObject);
         return Response.ok(saved).build();
@@ -134,6 +137,7 @@ public class CustomObjectResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
+    @RolesAllowed("admin")
     public Response putEquipmentToObject(@PathParam("sportObjectId") Integer sportObjectId,
                                          @PathParam("rentEquipmentId") Integer rentEquipmentId) {
         final CustomObject saved = customObjectService.putEquipmentToObject(sportObjectId, rentEquipmentId);

@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import pl.lodz.hubertgaw.dto.DartRoom;
 import pl.lodz.hubertgaw.service.DartRoomService;
 
+import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -74,6 +75,7 @@ public class DartRoomResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
+    @RolesAllowed("admin")
     public Response post(@Valid DartRoom DartRoom) {
         logger.info("post");
         final DartRoom saved = dartRoomService.save(DartRoom);
@@ -94,6 +96,7 @@ public class DartRoomResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
+    @RolesAllowed("admin")
     public Response put(@Valid DartRoom DartRoom) {
         final DartRoom saved = dartRoomService.update(DartRoom);
         return Response.ok(saved).build();
@@ -114,6 +117,7 @@ public class DartRoomResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
+    @RolesAllowed("admin")
     public Response putEquipmentToObject(@PathParam("sportObjectId") Integer sportObjectId,
                                          @PathParam("rentEquipmentId") Integer rentEquipmentId) {
         final DartRoom saved = dartRoomService.putEquipmentToObject(sportObjectId, rentEquipmentId);

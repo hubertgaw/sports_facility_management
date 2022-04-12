@@ -8,6 +8,7 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 import org.slf4j.Logger;
 import pl.lodz.hubertgaw.dto.SmallPitch;
 
+import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -73,6 +74,7 @@ public class SmallPitchResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
+    @RolesAllowed("admin")
     public Response post(@Valid SmallPitch SmallPitch) {
         logger.info("post");
         final SmallPitch saved = smallPitchService.save(SmallPitch);
@@ -93,6 +95,7 @@ public class SmallPitchResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
+    @RolesAllowed("admin")
     public Response put(@Valid SmallPitch SmallPitch) {
         final SmallPitch saved = smallPitchService.update(SmallPitch);
         return Response.ok(saved).build();
@@ -113,6 +116,7 @@ public class SmallPitchResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
+    @RolesAllowed("admin")
     public Response putEquipmentToObject(@PathParam("sportObjectId") Integer sportObjectId,
                                          @PathParam("rentEquipmentId") Integer rentEquipmentId) {
         final SmallPitch saved = smallPitchService.putEquipmentToObject(sportObjectId, rentEquipmentId);

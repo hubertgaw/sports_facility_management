@@ -8,6 +8,7 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 import org.slf4j.Logger;
 import pl.lodz.hubertgaw.dto.FullSizePitch;
 
+import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -73,6 +74,7 @@ public class FullSizePitchResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
+    @RolesAllowed("admin")
     public Response post(@Valid FullSizePitch FullSizePitch) {
         logger.info("post");
         final FullSizePitch saved = fullSizePitchService.save(FullSizePitch);
@@ -89,10 +91,11 @@ public class FullSizePitchResource {
                                     schema = @Schema(type = SchemaType.OBJECT, implementation = FullSizePitch.class))),
                     @APIResponse(
                             responseCode = "404",
-                            description = "No FullSizePitch found for athleticsTrackId provided",
+                            description = "No FullSizePitch found for Id provided",
                             content = @Content(mediaType = "application/json")),
             }
     )
+    @RolesAllowed("admin")
     public Response put(@Valid FullSizePitch fullSizePitch) {
         final FullSizePitch saved = fullSizePitchService.update(fullSizePitch);
         return Response.ok(saved).build();
@@ -113,6 +116,7 @@ public class FullSizePitchResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
+    @RolesAllowed("admin")
     public Response putEquipmentToObject(@PathParam("sportObjectId") Integer sportObjectId,
                                          @PathParam("rentEquipmentId") Integer rentEquipmentId) {
         final FullSizePitch saved = fullSizePitchService.putEquipmentToObject(sportObjectId, rentEquipmentId);

@@ -8,6 +8,7 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 import org.slf4j.Logger;
 import pl.lodz.hubertgaw.dto.Gym;
 
+import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -73,6 +74,7 @@ public class GymResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
+    @RolesAllowed("admin")
     public Response post(@Valid Gym Gym) {
         logger.info("post");
         final Gym saved = gymService.save(Gym);
@@ -89,10 +91,11 @@ public class GymResource {
                                     schema = @Schema(type = SchemaType.OBJECT, implementation = Gym.class))),
                     @APIResponse(
                             responseCode = "404",
-                            description = "No Gym found for athleticsTrackId provided",
+                            description = "No Gym found for Id provided",
                             content = @Content(mediaType = "application/json")),
             }
     )
+    @RolesAllowed("admin")
     public Response put(@Valid Gym Gym) {
         final Gym saved = gymService.update(Gym);
         return Response.ok(saved).build();
@@ -113,6 +116,7 @@ public class GymResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
+    @RolesAllowed("admin")
     public Response putEquipmentToObject(@PathParam("sportObjectId") Integer sportObjectId,
                                          @PathParam("rentEquipmentId") Integer rentEquipmentId) {
         final Gym saved = gymService.putEquipmentToObject(sportObjectId, rentEquipmentId);

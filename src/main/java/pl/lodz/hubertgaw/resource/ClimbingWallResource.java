@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import pl.lodz.hubertgaw.dto.ClimbingWall;
 import pl.lodz.hubertgaw.service.ClimbingWallService;
 
+import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -75,6 +76,7 @@ public class ClimbingWallResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
+    @RolesAllowed("admin")
     public Response post(@Valid ClimbingWall ClimbingWall) {
         logger.info("post");
         final ClimbingWall saved = climbingWallService.save(ClimbingWall);
@@ -91,10 +93,11 @@ public class ClimbingWallResource {
                                     schema = @Schema(type = SchemaType.OBJECT, implementation = ClimbingWall.class))),
                     @APIResponse(
                             responseCode = "404",
-                            description = "No ClimbingWall found for athleticsTrackId provided",
+                            description = "No ClimbingWall found for Id provided",
                             content = @Content(mediaType = "application/json")),
             }
     )
+    @RolesAllowed("admin")
     public Response put(@Valid ClimbingWall ClimbingWall) {
         final ClimbingWall saved = climbingWallService.update(ClimbingWall);
         return Response.ok(saved).build();
@@ -115,6 +118,7 @@ public class ClimbingWallResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
+    @RolesAllowed("admin")
     public Response putEquipmentToObject(@PathParam("sportObjectId") Integer sportObjectId,
                                          @PathParam("rentEquipmentId") Integer rentEquipmentId) {
         final ClimbingWall saved = climbingWallService.putEquipmentToObject(sportObjectId, rentEquipmentId);
