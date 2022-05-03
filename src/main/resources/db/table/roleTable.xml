@@ -2,21 +2,18 @@
     xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
-    <changeSet author="hubertgaw" id="2">
+    <changeSet author="hubertgaw" id="1">
         <preConditions onFail="CONTINUE">
             <not>
-                <tableExists tableName="sport_object"/>
+                <tableExists tableName="role"/>
             </not>
         </preConditions>
-        <createTable tableName="sport_object">
-            <column name="sport_object_id" type="bigint" autoIncrement="true">
+        <createTable tableName="role">
+            <column name="role_id" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true"/>
             </column>
-            <column name="name" type="VARCHAR(255)">
+            <column name="role_name" type="VARCHAR(255)">
                 <constraints nullable="false" unique="true"/>
-            </column>
-            <column name="full_price" type="float">
-                <constraints nullable="false"/>
             </column>
         </createTable>
     </changeSet>

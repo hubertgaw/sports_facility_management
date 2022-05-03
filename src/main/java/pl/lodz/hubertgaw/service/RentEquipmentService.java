@@ -49,7 +49,7 @@ public class RentEquipmentService {
     public RentEquipment findByName(String name) {
         RentEquipmentEntity entity = rentEquipmentRepository.findByName(name);
         if (entity == null) {
-
+            throw RentEquipmentException.rentEquipmentForNameNotFoundException();
         }
 
         return rentEquipmentMapper.toDomain(entity);

@@ -27,6 +27,10 @@ public class BookingEntity {
     @JoinColumn(name = "sport_object_id")
     private SportObjectEntity sportObject;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private UserEntity user;
+
     @Column(name = "from_date")
     @NotNull
     private LocalDateTime fromDate;

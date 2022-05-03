@@ -9,7 +9,7 @@
     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
     <include file="db/table/rentEquipmentTable.xml"/>
-    <include file="db/table/sportObject.xml"/>
+    <include file="db/table/sportObjectTable.xml"/>
     <include file="db/table/athleticsTrackTable.xml"/>
     <include file="db/table/beachVolleyballCourtTable.xml"/>
     <include file="db/table/climbingWallTable.xml"/>
@@ -24,5 +24,8 @@
     <include file="db/table/bookingTable.xml"/>
     <include file="db/table/objectEquipmentTable.xml"/>
     <include file="db/table/bookingEquipmentTable.xml"/>
+    <include file="db/table/roleTable.xml"/>
+    <include file="db/table/userTable.xml"/>
+    <include file="db/table/userRoleTable.xml"/>
 </databaseChangeLog>
 
