@@ -9,8 +9,9 @@ import javax.enterprise.context.ApplicationScoped;
 @ApplicationScoped
 public class RoleRepository implements PanacheRepositoryBase<RoleEntity, Integer> {
 
-    public RoleEntity findByName(String nameString) {
-        RoleName name = RoleName.valueOf(nameString);
-        return find("name", name).firstResult();
+    public RoleEntity findByName(RoleName name) {
+//        RoleName name = RoleName.valueOf(nameString);
+        String roleNameString = name.toString();
+        return find("role_name", roleNameString).firstResult();
     }
 }

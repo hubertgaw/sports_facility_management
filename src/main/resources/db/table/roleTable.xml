@@ -2,7 +2,7 @@
     xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
-    <changeSet author="hubertgaw" id="1">
+    <changeSet author="hubertgaw" id="2">
         <preConditions onFail="CONTINUE">
             <not>
                 <tableExists tableName="role"/>
@@ -16,5 +16,14 @@
                 <constraints nullable="false" unique="true"/>
             </column>
         </createTable>
+        <insert tableName="role">
+            <column name="role_name" value="ADMIN"/>
+        </insert>
+        <insert tableName="role">
+            <column name="role_name" value="USER"/>
+        </insert>
+        <insert tableName="role">
+            <column name="role_name" value="GUEST"/>
+        </insert>
     </changeSet>
 </databaseChangeLog>

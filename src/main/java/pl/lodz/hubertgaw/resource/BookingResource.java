@@ -60,7 +60,7 @@ public class BookingResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
-    @RolesAllowed("admin")
+    @RolesAllowed({"user","admin"})
     public Response getById(@PathParam("bookingId") Integer bookingId) {
 //        Optional<RentEquipment> optional =
         return Response.ok(bookingService.findById(bookingId)).build();
@@ -100,6 +100,7 @@ public class BookingResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
+    @RolesAllowed({"USER", "ADMIN"})
     public Response put(@Valid Booking booking) {
         final Booking saved = bookingService.update(booking);
         return Response.ok(saved).build();
@@ -120,7 +121,7 @@ public class BookingResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
-    @RolesAllowed("admin")
+    @RolesAllowed({"USER", "ADMIN"})
     public Response deleteBooking(@PathParam("bookingId") Integer bookingId) {
         bookingService.deleteBookingById(bookingId);
         return Response.noContent().build();

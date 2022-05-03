@@ -2,6 +2,7 @@ package pl.lodz.hubertgaw.dto;
 
 import lombok.Data;
 import pl.lodz.hubertgaw.repository.entity.RoleEntity;
+import pl.lodz.hubertgaw.repository.entity.RoleName;
 
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
@@ -33,7 +34,7 @@ public class User {
     @Size(min = 9, max = 9, message = "phone number must be 9 digits long")
     private String phoneNumber;
 
-    private Set<String> roles = new HashSet<>();
+    private Set<RoleName> roles = new HashSet<>();
 
     private Set<Booking> bookings = new HashSet<>();
 }

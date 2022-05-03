@@ -12,8 +12,12 @@ import pl.lodz.hubertgaw.service.UserService;
 import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+@Path("/api/users")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
 public class UserResource {
 
     private final UserService userService;
@@ -34,6 +38,7 @@ public class UserResource {
                                     schema = @Schema(type = SchemaType.ARRAY, implementation = User.class)))
             }
     )
+    @RolesAllowed("admin")
     public Response get() {
         return Response.ok(userService.findAll()).build();
     }
@@ -53,6 +58,7 @@ public class UserResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
+    @RolesAllowed({"user", "admin"})
     public Response getById(@PathParam("userId") Integer userId) {
 //        Optional<User> optional =
         return Response.ok(userService.findById(userId)).build();
@@ -73,6 +79,7 @@ public class UserResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
+    @RolesAllowed({"user", "admin"})
     public Response getByEmail(@PathParam("email") String email) {
         return Response.ok(userService.findByEmail(email)).build();
     }
@@ -92,6 +99,7 @@ public class UserResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
+    @RolesAllowed("admin")
     public Response getByRole(@PathParam("role") String role) {
         return Response.ok(userService.findByRole(role)).build();
     }
@@ -111,7 +119,6 @@ public class UserResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
-    @RolesAllowed("admin")
     public Response post(@Valid User user) {
         logger.info("post");
         final User saved = userService.save(user);
@@ -132,7 +139,7 @@ public class UserResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
-    @RolesAllowed("admin")
+    @RolesAllowed({"admin","user"})
     public Response put(@Valid User user) {
         final User saved = userService.update(user);
         return Response.ok(saved).build();

@@ -126,7 +126,6 @@ public class SportObjectResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
-    @RolesAllowed("admin")
     public Response getBookingsFromSportObject(@PathParam("sportObjectId") Integer sportObjectId) {
         return Response.ok(sportObjectService.findBookingsForSportObject(sportObjectId)).build();
     }

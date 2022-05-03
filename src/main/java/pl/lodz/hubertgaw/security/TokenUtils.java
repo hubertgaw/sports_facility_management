@@ -2,6 +2,7 @@ package pl.lodz.hubertgaw.security;
 
 import io.smallrye.jwt.build.Jwt;
 import io.smallrye.jwt.build.JwtClaimsBuilder;
+import pl.lodz.hubertgaw.repository.entity.RoleName;
 
 import javax.management.relation.Role;
 import java.io.InputStream;
@@ -14,7 +15,7 @@ import java.util.Set;
 
 public class TokenUtils {
 
-    public static String generateToken(String username, Set<Role> roles, Long duration, String issuer) throws Exception {
+    public static String generateToken(String username, Set<RoleName> roles, Long duration, String issuer) throws Exception {
         String privateKeyLocation = "/privatekey.pem";
         PrivateKey privateKey = readPrivateKey(privateKeyLocation);
 
@@ -22,7 +23,7 @@ public class TokenUtils {
         long currentTimeInSecs = currentTimeInSecs();
 
         Set<String> groups = new HashSet<>();
-        for (Role role : roles) groups.add(role.toString());
+        for (RoleName role : roles) groups.add(role.toString());
 
         claimsBuilder.issuer(issuer);
         claimsBuilder.subject(username);

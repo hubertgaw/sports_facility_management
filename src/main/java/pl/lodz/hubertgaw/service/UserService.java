@@ -7,9 +7,7 @@ import pl.lodz.hubertgaw.dto.User;
 import pl.lodz.hubertgaw.mapper.UserMapper;
 import pl.lodz.hubertgaw.repository.RoleRepository;
 import pl.lodz.hubertgaw.repository.UserRepository;
-import pl.lodz.hubertgaw.repository.entity.BookingEntity;
-import pl.lodz.hubertgaw.repository.entity.RoleEntity;
-import pl.lodz.hubertgaw.repository.entity.UserEntity;
+import pl.lodz.hubertgaw.repository.entity.*;
 import pl.lodz.hubertgaw.repository.entity.UserEntity;
 import pl.lodz.hubertgaw.repository.entity.sports_objects.SportObjectEntity;
 import pl.lodz.hubertgaw.service.exception.BookingException;
@@ -19,6 +17,8 @@ import pl.lodz.hubertgaw.service.utils.ServiceUtils;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -66,7 +66,8 @@ public class UserService {
         return userMapper.toDomain(entity);
     }
 
-    public User findByRole(String roleName) {
+    public User findByRole(String roleNameString) {
+        RoleName roleName = RoleName.valueOf(roleNameString);
         RoleEntity role = roleRepository.findByName(roleName);
         UserEntity entity = userRepository.findByRole(role);
         if (entity == null) {
@@ -81,6 +82,7 @@ public class UserService {
         if (serviceUtils.compareUserEmailWithExisting(user.getEmail())) {
             throw UserException.userDuplicateEmailException();
         }
+        user.setRoles(Collections.singleton((RoleName.USER)));
         UserEntity entity = userMapper.toEntity(user);
         userRepository.persist(entity);
         return userMapper.toDomain(entity);
