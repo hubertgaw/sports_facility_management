@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import pl.lodz.hubertgaw.dto.DartRoom;
 import pl.lodz.hubertgaw.service.DartRoomService;
 
+import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import javax.ws.rs.*;
@@ -38,6 +39,7 @@ public class DartRoomResource {
                                     schema = @Schema(type = SchemaType.ARRAY, implementation = DartRoom.class)))
             }
     )
+    @PermitAll
     public Response get() {
         return Response.ok(dartRoomService.findAll()).build();
     }
@@ -57,6 +59,7 @@ public class DartRoomResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
+    @PermitAll
     public Response getById(@PathParam("sportObjectId") Integer sportObjectId) {
         return Response.ok(dartRoomService.findById(sportObjectId)).build();
     }
@@ -75,7 +78,7 @@ public class DartRoomResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
-    @RolesAllowed("admin")
+    @RolesAllowed("ADMIN")
     public Response post(@Valid DartRoom DartRoom) {
         logger.info("post");
         final DartRoom saved = dartRoomService.save(DartRoom);
@@ -96,7 +99,7 @@ public class DartRoomResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
-    @RolesAllowed("admin")
+    @RolesAllowed("ADMIN")
     public Response put(@Valid DartRoom DartRoom) {
         final DartRoom saved = dartRoomService.update(DartRoom);
         return Response.ok(saved).build();
@@ -117,7 +120,7 @@ public class DartRoomResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
-    @RolesAllowed("admin")
+    @RolesAllowed("ADMIN")
     public Response putEquipmentToObject(@PathParam("sportObjectId") Integer sportObjectId,
                                          @PathParam("rentEquipmentId") Integer rentEquipmentId) {
         final DartRoom saved = dartRoomService.putEquipmentToObject(sportObjectId, rentEquipmentId);

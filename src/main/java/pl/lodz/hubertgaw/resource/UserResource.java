@@ -1,5 +1,7 @@
 package pl.lodz.hubertgaw.resource;
 
+import org.eclipse.microprofile.jwt.Claim;
+import org.eclipse.microprofile.jwt.Claims;
 import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
@@ -9,7 +11,9 @@ import org.slf4j.Logger;
 import pl.lodz.hubertgaw.dto.User;
 import pl.lodz.hubertgaw.service.UserService;
 
+import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
+import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -38,13 +42,13 @@ public class UserResource {
                                     schema = @Schema(type = SchemaType.ARRAY, implementation = User.class)))
             }
     )
-    @RolesAllowed("admin")
+    @RolesAllowed("ADMIN")
     public Response get() {
         return Response.ok(userService.findAll()).build();
     }
 
     @GET
-    @Path("/{userId}")
+    @Path("/id/{userId}")
     @APIResponses(
             value = {
                     @APIResponse(
@@ -58,14 +62,15 @@ public class UserResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
-    @RolesAllowed({"user", "admin"})
+    @RolesAllowed("ADMIN")
     public Response getById(@PathParam("userId") Integer userId) {
-//        Optional<User> optional =
         return Response.ok(userService.findById(userId)).build();
     }
 
+    //TODO: chyba najlepiej zrobić endpoint: /user, w którym to zwróci ZALOGOWANEMU userowi informacje o nim.
+
     @GET
-    @Path("/{email}")
+    @Path("/email/{email}")
     @APIResponses(
             value = {
                     @APIResponse(
@@ -79,13 +84,13 @@ public class UserResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
-    @RolesAllowed({"user", "admin"})
+    @RolesAllowed("ADMIN")
     public Response getByEmail(@PathParam("email") String email) {
         return Response.ok(userService.findByEmail(email)).build();
     }
 
     @GET
-    @Path("/{role}")
+    @Path("/role/{role}")
     @APIResponses(
             value = {
                     @APIResponse(
@@ -99,7 +104,7 @@ public class UserResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
-    @RolesAllowed("admin")
+    @RolesAllowed("ADMIN")
     public Response getByRole(@PathParam("role") String role) {
         return Response.ok(userService.findByRole(role)).build();
     }
@@ -119,6 +124,7 @@ public class UserResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
+    @PermitAll
     public Response post(@Valid User user) {
         logger.info("post");
         final User saved = userService.save(user);
@@ -139,11 +145,13 @@ public class UserResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
-    @RolesAllowed({"admin","user"})
+    @RolesAllowed("ADMIN")
     public Response put(@Valid User user) {
         final User saved = userService.update(user);
         return Response.ok(saved).build();
     }
+
+    //TODO: analogicznie jw. dla update, czyli osobny endpoint i user updatuje siebie.
 
     @DELETE
     @Path("{userId}")
@@ -160,7 +168,7 @@ public class UserResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
-    @RolesAllowed("admin")
+    @RolesAllowed("ADMIN")
     public Response deleteUser(@PathParam("userId") Integer userId) {
         userService.deleteUserById(userId);
         return Response.noContent().build();

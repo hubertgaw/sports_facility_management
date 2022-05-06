@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import pl.lodz.hubertgaw.dto.CustomObject;
 import pl.lodz.hubertgaw.service.CustomObjectService;
 
+import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import javax.ws.rs.*;
@@ -38,6 +39,7 @@ public class CustomObjectResource {
                                     schema = @Schema(type = SchemaType.ARRAY, implementation = CustomObject.class)))
             }
     )
+    @PermitAll
     public Response get() {
         return Response.ok(customObjectService.findAll()).build();
     }
@@ -57,6 +59,7 @@ public class CustomObjectResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
+    @PermitAll
     public Response getById(@PathParam("sportObjectId") Integer sportObjectId) {
         return Response.ok(customObjectService.findById(sportObjectId)).build();
     }
@@ -76,6 +79,7 @@ public class CustomObjectResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
+    @PermitAll
     public Response getByType(@PathParam("customObjectType") String customObjectType) {
         return Response.ok(customObjectService.findByType(customObjectType)).build();
     }
@@ -95,7 +99,7 @@ public class CustomObjectResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
-    @RolesAllowed("admin")
+    @RolesAllowed("ADMIN")
     public Response post(@Valid CustomObject CustomObject) {
         logger.info("post");
         final CustomObject saved = customObjectService.save(CustomObject);
@@ -116,7 +120,7 @@ public class CustomObjectResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
-    @RolesAllowed("admin")
+    @RolesAllowed("ADMIN")
     public Response put(@Valid CustomObject CustomObject) {
         final CustomObject saved = customObjectService.update(CustomObject);
         return Response.ok(saved).build();
@@ -137,7 +141,7 @@ public class CustomObjectResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
-    @RolesAllowed("admin")
+    @RolesAllowed("ADMIN")
     public Response putEquipmentToObject(@PathParam("sportObjectId") Integer sportObjectId,
                                          @PathParam("rentEquipmentId") Integer rentEquipmentId) {
         final CustomObject saved = customObjectService.putEquipmentToObject(sportObjectId, rentEquipmentId);

@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import pl.lodz.hubertgaw.dto.RentEquipment;
 import pl.lodz.hubertgaw.service.RentEquipmentService;
 
+import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import javax.ws.rs.*;
@@ -38,6 +39,7 @@ public class RentEquipmentResource {
                                     schema = @Schema(type = SchemaType.ARRAY, implementation = RentEquipment.class)))
             }
     )
+    @PermitAll
     public Response get() {
         return Response.ok(rentEquipmentService.findAll()).build();
     }
@@ -57,6 +59,7 @@ public class RentEquipmentResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
+    @PermitAll
     public Response getById(@PathParam("rentEquipmentId") Integer rentEquipmentId) {
 //        Optional<RentEquipment> optional =
         return Response.ok(rentEquipmentService.findById(rentEquipmentId)).build();
@@ -76,7 +79,7 @@ public class RentEquipmentResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
-    @RolesAllowed("admin")
+    @RolesAllowed("ADMIN")
     public Response post(@Valid RentEquipment rentEquipment) {
         logger.info("post");
         final RentEquipment saved = rentEquipmentService.save(rentEquipment);
@@ -97,7 +100,7 @@ public class RentEquipmentResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
-    @RolesAllowed("admin")
+    @RolesAllowed("ADMIN")
     public Response put(@Valid RentEquipment rentEquipment) {
         final RentEquipment saved = rentEquipmentService.update(rentEquipment);
         return Response.ok(saved).build();
@@ -118,7 +121,7 @@ public class RentEquipmentResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
-    @RolesAllowed("admin")
+    @RolesAllowed("ADMIN")
     public Response deleteRentEquipment(@PathParam("rentEquipmentId") Integer rentEquipmentId) {
         rentEquipmentService.deleteRentEquipmentById(rentEquipmentId);
         return Response.noContent().build();

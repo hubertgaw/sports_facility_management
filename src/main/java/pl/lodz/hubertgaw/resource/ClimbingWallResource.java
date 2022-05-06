@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import pl.lodz.hubertgaw.dto.ClimbingWall;
 import pl.lodz.hubertgaw.service.ClimbingWallService;
 
+import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import javax.ws.rs.*;
@@ -39,6 +40,7 @@ public class ClimbingWallResource {
                                     schema = @Schema(type = SchemaType.ARRAY, implementation = ClimbingWall.class)))
             }
     )
+    @PermitAll
     public Response get() {
         return Response.ok(climbingWallService.findAll()).build();
     }
@@ -58,6 +60,7 @@ public class ClimbingWallResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
+    @PermitAll
     public Response getById(@PathParam("sportObjectId") Integer sportObjectId) {
         return Response.ok(climbingWallService.findById(sportObjectId)).build();
     }
@@ -76,7 +79,7 @@ public class ClimbingWallResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
-    @RolesAllowed("admin")
+    @RolesAllowed("ADMIN")
     public Response post(@Valid ClimbingWall ClimbingWall) {
         logger.info("post");
         final ClimbingWall saved = climbingWallService.save(ClimbingWall);
@@ -97,7 +100,7 @@ public class ClimbingWallResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
-    @RolesAllowed("admin")
+    @RolesAllowed("ADMIN")
     public Response put(@Valid ClimbingWall ClimbingWall) {
         final ClimbingWall saved = climbingWallService.update(ClimbingWall);
         return Response.ok(saved).build();
@@ -118,7 +121,7 @@ public class ClimbingWallResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
-    @RolesAllowed("admin")
+    @RolesAllowed("ADMIN")
     public Response putEquipmentToObject(@PathParam("sportObjectId") Integer sportObjectId,
                                          @PathParam("rentEquipmentId") Integer rentEquipmentId) {
         final ClimbingWall saved = climbingWallService.putEquipmentToObject(sportObjectId, rentEquipmentId);

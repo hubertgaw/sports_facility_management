@@ -10,6 +10,7 @@ import pl.lodz.hubertgaw.repository.UserRepository;
 import pl.lodz.hubertgaw.repository.entity.*;
 import pl.lodz.hubertgaw.repository.entity.UserEntity;
 import pl.lodz.hubertgaw.repository.entity.sports_objects.SportObjectEntity;
+import pl.lodz.hubertgaw.security.PasswordEncoder;
 import pl.lodz.hubertgaw.service.exception.BookingException;
 import pl.lodz.hubertgaw.service.exception.UserException;
 import pl.lodz.hubertgaw.service.exception.UserException;
@@ -30,17 +31,20 @@ public class UserService {
     private final RoleRepository roleRepository;
     private final Logger logger;
     private final ServiceUtils serviceUtils;
+    private final PasswordEncoder passwordEncoder;
 
     public UserService(UserRepository userRepository,
                        UserMapper userMapper,
                        Logger logger,
                        ServiceUtils serviceUtils,
-                       RoleRepository roleRepository) {
+                       RoleRepository roleRepository,
+                       PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.roleRepository = roleRepository;
         this.logger = logger;
         this.serviceUtils = serviceUtils;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public List<User> findAll() {
@@ -83,6 +87,7 @@ public class UserService {
             throw UserException.userDuplicateEmailException();
         }
         user.setRoles(Collections.singleton((RoleName.USER)));
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         UserEntity entity = userMapper.toEntity(user);
         userRepository.persist(entity);
         return userMapper.toDomain(entity);

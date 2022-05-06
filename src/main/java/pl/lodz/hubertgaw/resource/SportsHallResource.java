@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import pl.lodz.hubertgaw.dto.SportsHall;
 import pl.lodz.hubertgaw.service.SportsHallService;
 
+import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import javax.ws.rs.*;
@@ -38,6 +39,7 @@ public class SportsHallResource {
                                     schema = @Schema(type = SchemaType.ARRAY, implementation = SportsHall.class)))
             }
     )
+    @PermitAll
     public Response get() {
         return Response.ok(sportsHallService.findAll()).build();
     }
@@ -57,6 +59,7 @@ public class SportsHallResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
+    @PermitAll
     public Response getById(@PathParam("sportObjectId") Integer sportObjectId) {
         return Response.ok(sportsHallService.findById(sportObjectId)).build();
     }
@@ -75,7 +78,7 @@ public class SportsHallResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
-    @RolesAllowed("admin")
+    @RolesAllowed("ADMIN")
     public Response post(@Valid SportsHall SportsHall) {
         logger.info("post");
         final SportsHall saved = sportsHallService.save(SportsHall);
@@ -96,7 +99,7 @@ public class SportsHallResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
-    @RolesAllowed("admin")
+    @RolesAllowed("ADMIN")
     public Response put(@Valid SportsHall SportsHall) {
         final SportsHall saved = sportsHallService.update(SportsHall);
         return Response.ok(saved).build();
@@ -117,7 +120,7 @@ public class SportsHallResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
-    @RolesAllowed("admin")
+    @RolesAllowed("ADMIN")
     public Response putEquipmentToObject(@PathParam("sportObjectId") Integer sportObjectId,
                                          @PathParam("rentEquipmentId") Integer rentEquipmentId) {
         final SportsHall saved = sportsHallService.putEquipmentToObject(sportObjectId, rentEquipmentId);

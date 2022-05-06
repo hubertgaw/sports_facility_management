@@ -1,13 +1,8 @@
 package pl.lodz.hubertgaw.dto;
 
 import lombok.Data;
-import pl.lodz.hubertgaw.repository.entity.RoleEntity;
 import pl.lodz.hubertgaw.repository.entity.RoleName;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.validation.constraints.*;
 import java.util.HashSet;
 import java.util.Set;

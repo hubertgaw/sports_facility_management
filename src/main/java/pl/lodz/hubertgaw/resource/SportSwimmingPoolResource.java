@@ -8,6 +8,7 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 import org.slf4j.Logger;
 import pl.lodz.hubertgaw.dto.SportSwimmingPool;
 
+import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import javax.ws.rs.*;
@@ -37,6 +38,7 @@ public class SportSwimmingPoolResource {
                                     schema = @Schema(type = SchemaType.ARRAY, implementation = SportSwimmingPool.class)))
             }
     )
+    @PermitAll
     public Response get() {
         return Response.ok(sportSwimmingPoolService.findAll()).build();
     }
@@ -56,6 +58,7 @@ public class SportSwimmingPoolResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
+    @PermitAll
     public Response getById(@PathParam("sportObjectId") Integer sportObjectId) {
         return Response.ok(sportSwimmingPoolService.findById(sportObjectId)).build();
     }
@@ -74,7 +77,7 @@ public class SportSwimmingPoolResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
-    @RolesAllowed("admin")
+    @RolesAllowed("ADMIN")
     public Response post(@Valid SportSwimmingPool SportSwimmingPool) {
         logger.info("post");
         final SportSwimmingPool saved = sportSwimmingPoolService.save(SportSwimmingPool);
@@ -95,7 +98,7 @@ public class SportSwimmingPoolResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
-    @RolesAllowed("admin")
+    @RolesAllowed("ADMIN")
     public Response put(@Valid SportSwimmingPool SportSwimmingPool) {
         final SportSwimmingPool saved = sportSwimmingPoolService.update(SportSwimmingPool);
         return Response.ok(saved).build();
@@ -116,7 +119,7 @@ public class SportSwimmingPoolResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
-    @RolesAllowed("admin")
+    @RolesAllowed("ADMIN")
     public Response putEquipmentToObject(@PathParam("sportObjectId") Integer sportObjectId,
                                          @PathParam("rentEquipmentId") Integer rentEquipmentId) {
         final SportSwimmingPool saved = sportSwimmingPoolService.putEquipmentToObject(sportObjectId, rentEquipmentId);

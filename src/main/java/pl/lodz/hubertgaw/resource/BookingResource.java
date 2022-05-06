@@ -10,6 +10,7 @@ import pl.lodz.hubertgaw.dto.Booking;
 import pl.lodz.hubertgaw.dto.RentEquipment;
 import pl.lodz.hubertgaw.service.BookingService;
 
+import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import javax.ws.rs.*;
@@ -40,7 +41,7 @@ public class BookingResource {
                                     schema = @Schema(type = SchemaType.ARRAY, implementation = Booking.class)))
             }
     )
-    @RolesAllowed("admin")
+    @RolesAllowed("ADMIN")
     public Response get() {
         return Response.ok(bookingService.findAll()).build();
     }
@@ -60,11 +61,13 @@ public class BookingResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
-    @RolesAllowed({"user","admin"})
+    @RolesAllowed("ADMIN")
     public Response getById(@PathParam("bookingId") Integer bookingId) {
 //        Optional<RentEquipment> optional =
         return Response.ok(bookingService.findById(bookingId)).build();
     }
+
+    //TODO: analogicznie jak dla user, zrobic osobny endpoint dla bookingow usera
 
     @POST
     @APIResponses(
@@ -80,6 +83,7 @@ public class BookingResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
+    @PermitAll
     public Response post(@Valid Booking booking) {
         logger.info("post");
         final Booking saved = bookingService.save(booking);
@@ -100,11 +104,13 @@ public class BookingResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
-    @RolesAllowed({"USER", "ADMIN"})
+    @RolesAllowed("USER")
     public Response put(@Valid Booking booking) {
         final Booking saved = bookingService.update(booking);
         return Response.ok(saved).build();
     }
+
+    //TODO osobny endpoint do edycji bookingu dla usera
 
     @DELETE
     @Path("{bookingId}")
@@ -121,10 +127,12 @@ public class BookingResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
-    @RolesAllowed({"USER", "ADMIN"})
+    @RolesAllowed("ADMIN")
     public Response deleteBooking(@PathParam("bookingId") Integer bookingId) {
         bookingService.deleteBookingById(bookingId);
         return Response.noContent().build();
 
     }
+
+    //TODO i osobny dla usuwania
 }

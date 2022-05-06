@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import pl.lodz.hubertgaw.dto.AthleticsTrack;
 import pl.lodz.hubertgaw.service.AthleticsTrackService;
 
+import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import javax.ws.rs.*;
@@ -38,6 +39,7 @@ public class AthleticsTrackResource {
                                     schema = @Schema(type = SchemaType.ARRAY, implementation = AthleticsTrack.class)))
             }
     )
+    @PermitAll
     public Response get() {
         return Response.ok(athleticsTrackService.findAll()).build();
     }
@@ -57,6 +59,7 @@ public class AthleticsTrackResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
+    @PermitAll
     public Response getById(@PathParam("athleticsTrackId") Integer athleticsTrackId) {
 //        Optional<AthleticsTrack> optional = athleticsTrackService.findById(athleticsTrackId);
         return Response.ok(athleticsTrackService.findById(athleticsTrackId)).build();
@@ -76,7 +79,7 @@ public class AthleticsTrackResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
-    @RolesAllowed("admin")
+    @RolesAllowed("ADMIN")
     public Response post(@Valid AthleticsTrack athleticsTrack) {
         logger.info("post");
         final AthleticsTrack saved = athleticsTrackService.save(athleticsTrack);
@@ -97,7 +100,7 @@ public class AthleticsTrackResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
-    @RolesAllowed("admin")
+    @RolesAllowed("ADMIN")
     public Response put(@Valid AthleticsTrack athleticsTrack) {
         final AthleticsTrack saved = athleticsTrackService.update(athleticsTrack);
         return Response.ok(saved).build();
@@ -118,7 +121,7 @@ public class AthleticsTrackResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
-    @RolesAllowed("admin")
+    @RolesAllowed("ADMIN")
     public Response putEquipmentToObject(@PathParam("athleticsTrackId") Integer athleticsTrackId,
                                          @PathParam("rentEquipmentId") Integer rentEquipmentId) {
         final AthleticsTrack saved = athleticsTrackService.putEquipmentToObject(athleticsTrackId, rentEquipmentId);

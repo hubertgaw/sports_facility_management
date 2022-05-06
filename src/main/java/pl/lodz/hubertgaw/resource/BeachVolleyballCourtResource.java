@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import pl.lodz.hubertgaw.dto.BeachVolleyballCourt;
 import pl.lodz.hubertgaw.service.BeachVolleyballCourtService;
 
+import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import javax.ws.rs.*;
@@ -38,6 +39,7 @@ public class BeachVolleyballCourtResource {
                                     schema = @Schema(type = SchemaType.ARRAY, implementation = BeachVolleyballCourt.class)))
             }
     )
+    @PermitAll
     public Response get() {
         return Response.ok(beachVolleyballCourtService.findAll()).build();
     }
@@ -57,6 +59,7 @@ public class BeachVolleyballCourtResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
+    @PermitAll
     public Response getById(@PathParam("sportObjectId") Integer sportObjectId) {
         return Response.ok(beachVolleyballCourtService.findById(sportObjectId)).build();
     }
@@ -75,7 +78,7 @@ public class BeachVolleyballCourtResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
-    @RolesAllowed("admin")
+    @RolesAllowed("ADMIN")
     public Response post(@Valid BeachVolleyballCourt beachVolleyballCourt) {
         logger.info("post");
         final BeachVolleyballCourt saved = beachVolleyballCourtService.save(beachVolleyballCourt);
@@ -96,7 +99,7 @@ public class BeachVolleyballCourtResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
-    @RolesAllowed("admin")
+    @RolesAllowed("ADMIN")
     public Response put(@Valid BeachVolleyballCourt beachVolleyballCourt) {
         final BeachVolleyballCourt saved = beachVolleyballCourtService.update(beachVolleyballCourt);
         return Response.ok(saved).build();
@@ -117,7 +120,7 @@ public class BeachVolleyballCourtResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
-    @RolesAllowed("admin")
+    @RolesAllowed("ADMIN")
     public Response putEquipmentToObject(@PathParam("sportObjectId") Integer sportObjectId,
                                          @PathParam("rentEquipmentId") Integer rentEquipmentId) {
         final BeachVolleyballCourt saved = beachVolleyballCourtService.putEquipmentToObject(sportObjectId, rentEquipmentId);

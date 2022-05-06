@@ -8,6 +8,7 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 import org.slf4j.Logger;
 import pl.lodz.hubertgaw.dto.FullSizePitch;
 
+import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import javax.ws.rs.*;
@@ -37,6 +38,7 @@ public class FullSizePitchResource {
                                     schema = @Schema(type = SchemaType.ARRAY, implementation = FullSizePitch.class)))
             }
     )
+    @PermitAll
     public Response get() {
         return Response.ok(fullSizePitchService.findAll()).build();
     }
@@ -56,6 +58,7 @@ public class FullSizePitchResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
+    @PermitAll
     public Response getById(@PathParam("sportObjectId") Integer sportObjectId) {
         return Response.ok(fullSizePitchService.findById(sportObjectId)).build();
     }
@@ -74,7 +77,7 @@ public class FullSizePitchResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
-    @RolesAllowed("admin")
+    @RolesAllowed("ADMIN")
     public Response post(@Valid FullSizePitch FullSizePitch) {
         logger.info("post");
         final FullSizePitch saved = fullSizePitchService.save(FullSizePitch);
@@ -95,7 +98,7 @@ public class FullSizePitchResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
-    @RolesAllowed("admin")
+    @RolesAllowed("ADMIN")
     public Response put(@Valid FullSizePitch fullSizePitch) {
         final FullSizePitch saved = fullSizePitchService.update(fullSizePitch);
         return Response.ok(saved).build();
@@ -116,7 +119,7 @@ public class FullSizePitchResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
-    @RolesAllowed("admin")
+    @RolesAllowed("ADMIN")
     public Response putEquipmentToObject(@PathParam("sportObjectId") Integer sportObjectId,
                                          @PathParam("rentEquipmentId") Integer rentEquipmentId) {
         final FullSizePitch saved = fullSizePitchService.putEquipmentToObject(sportObjectId, rentEquipmentId);

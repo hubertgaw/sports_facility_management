@@ -10,6 +10,7 @@ import pl.lodz.hubertgaw.dto.SportObject;
 import pl.lodz.hubertgaw.service.BookingService;
 import pl.lodz.hubertgaw.service.SportObjectService;
 
+import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -40,6 +41,7 @@ public class SportObjectResource {
                                     schema = @Schema(type = SchemaType.ARRAY, implementation = SportObject.class)))
             }
     )
+    @PermitAll
     public Response get() {
         return Response.ok(sportObjectService.findAll()).build();
     }
@@ -59,6 +61,7 @@ public class SportObjectResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
+    @PermitAll
     public Response getById(@PathParam("sportObjectId") Integer sportObjectId) {
         return Response.ok(sportObjectService.findById(sportObjectId)).build();
     }
@@ -79,7 +82,7 @@ public class SportObjectResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
-    @RolesAllowed("admin")
+    @RolesAllowed("ADMIN")
     public Response putEquipmentToObject(@PathParam("sportObjectId") Integer sportObjectId,
                                          @PathParam("rentEquipmentId") Integer rentEquipmentId) {
         final SportObject saved = sportObjectService.putEquipmentToObject(sportObjectId, rentEquipmentId);
@@ -103,7 +106,7 @@ public class SportObjectResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
-    @RolesAllowed("admin")
+    @RolesAllowed("ADMIN")
     public Response deleteSportObject(@PathParam("sportObjectId") Integer sportObjectId) {
         sportObjectService.deleteSportObjectById(sportObjectId);
 //        bez tego return byłoby to samo - jax-rs automatycznie ogarnia podstawowe responsy
@@ -126,6 +129,7 @@ public class SportObjectResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
+    @PermitAll
     public Response getBookingsFromSportObject(@PathParam("sportObjectId") Integer sportObjectId) {
         return Response.ok(sportObjectService.findBookingsForSportObject(sportObjectId)).build();
     }
