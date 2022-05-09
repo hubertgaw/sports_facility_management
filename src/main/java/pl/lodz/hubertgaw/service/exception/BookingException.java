@@ -14,7 +14,7 @@ public class BookingException extends BaseException {
 
     public static BookingException bookingEmptyIdException() {
         return new BookingException(
-                EmptyPropertyException.emptyId("Id for updating booking cannot be null"));
+                EmptyPropertyException.emptyProperty("Id for updating booking cannot be null"));
     }
 
     public static BookingException rentEquipmentForSportObjectNotFoundException() {
@@ -50,4 +50,28 @@ public class BookingException extends BaseException {
         return new BookingException(
                 WrongFormatException.invalidField("Number of people cannot be provided along with half rent"));
     }
+
+    // the following exceptions cannot be done as bean validation, because in role: user these fields are not used and
+    // in other roles they cannot be null.
+    public static BookingException bookingEmptyEmailException() {
+        return new BookingException(
+                EmptyPropertyException.emptyProperty("Email for user in booking cannot be null"));
+    }
+
+    public static BookingException bookingWrongEmailFormatException() {
+        return new BookingException(
+                WrongFormatException.wrongFormat("Email must be in proper format"));
+    }
+
+    public static BookingException bookingEmptyFirstNameException() {
+        return new BookingException(
+                EmptyPropertyException.emptyProperty("First name for user in booking cannot be null"));
+    }
+
+    public static BookingException bookingEmptyLastNameException() {
+        return new BookingException(
+                EmptyPropertyException.emptyProperty("Last name for user in booking cannot be null"));
+    }
+
+
 }

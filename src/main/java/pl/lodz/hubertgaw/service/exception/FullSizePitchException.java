@@ -18,6 +18,6 @@ public class FullSizePitchException extends BaseException {
 
     public static FullSizePitchException fullSizePitchEmptyIdException() {
         return new FullSizePitchException(
-                EmptyPropertyException.emptyId("Id for updating full size pitch cannot be null"));
+                EmptyPropertyException.emptyProperty("Id for updating full size pitch cannot be null"));
     }
 }

@@ -18,6 +18,6 @@ public class DartRoomException extends BaseException {
 
     public static DartRoomException dartRoomEmptyIdException() {
         return new DartRoomException(
-                EmptyPropertyException.emptyId("Id for updating dart room cannot be null"));
+                EmptyPropertyException.emptyProperty("Id for updating dart room cannot be null"));
     }
 }

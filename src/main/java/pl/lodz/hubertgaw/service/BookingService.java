@@ -1,5 +1,6 @@
 package pl.lodz.hubertgaw.service;
 
+import org.apache.commons.validator.routines.EmailValidator;
 import org.slf4j.Logger;
 import pl.lodz.hubertgaw.dto.Booking;
 import pl.lodz.hubertgaw.dto.SportObject;
@@ -7,13 +8,18 @@ import pl.lodz.hubertgaw.mapper.BookingMapper;
 import pl.lodz.hubertgaw.repository.BookingRepository;
 import pl.lodz.hubertgaw.repository.RentEquipmentRepository;
 import pl.lodz.hubertgaw.repository.SportObjectRepository;
+import pl.lodz.hubertgaw.repository.UserRepository;
 import pl.lodz.hubertgaw.repository.entity.BookingEntity;
 import pl.lodz.hubertgaw.repository.entity.RentEquipmentEntity;
+import pl.lodz.hubertgaw.repository.entity.UserEntity;
 import pl.lodz.hubertgaw.service.exception.BookingException;
 import pl.lodz.hubertgaw.service.utils.ServiceUtils;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.SecurityContext;
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,6 +33,7 @@ public class BookingService {
     private final BookingMapper bookingMapper;
     private final Logger logger;
     private final ServiceUtils serviceUtils;
+    private final UserRepository userRepository;
 
     public BookingService(BookingRepository bookingRepository,
                           RentEquipmentRepository rentEquipmentRepository,
@@ -34,7 +41,8 @@ public class BookingService {
                           SportObjectService sportObjectService,
                           BookingMapper bookingMapper,
                           Logger logger,
-                          ServiceUtils serviceUtils) {
+                          ServiceUtils serviceUtils,
+                          UserRepository userRepository) {
         this.bookingRepository = bookingRepository;
         this.rentEquipmentRepository = rentEquipmentRepository;
         this.sportObjectRepository = sportObjectRepository;
@@ -42,6 +50,7 @@ public class BookingService {
         this.bookingMapper = bookingMapper;
         this.logger = logger;
         this.serviceUtils = serviceUtils;
+        this.userRepository = userRepository;
     }
 
     public List<Booking> findAll() {
@@ -59,7 +68,31 @@ public class BookingService {
     }
 
     @Transactional
-    public Booking save(Booking booking) {
+    public Booking save(Booking booking, SecurityContext userContext) {
+        if (!userContext.isUserInRole("USER")) {
+            if (null == booking.getEmail() || booking.getEmail().isEmpty()) {
+                throw BookingException.bookingEmptyEmailException();
+            }
+            if (!EmailValidator.getInstance().isValid(booking.getEmail())) {
+                throw BookingException.bookingWrongEmailFormatException();
+            }
+            if (null == booking.getFirstName() || booking.getFirstName().isEmpty()) {
+                throw BookingException.bookingEmptyFirstNameException();
+            }
+            if (null == booking.getLastName() || booking.getLastName().isEmpty()) {
+                throw BookingException.bookingEmptyLastNameException();
+            }
+            // 0 - not logged user (guest or booked as admin)
+            booking.setUserId(0);
+        } else {
+            UserEntity loggedUser = userRepository.findByEmail(userContext.getUserPrincipal().getName());
+            // these fields can be also for example null or some string/value - based on convention that we decide.
+            booking.setUserId(loggedUser.getId());
+            booking.setEmail(loggedUser.getEmail());
+            booking.setFirstName(loggedUser.getFirstName());
+            booking.setLastName(loggedUser.getLastName());
+            booking.setPhoneNumber(loggedUser.getPhoneNumber());
+        }
         booking.setFromDate(serviceUtils.convertTime(booking.getFromDate()));
         if (null == booking.getHalfRent()) {
             booking.setHalfRent(false);

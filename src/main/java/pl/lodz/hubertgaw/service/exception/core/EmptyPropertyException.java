@@ -6,7 +6,7 @@ public class EmptyPropertyException extends BaseException{
         super(message, 400);
     }
 
-    public static EmptyPropertyException emptyId(String message) {
+    public static EmptyPropertyException emptyProperty(String message) {
         return new EmptyPropertyException(message);
     }
 

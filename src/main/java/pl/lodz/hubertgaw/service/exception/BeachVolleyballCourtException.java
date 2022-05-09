@@ -18,7 +18,7 @@ public class BeachVolleyballCourtException extends BaseException {
 
     public static BeachVolleyballCourtException beachVolleyballCourtEmptyIdException() {
         return new BeachVolleyballCourtException(
-                EmptyPropertyException.emptyId("Id for updating beach volleyball court cannot be null"));
+                EmptyPropertyException.emptyProperty("Id for updating beach volleyball court cannot be null"));
 
     }
 }

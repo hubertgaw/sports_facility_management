@@ -18,6 +18,6 @@ public class ClimbingWallException extends BaseException {
 
     public static ClimbingWallException climbingWallEmptyIdException() {
         return new ClimbingWallException(
-                EmptyPropertyException.emptyId("Id for updating climbing wall cannot be null"));
+                EmptyPropertyException.emptyProperty("Id for updating climbing wall cannot be null"));
     }
 }

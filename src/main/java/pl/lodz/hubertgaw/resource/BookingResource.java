@@ -15,8 +15,11 @@ import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
+import java.security.Principal;
 
 @Path("/api/bookings")
 @Produces(MediaType.APPLICATION_JSON)
@@ -84,9 +87,10 @@ public class BookingResource {
             }
     )
     @PermitAll
-    public Response post(@Valid Booking booking) {
+    public Response post(@Valid Booking booking, @Context SecurityContext userContext) {
         logger.info("post");
-        final Booking saved = bookingService.save(booking);
+//        Principal user = userContext.getUserPrincipal();
+        final Booking saved = bookingService.save(booking, userContext);
         return Response.status(Response.Status.CREATED).entity(saved).build();
     }
 

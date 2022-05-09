@@ -18,7 +18,7 @@ public class SportObjectException extends BaseException {
     }
 
     public static SportObjectException sportObjectEmptyIdException() {
-        return new SportObjectException(EmptyPropertyException.emptyId("Id for updating sport object cannot be null"));
+        return new SportObjectException(EmptyPropertyException.emptyProperty("Id for updating sport object cannot be null"));
     }
 
     public static SportObjectException sportObjectDuplicateNameException() {

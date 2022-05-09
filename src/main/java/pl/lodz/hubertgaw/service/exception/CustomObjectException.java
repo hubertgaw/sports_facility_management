@@ -19,7 +19,7 @@ public class CustomObjectException extends BaseException {
 
     public static CustomObjectException customObjectEmptyIdException() {
         return new CustomObjectException(
-                EmptyPropertyException.emptyId("Id for updating custom object cannot be null"));
+                EmptyPropertyException.emptyProperty("Id for updating custom object cannot be null"));
     }
 
     public static CustomObjectException customObjectTypeNotFoundException() {

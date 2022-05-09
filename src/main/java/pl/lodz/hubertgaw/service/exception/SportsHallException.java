@@ -18,6 +18,6 @@ public class SportsHallException extends BaseException {
 
     public static SportsHallException sportsHallEmptyIdException() {
         return new SportsHallException(
-                EmptyPropertyException.emptyId("Id for updating sports hall cannot be null"));
+                EmptyPropertyException.emptyProperty("Id for updating sports hall cannot be null"));
     }
 }

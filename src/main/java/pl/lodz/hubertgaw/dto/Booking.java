@@ -18,6 +18,8 @@ public class Booking implements Cloneable {
     @NotNull(message = "sport object id cannot be null")
     private Integer sportObjectId;
 
+    private Integer userId;
+
     @NotNull(message = "from date cannot be null")
     private LocalDateTime fromDate;
 
@@ -28,13 +30,10 @@ public class Booking implements Cloneable {
 
     private List<String> rentEquipmentNames = new ArrayList<>();
 
-    @NotBlank(message = "first name cannot be blank")
     private String firstName;
 
-    @NotBlank(message = "last name cannot be blank")
     private String lastName;
 
-    @NotBlank(message = "email value cannot be blank")
     @Email(message = "email must be in proper format")
     private String email;
 

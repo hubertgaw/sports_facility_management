@@ -16,7 +16,7 @@ public class User {
     @Email(message = "email must be in proper format")
     private String email;
 
-    @NotBlank(message = "first name vannot be blank")
+    @NotBlank(message = "first name cannot be blank")
     private String firstName;
 
     @NotBlank(message = "last name cannot be blank")

@@ -2,7 +2,7 @@
     xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
-    <changeSet author="hubertgaw" id="3">
+    <changeSet author="hubertgaw" id="4">
         <preConditions onFail="CONTINUE">
             <not>
                 <tableExists tableName="booking"/>
@@ -16,7 +16,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="user_id" type="bigint">
-                <constraints nullable="false"/>
+                <constraints nullable="true"/>
             </column>
             <column name="from_date" type="timestamp">
                 <constraints nullable="false"/>
@@ -28,16 +28,16 @@
                 <constraints nullable="false"/>
             </column>
             <column name="first_name" type="varchar(255)">
-                <constraints nullable="false"/>
+                <constraints nullable="true"/>
             </column>
             <column name="last_name" type="varchar(255)">
-                <constraints nullable="false"/>
+                <constraints nullable="true"/>
             </column>
             <column name="email" type="varchar(255)">
-                <constraints nullable="false"/>
+                <constraints nullable="true"/>
             </column>
             <column name="phone_number" type="varchar(255)">
-                <constraints nullable="false"/>
+                <constraints nullable="true"/>
             </column>
             <column name="number_of_places" type="int">
                 <constraints nullable="true"/>

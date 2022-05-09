@@ -14,7 +14,7 @@ public class UserException extends BaseException {
 
     public static UserException userEmptyIdException() {
         return new UserException(
-                EmptyPropertyException.emptyId("Id for updating user cannot be null"));
+                EmptyPropertyException.emptyProperty("Id for updating user cannot be null"));
     }
 
     public static UserException userForEmailNotFoundException() {

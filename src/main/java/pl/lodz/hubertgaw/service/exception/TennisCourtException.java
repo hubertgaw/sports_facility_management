@@ -18,6 +18,6 @@ public class TennisCourtException extends BaseException {
 
     public static TennisCourtException tennisCourtEmptyIdException() {
         return new TennisCourtException(
-                EmptyPropertyException.emptyId("Id for updating tennis court cannot be null"));
+                EmptyPropertyException.emptyProperty("Id for updating tennis court cannot be null"));
     }
 }

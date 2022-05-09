@@ -18,6 +18,6 @@ public class SportSwimmingPoolException extends BaseException {
 
     public static SportSwimmingPoolException sportSwimmingPoolEmptyIdException() {
         return new SportSwimmingPoolException(
-                EmptyPropertyException.emptyId("Id for updating sport swimming pool cannot be null"));
+                EmptyPropertyException.emptyProperty("Id for updating sport swimming pool cannot be null"));
     }
 }

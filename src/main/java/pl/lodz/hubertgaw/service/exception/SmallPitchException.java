@@ -18,7 +18,7 @@ public class SmallPitchException extends BaseException {
 
     public static SmallPitchException smallPitchEmptyIdException() {
         return new SmallPitchException(
-                EmptyPropertyException.emptyId("Id for updating small pitch cannot be null"));
+                EmptyPropertyException.emptyProperty("Id for updating small pitch cannot be null"));
     }
 
 }

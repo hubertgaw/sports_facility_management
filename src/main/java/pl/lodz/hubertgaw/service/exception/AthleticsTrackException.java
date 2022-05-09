@@ -18,6 +18,6 @@ public class AthleticsTrackException extends BaseException {
 
     public static AthleticsTrackException athleticsTrackEmptyIdException() {
         return new AthleticsTrackException(
-                EmptyPropertyException.emptyId("Id for updating athletics track cannot be null"));
+                EmptyPropertyException.emptyProperty("Id for updating athletics track cannot be null"));
     }
 }

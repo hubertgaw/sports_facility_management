@@ -18,6 +18,6 @@ public class GymException extends BaseException {
 
     public static GymException gymEmptyIdException() {
         return new GymException(
-                EmptyPropertyException.emptyId("Id for updating gym cannot be null"));
+                EmptyPropertyException.emptyProperty("Id for updating gym cannot be null"));
     }
 }
