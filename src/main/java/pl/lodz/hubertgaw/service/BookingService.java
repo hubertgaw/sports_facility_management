@@ -4,6 +4,7 @@ import org.apache.commons.validator.routines.EmailValidator;
 import org.slf4j.Logger;
 import pl.lodz.hubertgaw.dto.Booking;
 import pl.lodz.hubertgaw.dto.SportObject;
+import pl.lodz.hubertgaw.dto.User;
 import pl.lodz.hubertgaw.mapper.BookingMapper;
 import pl.lodz.hubertgaw.repository.BookingRepository;
 import pl.lodz.hubertgaw.repository.RentEquipmentRepository;
@@ -17,9 +18,7 @@ import pl.lodz.hubertgaw.service.utils.ServiceUtils;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.SecurityContext;
-import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,7 +32,7 @@ public class BookingService {
     private final BookingMapper bookingMapper;
     private final Logger logger;
     private final ServiceUtils serviceUtils;
-    private final UserRepository userRepository;
+    private final UserService userService;
 
     public BookingService(BookingRepository bookingRepository,
                           RentEquipmentRepository rentEquipmentRepository,
@@ -42,7 +41,7 @@ public class BookingService {
                           BookingMapper bookingMapper,
                           Logger logger,
                           ServiceUtils serviceUtils,
-                          UserRepository userRepository) {
+                          UserService userService) {
         this.bookingRepository = bookingRepository;
         this.rentEquipmentRepository = rentEquipmentRepository;
         this.sportObjectRepository = sportObjectRepository;
@@ -50,7 +49,7 @@ public class BookingService {
         this.bookingMapper = bookingMapper;
         this.logger = logger;
         this.serviceUtils = serviceUtils;
-        this.userRepository = userRepository;
+        this.userService = userService;
     }
 
     public List<Booking> findAll() {
@@ -65,6 +64,19 @@ public class BookingService {
                 .orElseThrow(BookingException::bookingNotFoundException);
 
         return bookingMapper.toDomain(entity);
+    }
+
+    public List<Booking> findByUserId(Integer userId) {
+        List<Booking> bookingsByUser = bookingRepository.findByUserId(userId)
+                .stream()
+                .map(bookingMapper::toDomain)
+                .map(Booking.class::cast)
+                .collect(Collectors.toList());
+
+        if (bookingsByUser.isEmpty()) {
+            throw BookingException.bookingForUserNotFoundException();
+        }
+        return bookingsByUser;
     }
 
     @Transactional
@@ -85,7 +97,7 @@ public class BookingService {
             // 0 - not logged user (guest or booked as admin)
             booking.setUserId(0);
         } else {
-            UserEntity loggedUser = userRepository.findByEmail(userContext.getUserPrincipal().getName());
+            User loggedUser = userService.findByEmail(userContext.getUserPrincipal().getName());
             // these fields can be also for example null or some string/value - based on convention that we decide.
             booking.setUserId(loggedUser.getId());
             booking.setEmail(loggedUser.getEmail());
@@ -105,7 +117,20 @@ public class BookingService {
     }
 
     @Transactional
-    public Booking update(Booking booking) {
+    public Booking update(Booking booking, SecurityContext userContext) {
+        if (userContext.isUserInRole("USER")) {
+            User loggedUser = userService.findByEmail(userContext.getUserPrincipal().getName());
+            if (!checkIfUserHasBooking(
+                    booking.getId(), loggedUser.getId())) {
+                throw BookingException.bookingForUserNotFoundException();
+            }
+            booking.setUserId(loggedUser.getId());
+            booking.setEmail(loggedUser.getEmail());
+            booking.setFirstName(loggedUser.getFirstName());
+            booking.setLastName(loggedUser.getLastName());
+            booking.setPhoneNumber(loggedUser.getPhoneNumber());
+        }
+
         booking.setFromDate(serviceUtils.convertTime(booking.getFromDate()));
         if (booking.getId() == null) {
             throw BookingException.bookingEmptyIdException();
@@ -133,7 +158,14 @@ public class BookingService {
     }
 
     @Transactional
-    public void deleteBookingById(Integer bookingId) {
+    public void deleteBookingById(Integer bookingId, SecurityContext userContext) {
+        if (userContext.isUserInRole("USER")) {
+            User loggedUser = userService.findByEmail(userContext.getUserPrincipal().getName());
+            if (!checkIfUserHasBooking(
+                    bookingId, loggedUser.getId())) {
+                throw BookingException.bookingForUserNotFoundException();
+            }
+        }
         BookingEntity bookingToDelete = bookingRepository.findById(bookingId);
         if (bookingToDelete == null) {
             throw BookingException.bookingNotFoundException();
@@ -245,10 +277,9 @@ public class BookingService {
             }
         }
 
-        //todo zwweryfikowac
     }
 
-
-
-
+    private Boolean checkIfUserHasBooking(Integer bookingId, Integer userId) {
+        return findById(bookingId).getUserId().equals(userId);
+    }
 }

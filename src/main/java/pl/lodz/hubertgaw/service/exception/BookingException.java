@@ -12,6 +12,10 @@ public class BookingException extends BaseException {
         return new BookingException(NotFoundException.notFound("Booking for given id not found!"));
     }
 
+    public static BookingException bookingForUserNotFoundException() {
+        return new BookingException(NotFoundException.notFound("Booking for given user not found!"));
+    }
+
     public static BookingException bookingEmptyIdException() {
         return new BookingException(
                 EmptyPropertyException.emptyProperty("Id for updating booking cannot be null"));

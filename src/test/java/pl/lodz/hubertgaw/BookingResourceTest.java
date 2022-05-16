@@ -532,8 +532,9 @@ public class BookingResourceTest {
     }
 
 
+    // todo zmienic userContext
     private void clearBookingAfterTest(Integer id) {
-        bookingService.deleteBookingById(id);
+        bookingService.deleteBookingById(id, null);
     }
 
     private void clearRentEquipmentAfterTest(Integer id) {

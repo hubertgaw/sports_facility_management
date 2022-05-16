@@ -8,7 +8,10 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 import org.slf4j.Logger;
 import pl.lodz.hubertgaw.dto.Booking;
 import pl.lodz.hubertgaw.dto.RentEquipment;
+import pl.lodz.hubertgaw.dto.User;
+import pl.lodz.hubertgaw.repository.entity.UserEntity;
 import pl.lodz.hubertgaw.service.BookingService;
+import pl.lodz.hubertgaw.service.UserService;
 
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
@@ -27,11 +30,13 @@ import java.security.Principal;
 public class BookingResource {
 
     private final BookingService bookingService;
+    private final UserService userService;
     private final Logger logger;
 
-    public BookingResource(BookingService bookingService, Logger logger) {
+    public BookingResource(BookingService bookingService, UserService userService, Logger logger) {
         this.bookingService = bookingService;
         this.logger = logger;
+        this.userService = userService;
     }
 
     @GET
@@ -70,7 +75,23 @@ public class BookingResource {
         return Response.ok(bookingService.findById(bookingId)).build();
     }
 
-    //TODO: analogicznie jak dla user, zrobic osobny endpoint dla bookingow usera
+
+    @GET
+    @Path("/mine")
+    @APIResponses(
+            value = {
+                    @APIResponse(
+                            responseCode = "200",
+                            description = "Get logged user's bookings",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(type = SchemaType.OBJECT, implementation = User.class)))
+            }
+    )
+    @RolesAllowed("USER")
+    public Response getLoggedUserBookings(@Context SecurityContext userContext) {
+        Integer loggedUserId = userService.findByEmail(userContext.getUserPrincipal().getName()).getId();
+        return Response.ok(bookingService.findByUserId(loggedUserId)).build();
+    }
 
     @POST
     @APIResponses(
@@ -108,13 +129,11 @@ public class BookingResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
-    @RolesAllowed("USER")
-    public Response put(@Valid Booking booking) {
-        final Booking saved = bookingService.update(booking);
+    @RolesAllowed({"ADMIN","USER"})
+    public Response put(@Context SecurityContext userContext, @Valid Booking booking) {
+        final Booking saved = bookingService.update(booking, userContext);
         return Response.ok(saved).build();
     }
-
-    //TODO osobny endpoint do edycji bookingu dla usera
 
     @DELETE
     @Path("{bookingId}")
@@ -131,9 +150,9 @@ public class BookingResource {
                             content = @Content(mediaType = "application/json")),
             }
     )
-    @RolesAllowed("ADMIN")
-    public Response deleteBooking(@PathParam("bookingId") Integer bookingId) {
-        bookingService.deleteBookingById(bookingId);
+    @RolesAllowed({"USER", "ADMIN"})
+    public Response deleteBooking(@Context SecurityContext userContext, @PathParam("bookingId") Integer bookingId) {
+        bookingService.deleteBookingById(bookingId, userContext);
         return Response.noContent().build();
 
     }

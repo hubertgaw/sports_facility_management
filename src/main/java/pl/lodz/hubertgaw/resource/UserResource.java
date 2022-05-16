@@ -16,8 +16,10 @@ import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
 
 @Path("/api/users")
 @Produces(MediaType.APPLICATION_JSON)
@@ -67,7 +69,23 @@ public class UserResource {
         return Response.ok(userService.findById(userId)).build();
     }
 
-    //TODO: chyba najlepiej zrobić endpoint: /user, w którym to zwróci ZALOGOWANEMU userowi informacje o nim.
+
+    @GET
+    @Path("/info")
+    @APIResponses(
+            value = {
+                    @APIResponse(
+                            responseCode = "200",
+                            description = "Get information about logged user",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(type = SchemaType.OBJECT, implementation = User.class)))
+            }
+    )
+    @RolesAllowed("USER")
+    public Response getLoggedUser(@Context SecurityContext userContext) {
+        return Response.ok(userService.findByEmail(userContext.getUserPrincipal().getName())).build();
+    }
+
 
     @GET
     @Path("/email/{email}")
@@ -146,12 +164,29 @@ public class UserResource {
             }
     )
     @RolesAllowed("ADMIN")
-    public Response put(@Valid User user) {
+    public Response putUserByAdmin(@Valid User user) {
         final User saved = userService.update(user);
         return Response.ok(saved).build();
     }
 
-    //TODO: analogicznie jw. dla update, czyli osobny endpoint i user updatuje siebie.
+    @PUT
+    @Path("/info")
+    @APIResponses(
+            value = {
+                    @APIResponse(
+                            responseCode = "200",
+                            description = "Update logged user's information",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(type = SchemaType.OBJECT, implementation = User.class)))
+            }
+    )
+    @RolesAllowed("USER")
+    public Response putUserByUser(@Context SecurityContext userContext, @Valid User user) {
+        int updatedUserId = userService.findByEmail((userContext.getUserPrincipal().getName())).getId();
+        user.setId(updatedUserId);
+        final User saved = userService.update(user);
+        return Response.ok(saved).build();
+    }
 
     @DELETE
     @Path("{userId}")

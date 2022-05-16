@@ -1,27 +1,21 @@
 package pl.lodz.hubertgaw.service;
 
 import org.slf4j.Logger;
-import pl.lodz.hubertgaw.dto.Booking;
-import pl.lodz.hubertgaw.dto.User;
 import pl.lodz.hubertgaw.dto.User;
 import pl.lodz.hubertgaw.mapper.UserMapper;
 import pl.lodz.hubertgaw.repository.RoleRepository;
 import pl.lodz.hubertgaw.repository.UserRepository;
 import pl.lodz.hubertgaw.repository.entity.*;
 import pl.lodz.hubertgaw.repository.entity.UserEntity;
-import pl.lodz.hubertgaw.repository.entity.sports_objects.SportObjectEntity;
 import pl.lodz.hubertgaw.security.PasswordEncoder;
-import pl.lodz.hubertgaw.service.exception.BookingException;
-import pl.lodz.hubertgaw.service.exception.UserException;
+import pl.lodz.hubertgaw.service.exception.RoleException;
 import pl.lodz.hubertgaw.service.exception.UserException;
 import pl.lodz.hubertgaw.service.utils.ServiceUtils;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
@@ -70,15 +64,20 @@ public class UserService {
         return userMapper.toDomain(entity);
     }
 
-    public User findByRole(String roleNameString) {
-        RoleName roleName = RoleName.valueOf(roleNameString);
+    public List<User> findByRole(String roleNameString) {
+        RoleName roleName = RoleName.getByName(roleNameString);
         RoleEntity role = roleRepository.findByName(roleName);
-        UserEntity entity = userRepository.findByRole(role);
-        if (entity == null) {
+        List<User> usersByType = userRepository.findByRole(role)
+                .stream()
+                .map(userMapper::toDomain)
+                .map(User.class::cast)
+                .collect(Collectors.toList());
+//        UserEntity entity = userRepository.findByRole(role);
+        if (usersByType.isEmpty()) {
             throw UserException.userForRoleNotFoundException();
         }
 
-        return userMapper.toDomain(entity);
+        return usersByType;
     }
 
     @Transactional
