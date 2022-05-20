@@ -22,12 +22,12 @@
         <lombok.version>1.18.22</lombok.version>
     </properties>
 
-<!--    <repositories>-->
-<!--        <repository>-->
-<!--            <id>jitpack.io</id>-->
-<!--            <url>https://jitpack.io</url>-->
-<!--        </repository>-->
-<!--    </repositories>-->
+    <!--    <repositories>-->
+    <!--        <repository>-->
+    <!--            <id>jitpack.io</id>-->
+    <!--            <url>https://jitpack.io</url>-->
+    <!--        </repository>-->
+    <!--    </repositories>-->
 
     <dependencyManagement>
         <dependencies>
@@ -69,14 +69,14 @@
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-jdbc-mysql</artifactId>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>io.quarkus</groupId>-->
-<!--            <artifactId>quarkus-micrometer</artifactId>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>io.quarkus</groupId>-->
-<!--            <artifactId>quarkus-micrometer-registry-prometheus</artifactId>-->
-<!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>io.quarkus</groupId>-->
+        <!--            <artifactId>quarkus-micrometer</artifactId>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>io.quarkus</groupId>-->
+        <!--            <artifactId>quarkus-micrometer-registry-prometheus</artifactId>-->
+        <!--        </dependency>-->
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-hibernate-validator</artifactId>
@@ -93,10 +93,10 @@
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-resteasy-jackson</artifactId>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>io.quarkus</groupId>-->
-<!--            <artifactId>quarkus-jaxb</artifactId>-->
-<!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>io.quarkus</groupId>-->
+        <!--            <artifactId>quarkus-jaxb</artifactId>-->
+        <!--        </dependency>-->
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-arc</artifactId>
@@ -136,19 +136,19 @@
             <artifactId>assertj-core</artifactId>
             <scope>test</scope>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>com.github.mapstruct.mapstruct</groupId>-->
-<!--            <artifactId>mapstruct-processor</artifactId>-->
-<!--            <version>master-SNAPSHOT</version>-->
-<!--            <version>${mapstruct.version}</version>-->
-<!--            <scope>provided</scope>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>com.github.mapstruct.mapstruct</groupId>-->
-<!--            <artifactId>mapstruct</artifactId>-->
-<!--            <version>master-SNAPSHOT</version>-->
-<!--            <version>${mapstruct.version}</version>-->
-<!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>com.github.mapstruct.mapstruct</groupId>-->
+        <!--            <artifactId>mapstruct-processor</artifactId>-->
+        <!--            <version>master-SNAPSHOT</version>-->
+        <!--            <version>${mapstruct.version}</version>-->
+        <!--            <scope>provided</scope>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>com.github.mapstruct.mapstruct</groupId>-->
+        <!--            <artifactId>mapstruct</artifactId>-->
+        <!--            <version>master-SNAPSHOT</version>-->
+        <!--            <version>${mapstruct.version}</version>-->
+        <!--        </dependency>-->
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-frontend-jaxrs</artifactId>
@@ -174,10 +174,10 @@
             <artifactId>commons-collections4</artifactId>
             <version>4.4</version>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>io.quarkus</groupId>-->
-<!--            <artifactId>quarkus-oidc</artifactId>-->
-<!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>io.quarkus</groupId>-->
+        <!--            <artifactId>quarkus-oidc</artifactId>-->
+        <!--        </dependency>-->
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-resteasy-qute</artifactId>
@@ -271,6 +271,19 @@
                                     <version>master-SNAPSHOT</version>
                                 </path>
                             </annotationProcessorPaths>
+                            <showWarnings>true</showWarnings>
+                            <compilerArgs>
+                                <arg>
+                                    -Amapstruct.suppressGeneratorTimestamp=true
+                                </arg>
+                                <arg>
+                                    -Amapstruct.suppressGeneratorVersionInfoComment=true
+                                </arg>
+                                <arg>
+                                    -Amapstruct.verbose=true
+                                </arg>
+                            </compilerArgs>
+
                         </configuration>
                     </plugin>
                 </plugins>

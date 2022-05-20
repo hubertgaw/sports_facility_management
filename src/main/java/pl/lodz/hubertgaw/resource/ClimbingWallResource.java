@@ -28,6 +28,8 @@ public class ClimbingWallResource {
     public ClimbingWallResource(ClimbingWallService ClimbingWallService, Logger logger) {
         this.climbingWallService = ClimbingWallService;
         this.logger = logger;
+
+        logger.info("Constructor ClimbingWallResource called");
     }
 
     @GET
@@ -42,7 +44,13 @@ public class ClimbingWallResource {
     )
     @PermitAll
     public Response get() {
-        return Response.ok(climbingWallService.findAll()).build();
+        logger.info("Method get() called");
+
+        Response response = Response.ok(climbingWallService.findAll()).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
     @GET
@@ -62,7 +70,13 @@ public class ClimbingWallResource {
     )
     @PermitAll
     public Response getById(@PathParam("sportObjectId") Integer sportObjectId) {
-        return Response.ok(climbingWallService.findById(sportObjectId)).build();
+        logger.info("Method getById() called with argument: {}", sportObjectId);
+
+        Response response = Response.ok(climbingWallService.findById(sportObjectId)).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
     @POST
@@ -80,10 +94,15 @@ public class ClimbingWallResource {
             }
     )
     @RolesAllowed("ADMIN")
-    public Response post(@Valid ClimbingWall ClimbingWall) {
-        logger.info("post");
-        final ClimbingWall saved = climbingWallService.save(ClimbingWall);
-        return Response.status(Response.Status.CREATED).entity(saved).build();
+    public Response post(@Valid ClimbingWall climbingWall) {
+        logger.info("Method post() called with argument: {}", climbingWall);
+
+        final ClimbingWall saved = climbingWallService.save(climbingWall);
+        Response response = Response.status(Response.Status.CREATED).entity(saved).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
     @PUT
@@ -101,9 +120,15 @@ public class ClimbingWallResource {
             }
     )
     @RolesAllowed("ADMIN")
-    public Response put(@Valid ClimbingWall ClimbingWall) {
-        final ClimbingWall saved = climbingWallService.update(ClimbingWall);
-        return Response.ok(saved).build();
+    public Response put(@Valid ClimbingWall climbingWall) {
+        logger.info("Method put() called with argument: {}", climbingWall);
+
+        final ClimbingWall saved = climbingWallService.update(climbingWall);
+        Response response = Response.ok(saved).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
     @PUT
@@ -124,8 +149,14 @@ public class ClimbingWallResource {
     @RolesAllowed("ADMIN")
     public Response putEquipmentToObject(@PathParam("sportObjectId") Integer sportObjectId,
                                          @PathParam("rentEquipmentId") Integer rentEquipmentId) {
+        logger.info("Method putEquipmentToObject() called with arguments: {}, {}", sportObjectId, rentEquipmentId);
+
         final ClimbingWall saved = climbingWallService.putEquipmentToObject(sportObjectId, rentEquipmentId);
-        return Response.ok(saved).build();
+        Response response = Response.ok(saved).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
 }

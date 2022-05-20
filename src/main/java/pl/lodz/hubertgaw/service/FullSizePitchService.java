@@ -2,11 +2,14 @@ package pl.lodz.hubertgaw.service;
 
 import org.slf4j.Logger;
 import pl.lodz.hubertgaw.dto.FullSizePitch;
+import pl.lodz.hubertgaw.dto.FullSizePitch;
 import pl.lodz.hubertgaw.mapper.SportObjectMapper;
 import pl.lodz.hubertgaw.repository.FullSizePitchRepository;
 import pl.lodz.hubertgaw.repository.RentEquipmentRepository;
 import pl.lodz.hubertgaw.repository.entity.RentEquipmentEntity;
 import pl.lodz.hubertgaw.repository.entity.sports_objects.FullSizePitchEntity;
+import pl.lodz.hubertgaw.repository.entity.sports_objects.FullSizePitchEntity;
+import pl.lodz.hubertgaw.service.exception.FullSizePitchException;
 import pl.lodz.hubertgaw.service.exception.FullSizePitchException;
 import pl.lodz.hubertgaw.service.exception.RentEquipmentException;
 import pl.lodz.hubertgaw.service.exception.SportObjectException;
@@ -35,61 +38,139 @@ public class FullSizePitchService {
         this.logger = logger;
         this.rentEquipmentRepository = rentEquipmentRepository;
         this.serviceUtils = serviceUtils;
+
+        logger.info("Constructor FullSizePitchService called");
     }
 
     public List<FullSizePitch> findAll() {
-        return fullSizePitchRepository.listAll()
+        logger.info("Method findAll() called");
+
+        List<FullSizePitchEntity> allFullSizePitchsEntities = fullSizePitchRepository.listAll();
+
+        logger.info("All fullSizePitches as entities taken from repository: {}", allFullSizePitchsEntities);
+
+        List<FullSizePitch> allFullSizePitchesDto = allFullSizePitchsEntities
                 .stream()
                 .map(sportObjectMapper::toDomain)
                 .map(FullSizePitch.class::cast)
                 .collect(Collectors.toList());
+
+        logger.info("All fullSizePitches found (after mapping from entity to DTO): {}", allFullSizePitchesDto);
+
+        return allFullSizePitchesDto;
     }
 
-    public FullSizePitch findById(Integer pitchId) {
-        FullSizePitchEntity entity = fullSizePitchRepository.findByIdOptional(pitchId)
-                .orElseThrow(FullSizePitchException::fullSizePitchNotFoundException);
-        return (FullSizePitch) sportObjectMapper.toDomain(entity);
+    public FullSizePitch findById(Integer fullSizePitchId) {
+        logger.info("Method findById() called with argument: {}", fullSizePitchId);
+
+        FullSizePitchEntity entity = fullSizePitchRepository.findByIdOptional(fullSizePitchId)
+                .orElseThrow(() -> {
+
+                    logger.warn("Exception", FullSizePitchException.fullSizePitchNotFoundException());
+
+                    return FullSizePitchException.fullSizePitchNotFoundException();
+                });
+
+        logger.info("FullSizePitchEntity by id: {} found in database:{}", fullSizePitchId, entity);
+
+        FullSizePitch fullSizePitchDto = (FullSizePitch) sportObjectMapper.toDomain(entity);
+
+        logger.info("FullSizePitch by id: {} found after mapping to DTO:{}", fullSizePitchId, fullSizePitchDto);
+
+        return fullSizePitchDto;
     }
 
     @Transactional
     public FullSizePitch save(FullSizePitch fullSizePitch) {
+        logger.info("Method save() called with argument: {}", fullSizePitch);
+
         if (serviceUtils.compareSportObjectNameWithExisting(fullSizePitch.getName())) {
+            logger.warn("Exception", SportObjectException.sportObjectDuplicateNameException());
+
             throw SportObjectException.sportObjectDuplicateNameException();
         }
+
         FullSizePitchEntity entity = (FullSizePitchEntity) sportObjectMapper.toEntity(fullSizePitch);
         fullSizePitchRepository.persist(entity);
-        return (FullSizePitch) sportObjectMapper.toDomain(entity);
+
+        logger.info("FullSizePitch persisted in repository: {}", entity);
+
+        FullSizePitch fullSizePitchDto = (FullSizePitch) sportObjectMapper.toDomain(entity);
+
+        logger.info("FullSizePitch mapped from entity to DTO: {}", fullSizePitchDto);
+
+        return fullSizePitchDto;
     }
 
     @Transactional
     public FullSizePitch update(FullSizePitch fullSizePitch) {
+        logger.info("Method update() called with argument: {}", fullSizePitch);
+
         if (fullSizePitch.getId() == null) {
+
+            logger.warn("Exception", FullSizePitchException.fullSizePitchEmptyIdException());
+
             throw FullSizePitchException.fullSizePitchEmptyIdException();
         }
         FullSizePitchEntity entity = fullSizePitchRepository.findByIdOptional(fullSizePitch.getId())
-                .orElseThrow(FullSizePitchException::fullSizePitchNotFoundException);
+                .orElseThrow(() -> {
+
+                    logger.warn("Exception", FullSizePitchException.fullSizePitchNotFoundException());
+
+                    return FullSizePitchException.fullSizePitchNotFoundException();
+                });
+
+        logger.info("FullSizePitch before update: {}", entity);
 
         entity.setFullPrice(fullSizePitch.getFullPrice());
         entity.setName(fullSizePitch.getName());
         entity.setHalfPitchPrice(fullSizePitch.getHalfPitchPrice());
         entity.setIsHalfRentable(fullSizePitch.getIsHalfRentable());
         fullSizePitchRepository.persist(entity);
-        return (FullSizePitch) sportObjectMapper.toDomain(entity);
+
+        logger.info("FullSizePitch updated and persisted: {}", entity);
+
+        FullSizePitch fullSizePitchDto = (FullSizePitch) sportObjectMapper.toDomain(entity);
+
+        logger.info("Updated fullSizePitch mapped from entity to DTO: {}", fullSizePitchDto);
+
+        return fullSizePitchDto;
     }
 
     @Transactional
     public FullSizePitch putEquipmentToObject(Integer sportObjectId, Integer rentEquipmentId) {
-        FullSizePitchEntity fullSizeToUpdate = fullSizePitchRepository.findById(sportObjectId);
-        if (fullSizeToUpdate == null) {
+        logger.info("Method putEquipmentToObject() called with arguments: {}, {}", sportObjectId, rentEquipmentId);
+
+        FullSizePitchEntity fullSizePitchToUpdate = fullSizePitchRepository.findById(sportObjectId);
+        if (fullSizePitchToUpdate == null) {
+
+            logger.warn("Exception", FullSizePitchException.fullSizePitchNotFoundException());
+
             throw FullSizePitchException.fullSizePitchNotFoundException();
         }
         RentEquipmentEntity rentEquipmentToAdd = rentEquipmentRepository.findById(rentEquipmentId);
         if (rentEquipmentToAdd == null) {
+
+            logger.warn("Exception", RentEquipmentException.rentEquipmentNotFoundException());
+
             throw RentEquipmentException.rentEquipmentNotFoundException();
         }
-        fullSizeToUpdate.addRentEquipment(rentEquipmentToAdd);
-        fullSizePitchRepository.persistAndFlush(fullSizeToUpdate);
-        return (FullSizePitch) sportObjectMapper.toDomain(fullSizeToUpdate);
+
+        logger.info("FullSizePitchEntity and RentEquipmentEntity to be connected: {}, {}",
+                fullSizePitchToUpdate, rentEquipmentToAdd);
+
+        fullSizePitchToUpdate.addRentEquipment(rentEquipmentToAdd);
+        fullSizePitchRepository.persistAndFlush(fullSizePitchToUpdate);
+
+        logger.info("FullSizePitchEntity with new rentEquipmentEntity in it persisted in database: {}",
+                fullSizePitchToUpdate);
+
+        FullSizePitch fullSizePitchDto = (FullSizePitch) sportObjectMapper.toDomain(fullSizePitchToUpdate);
+
+        logger.info("FullSizePitch with new rentEquipment mapped from entity to DTO: {}, {}",
+                fullSizePitchDto, fullSizePitchDto.getRentEquipmentNames());
+
+        return fullSizePitchDto;
     }
 
 }

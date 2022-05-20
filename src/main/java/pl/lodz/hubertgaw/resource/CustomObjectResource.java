@@ -27,6 +27,9 @@ public class CustomObjectResource {
     public CustomObjectResource(CustomObjectService CustomObjectService, Logger logger) {
         this.customObjectService = CustomObjectService;
         this.logger = logger;
+
+        logger.info("Constructor CustomObjectResource called");
+
     }
 
     @GET
@@ -41,7 +44,13 @@ public class CustomObjectResource {
     )
     @PermitAll
     public Response get() {
-        return Response.ok(customObjectService.findAll()).build();
+        logger.info("Method get() called");
+
+        Response response = Response.ok(customObjectService.findAll()).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
     @GET
@@ -61,7 +70,13 @@ public class CustomObjectResource {
     )
     @PermitAll
     public Response getById(@PathParam("sportObjectId") Integer sportObjectId) {
-        return Response.ok(customObjectService.findById(sportObjectId)).build();
+        logger.info("Method getById() called with argument: {}", sportObjectId);
+
+        Response response = Response.ok(customObjectService.findById(sportObjectId)).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
     @GET
@@ -81,7 +96,13 @@ public class CustomObjectResource {
     )
     @PermitAll
     public Response getByType(@PathParam("customObjectType") String customObjectType) {
-        return Response.ok(customObjectService.findByType(customObjectType)).build();
+        logger.info("Method getByType() called with argument: {}", customObjectType);
+
+        Response response = Response.ok(customObjectService.findByType(customObjectType)).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
 
@@ -100,10 +121,15 @@ public class CustomObjectResource {
             }
     )
     @RolesAllowed("ADMIN")
-    public Response post(@Valid CustomObject CustomObject) {
-        logger.info("post");
-        final CustomObject saved = customObjectService.save(CustomObject);
-        return Response.status(Response.Status.CREATED).entity(saved).build();
+    public Response post(@Valid CustomObject customObject) {
+        logger.info("Method post() called with argument: {}", customObject);
+
+        final CustomObject saved = customObjectService.save(customObject);
+        Response response = Response.status(Response.Status.CREATED).entity(saved).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
     @PUT
@@ -121,9 +147,15 @@ public class CustomObjectResource {
             }
     )
     @RolesAllowed("ADMIN")
-    public Response put(@Valid CustomObject CustomObject) {
-        final CustomObject saved = customObjectService.update(CustomObject);
-        return Response.ok(saved).build();
+    public Response put(@Valid CustomObject customObject) {
+        logger.info("Method put() called with argument: {}", customObject);
+
+        final CustomObject saved = customObjectService.update(customObject);
+        Response response = Response.ok(saved).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
     @PUT
@@ -144,8 +176,14 @@ public class CustomObjectResource {
     @RolesAllowed("ADMIN")
     public Response putEquipmentToObject(@PathParam("sportObjectId") Integer sportObjectId,
                                          @PathParam("rentEquipmentId") Integer rentEquipmentId) {
+        logger.info("Method putEquipmentToObject() called with arguments: {}, {}", sportObjectId, rentEquipmentId);
+
         final CustomObject saved = customObjectService.putEquipmentToObject(sportObjectId, rentEquipmentId);
-        return Response.ok(saved).build();
+        Response response = Response.ok(saved).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
 

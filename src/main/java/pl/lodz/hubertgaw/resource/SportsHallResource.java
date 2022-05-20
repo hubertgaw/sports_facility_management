@@ -27,6 +27,8 @@ public class SportsHallResource {
     public SportsHallResource(SportsHallService SportsHallService, Logger logger) {
         this.sportsHallService = SportsHallService;
         this.logger = logger;
+
+        logger.info("Constructor SportsHallResource called");
     }
 
     @GET
@@ -41,7 +43,13 @@ public class SportsHallResource {
     )
     @PermitAll
     public Response get() {
-        return Response.ok(sportsHallService.findAll()).build();
+        logger.info("Method get() called");
+
+        Response response = Response.ok(sportsHallService.findAll()).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
     @GET
@@ -61,7 +69,13 @@ public class SportsHallResource {
     )
     @PermitAll
     public Response getById(@PathParam("sportObjectId") Integer sportObjectId) {
-        return Response.ok(sportsHallService.findById(sportObjectId)).build();
+        logger.info("Method getById() called with argument: {}", sportObjectId);
+
+        Response response = Response.ok(sportsHallService.findById(sportObjectId)).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
     @POST
@@ -79,10 +93,15 @@ public class SportsHallResource {
             }
     )
     @RolesAllowed("ADMIN")
-    public Response post(@Valid SportsHall SportsHall) {
-        logger.info("post");
-        final SportsHall saved = sportsHallService.save(SportsHall);
-        return Response.status(Response.Status.CREATED).entity(saved).build();
+    public Response post(@Valid SportsHall sportsHall) {
+        logger.info("Method post() called with argument: {}", sportsHall);
+
+        final SportsHall saved = sportsHallService.save(sportsHall);
+        Response response = Response.status(Response.Status.CREATED).entity(saved).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
     @PUT
@@ -100,9 +119,15 @@ public class SportsHallResource {
             }
     )
     @RolesAllowed("ADMIN")
-    public Response put(@Valid SportsHall SportsHall) {
-        final SportsHall saved = sportsHallService.update(SportsHall);
-        return Response.ok(saved).build();
+    public Response put(@Valid SportsHall sportsHall) {
+        logger.info("Method put() called with argument: {}", sportsHall);
+
+        final SportsHall saved = sportsHallService.update(sportsHall);
+        Response response = Response.ok(saved).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
     @PUT
@@ -123,8 +148,14 @@ public class SportsHallResource {
     @RolesAllowed("ADMIN")
     public Response putEquipmentToObject(@PathParam("sportObjectId") Integer sportObjectId,
                                          @PathParam("rentEquipmentId") Integer rentEquipmentId) {
+        logger.info("Method putEquipmentToObject() called with arguments: {}, {}", sportObjectId, rentEquipmentId);
+
         final SportsHall saved = sportsHallService.putEquipmentToObject(sportObjectId, rentEquipmentId);
-        return Response.ok(saved).build();
+        Response response = Response.ok(saved).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
 }

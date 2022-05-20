@@ -26,6 +26,8 @@ public class FullSizePitchResource {
     public FullSizePitchResource(pl.lodz.hubertgaw.service.FullSizePitchService FullSizePitchService, Logger logger) {
         this.fullSizePitchService = FullSizePitchService;
         this.logger = logger;
+
+        logger.info("Constructor FullSizePitchResource called");
     }
 
     @GET
@@ -40,7 +42,13 @@ public class FullSizePitchResource {
     )
     @PermitAll
     public Response get() {
-        return Response.ok(fullSizePitchService.findAll()).build();
+        logger.info("Method get() called");
+
+        Response response = Response.ok(fullSizePitchService.findAll()).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
     @GET
@@ -60,7 +68,13 @@ public class FullSizePitchResource {
     )
     @PermitAll
     public Response getById(@PathParam("sportObjectId") Integer sportObjectId) {
-        return Response.ok(fullSizePitchService.findById(sportObjectId)).build();
+        logger.info("Method getById() called with argument: {}", sportObjectId);
+
+        Response response = Response.ok(fullSizePitchService.findById(sportObjectId)).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
     @POST
@@ -78,10 +92,15 @@ public class FullSizePitchResource {
             }
     )
     @RolesAllowed("ADMIN")
-    public Response post(@Valid FullSizePitch FullSizePitch) {
-        logger.info("post");
-        final FullSizePitch saved = fullSizePitchService.save(FullSizePitch);
-        return Response.status(Response.Status.CREATED).entity(saved).build();
+    public Response post(@Valid FullSizePitch fullSizePitch) {
+        logger.info("Method post() called with argument: {}", fullSizePitch);
+
+        final FullSizePitch saved = fullSizePitchService.save(fullSizePitch);
+        Response response = Response.status(Response.Status.CREATED).entity(saved).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
     @PUT
@@ -100,8 +119,14 @@ public class FullSizePitchResource {
     )
     @RolesAllowed("ADMIN")
     public Response put(@Valid FullSizePitch fullSizePitch) {
+        logger.info("Method put() called with argument: {}", fullSizePitch);
+
         final FullSizePitch saved = fullSizePitchService.update(fullSizePitch);
-        return Response.ok(saved).build();
+        Response response = Response.ok(saved).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
     @PUT
@@ -122,8 +147,14 @@ public class FullSizePitchResource {
     @RolesAllowed("ADMIN")
     public Response putEquipmentToObject(@PathParam("sportObjectId") Integer sportObjectId,
                                          @PathParam("rentEquipmentId") Integer rentEquipmentId) {
+        logger.info("Method putEquipmentToObject() called with arguments: {}, {}", sportObjectId, rentEquipmentId);
+
         final FullSizePitch saved = fullSizePitchService.putEquipmentToObject(sportObjectId, rentEquipmentId);
-        return Response.ok(saved).build();
+        Response response = Response.ok(saved).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
 }

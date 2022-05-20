@@ -29,6 +29,8 @@ public class SportObjectResource {
         this.sportObjectService = sportObjectService;
         this.bookingService = bookingService;
         this.logger = logger;
+
+        logger.info("Constructor SportObjectResource called");
     }
 
     @GET
@@ -43,7 +45,13 @@ public class SportObjectResource {
     )
     @PermitAll
     public Response get() {
-        return Response.ok(sportObjectService.findAll()).build();
+        logger.info("Method get() called");
+
+        Response response = Response.ok(sportObjectService.findAll()).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
     @GET
@@ -63,7 +71,13 @@ public class SportObjectResource {
     )
     @PermitAll
     public Response getById(@PathParam("sportObjectId") Integer sportObjectId) {
-        return Response.ok(sportObjectService.findById(sportObjectId)).build();
+        logger.info("Method getById() called with argument: {}", sportObjectId);
+
+        Response response = Response.ok(sportObjectService.findById(sportObjectId)).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
 
@@ -85,9 +99,14 @@ public class SportObjectResource {
     @RolesAllowed("ADMIN")
     public Response putEquipmentToObject(@PathParam("sportObjectId") Integer sportObjectId,
                                          @PathParam("rentEquipmentId") Integer rentEquipmentId) {
+        logger.info("Method putEquipmentToObject() called with arguments: {}, {}", sportObjectId, rentEquipmentId);
+
         final SportObject saved = sportObjectService.putEquipmentToObject(sportObjectId, rentEquipmentId);
-        //jeśli już koszytsam z "ręcznego" return to mozna ustawić zwracany language/header poprzez wywołanie po ok().
-        return Response.ok(saved).build();
+        Response response = Response.ok(saved).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
 
@@ -108,9 +127,14 @@ public class SportObjectResource {
     )
     @RolesAllowed("ADMIN")
     public Response deleteSportObject(@PathParam("sportObjectId") Integer sportObjectId) {
+        logger.info("Method deleteSportObject called with argument: {}", sportObjectId);
+
         sportObjectService.deleteSportObjectById(sportObjectId);
-//        bez tego return byłoby to samo - jax-rs automatycznie ogarnia podstawowe responsy
-        return Response.noContent().build();
+        Response response = Response.noContent().build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
 
     }
 
@@ -131,7 +155,13 @@ public class SportObjectResource {
     )
     @PermitAll
     public Response getBookingsFromSportObject(@PathParam("sportObjectId") Integer sportObjectId) {
-        return Response.ok(sportObjectService.findBookingsForSportObject(sportObjectId)).build();
+        logger.info("Method getBookingsFromSportObject() called with argument: {}", sportObjectId);
+
+        Response response = Response.ok(sportObjectService.findBookingsForSportObject(sportObjectId)).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
 }

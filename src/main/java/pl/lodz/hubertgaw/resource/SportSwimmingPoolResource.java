@@ -26,6 +26,8 @@ public class SportSwimmingPoolResource {
     public SportSwimmingPoolResource(pl.lodz.hubertgaw.service.SportSwimmingPoolService SportSwimmingPoolService, Logger logger) {
         this.sportSwimmingPoolService = SportSwimmingPoolService;
         this.logger = logger;
+
+        logger.info("Constructor SportSwimmingPoolResource called");
     }
 
     @GET
@@ -40,7 +42,13 @@ public class SportSwimmingPoolResource {
     )
     @PermitAll
     public Response get() {
-        return Response.ok(sportSwimmingPoolService.findAll()).build();
+        logger.info("Method get() called");
+
+        Response response = Response.ok(sportSwimmingPoolService.findAll()).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
     @GET
@@ -60,7 +68,13 @@ public class SportSwimmingPoolResource {
     )
     @PermitAll
     public Response getById(@PathParam("sportObjectId") Integer sportObjectId) {
-        return Response.ok(sportSwimmingPoolService.findById(sportObjectId)).build();
+        logger.info("Method getById() called with argument: {}", sportObjectId);
+
+        Response response = Response.ok(sportSwimmingPoolService.findById(sportObjectId)).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
     @POST
@@ -78,10 +92,15 @@ public class SportSwimmingPoolResource {
             }
     )
     @RolesAllowed("ADMIN")
-    public Response post(@Valid SportSwimmingPool SportSwimmingPool) {
-        logger.info("post");
-        final SportSwimmingPool saved = sportSwimmingPoolService.save(SportSwimmingPool);
-        return Response.status(Response.Status.CREATED).entity(saved).build();
+    public Response post(@Valid SportSwimmingPool sportSwimmingPool) {
+        logger.info("Method post() called with argument: {}", sportSwimmingPool);
+
+        final SportSwimmingPool saved = sportSwimmingPoolService.save(sportSwimmingPool);
+        Response response = Response.status(Response.Status.CREATED).entity(saved).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
     @PUT
@@ -99,9 +118,15 @@ public class SportSwimmingPoolResource {
             }
     )
     @RolesAllowed("ADMIN")
-    public Response put(@Valid SportSwimmingPool SportSwimmingPool) {
-        final SportSwimmingPool saved = sportSwimmingPoolService.update(SportSwimmingPool);
-        return Response.ok(saved).build();
+    public Response put(@Valid SportSwimmingPool sportSwimmingPool) {
+        logger.info("Method put() called with argument: {}", sportSwimmingPool);
+
+        final SportSwimmingPool saved = sportSwimmingPoolService.update(sportSwimmingPool);
+        Response response = Response.ok(saved).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
     @PUT
@@ -122,8 +147,14 @@ public class SportSwimmingPoolResource {
     @RolesAllowed("ADMIN")
     public Response putEquipmentToObject(@PathParam("sportObjectId") Integer sportObjectId,
                                          @PathParam("rentEquipmentId") Integer rentEquipmentId) {
+        logger.info("Method putEquipmentToObject() called with arguments: {}, {}", sportObjectId, rentEquipmentId);
+
         final SportSwimmingPool saved = sportSwimmingPoolService.putEquipmentToObject(sportObjectId, rentEquipmentId);
-        return Response.ok(saved).build();
+        Response response = Response.ok(saved).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
 

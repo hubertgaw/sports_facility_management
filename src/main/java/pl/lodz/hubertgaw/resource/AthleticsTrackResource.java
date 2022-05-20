@@ -27,6 +27,8 @@ public class AthleticsTrackResource {
     public AthleticsTrackResource(AthleticsTrackService athleticsTrackService, Logger logger) {
         this.athleticsTrackService = athleticsTrackService;
         this.logger = logger;
+
+        logger.info("Constructor AthleticsTrackResource called");
     }
 
     @GET
@@ -41,7 +43,13 @@ public class AthleticsTrackResource {
     )
     @PermitAll
     public Response get() {
-        return Response.ok(athleticsTrackService.findAll()).build();
+        logger.info("Method get() called");
+
+        Response response = Response.ok(athleticsTrackService.findAll()).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
     @GET
@@ -61,8 +69,13 @@ public class AthleticsTrackResource {
     )
     @PermitAll
     public Response getById(@PathParam("athleticsTrackId") Integer athleticsTrackId) {
-//        Optional<AthleticsTrack> optional = athleticsTrackService.findById(athleticsTrackId);
-        return Response.ok(athleticsTrackService.findById(athleticsTrackId)).build();
+        logger.info("Method getById() called with argument: {}", athleticsTrackId);
+
+        Response response = Response.ok(athleticsTrackService.findById(athleticsTrackId)).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
     @POST
@@ -81,9 +94,14 @@ public class AthleticsTrackResource {
     )
     @RolesAllowed("ADMIN")
     public Response post(@Valid AthleticsTrack athleticsTrack) {
-        logger.info("post");
+        logger.info("Method post() called with argument: {}", athleticsTrack);
+
         final AthleticsTrack saved = athleticsTrackService.save(athleticsTrack);
-        return Response.status(Response.Status.CREATED).entity(saved).build();
+        Response response = Response.status(Response.Status.CREATED).entity(saved).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
     @PUT
@@ -102,8 +120,14 @@ public class AthleticsTrackResource {
     )
     @RolesAllowed("ADMIN")
     public Response put(@Valid AthleticsTrack athleticsTrack) {
+        logger.info("Method put() called with argument: {}", athleticsTrack);
+
         final AthleticsTrack saved = athleticsTrackService.update(athleticsTrack);
-        return Response.ok(saved).build();
+        Response response = Response.ok(saved).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
     @PUT
@@ -124,8 +148,14 @@ public class AthleticsTrackResource {
     @RolesAllowed("ADMIN")
     public Response putEquipmentToObject(@PathParam("athleticsTrackId") Integer athleticsTrackId,
                                          @PathParam("rentEquipmentId") Integer rentEquipmentId) {
+        logger.info("Method putEquipmentToObject() called with arguments: {}, {}", athleticsTrackId, rentEquipmentId);
+
         final AthleticsTrack saved = athleticsTrackService.putEquipmentToObject(athleticsTrackId, rentEquipmentId);
-        return Response.ok(saved).build();
+        Response response = Response.ok(saved).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
 }

@@ -37,6 +37,8 @@ public class BookingResource {
         this.bookingService = bookingService;
         this.logger = logger;
         this.userService = userService;
+
+        logger.info("Constructor BookingResource called");
     }
 
     @GET
@@ -51,7 +53,13 @@ public class BookingResource {
     )
     @RolesAllowed("ADMIN")
     public Response get() {
-        return Response.ok(bookingService.findAll()).build();
+        logger.info("Method get() called");
+
+        Response response = Response.ok(bookingService.findAll()).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
     @GET
@@ -71,8 +79,14 @@ public class BookingResource {
     )
     @RolesAllowed("ADMIN")
     public Response getById(@PathParam("bookingId") Integer bookingId) {
+        logger.info("Method getById() called with argument: {}", bookingId);
+
 //        Optional<RentEquipment> optional =
-        return Response.ok(bookingService.findById(bookingId)).build();
+        Response response = Response.ok(bookingService.findById(bookingId)).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
 
@@ -90,7 +104,11 @@ public class BookingResource {
     @RolesAllowed("USER")
     public Response getLoggedUserBookings(@Context SecurityContext userContext) {
         Integer loggedUserId = userService.findByEmail(userContext.getUserPrincipal().getName()).getId();
-        return Response.ok(bookingService.findByUserId(loggedUserId)).build();
+        Response response = Response.ok(bookingService.findByUserId(loggedUserId)).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
     @POST
@@ -109,10 +127,14 @@ public class BookingResource {
     )
     @PermitAll
     public Response post(@Valid Booking booking, @Context SecurityContext userContext) {
-        logger.info("post");
+        logger.info("Method post() called with arguments: {}, {}", booking, userContext);
 //        Principal user = userContext.getUserPrincipal();
         final Booking saved = bookingService.save(booking, userContext);
-        return Response.status(Response.Status.CREATED).entity(saved).build();
+        Response response = Response.status(Response.Status.CREATED).entity(saved).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
     @PUT
@@ -131,8 +153,14 @@ public class BookingResource {
     )
     @RolesAllowed({"ADMIN","USER"})
     public Response put(@Context SecurityContext userContext, @Valid Booking booking) {
+        logger.info("Method put() called with arguments: {}, {}", userContext, booking);
+
         final Booking saved = bookingService.update(booking, userContext);
-        return Response.ok(saved).build();
+        Response response = Response.ok(saved).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
     @DELETE
@@ -152,10 +180,15 @@ public class BookingResource {
     )
     @RolesAllowed({"USER", "ADMIN"})
     public Response deleteBooking(@Context SecurityContext userContext, @PathParam("bookingId") Integer bookingId) {
+        logger.info("Method deleteBooking() called with arguments: {}, {}", userContext, bookingId);
+
         bookingService.deleteBookingById(bookingId, userContext);
-        return Response.noContent().build();
+        Response response = Response.noContent().build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
 
     }
 
-    //TODO i osobny dla usuwania
 }

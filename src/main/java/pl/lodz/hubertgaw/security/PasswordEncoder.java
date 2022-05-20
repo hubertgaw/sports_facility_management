@@ -5,6 +5,7 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
@@ -19,6 +20,8 @@ public class PasswordEncoder {
     Integer iteration;
     @ConfigProperty(name = "pl.lodz.hubertgaw.sports_facility_management.password.keylength")
     Integer keyLength;
+
+    //this method is not logged because of security reasons (in order to prevent password disclosure)
 
     /**
      * More info (https://www.owasp.org/index.php/Hashing_Java) 404 :(

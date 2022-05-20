@@ -27,6 +27,8 @@ public class DartRoomResource {
     public DartRoomResource(DartRoomService DartRoomService, Logger logger) {
         this.dartRoomService = DartRoomService;
         this.logger = logger;
+
+        logger.info("Constructor DartRoomResource called");
     }
 
     @GET
@@ -41,7 +43,13 @@ public class DartRoomResource {
     )
     @PermitAll
     public Response get() {
-        return Response.ok(dartRoomService.findAll()).build();
+        logger.info("Method get() called");
+
+        Response response = Response.ok(dartRoomService.findAll()).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
     @GET
@@ -61,7 +69,13 @@ public class DartRoomResource {
     )
     @PermitAll
     public Response getById(@PathParam("sportObjectId") Integer sportObjectId) {
-        return Response.ok(dartRoomService.findById(sportObjectId)).build();
+        logger.info("Method getById() called with argument: {}", sportObjectId);
+
+        Response response = Response.ok(dartRoomService.findById(sportObjectId)).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
     @POST
@@ -79,10 +93,15 @@ public class DartRoomResource {
             }
     )
     @RolesAllowed("ADMIN")
-    public Response post(@Valid DartRoom DartRoom) {
-        logger.info("post");
-        final DartRoom saved = dartRoomService.save(DartRoom);
-        return Response.status(Response.Status.CREATED).entity(saved).build();
+    public Response post(@Valid DartRoom dartRoom) {
+        logger.info("Method post() called with argument: {}", dartRoom);
+
+        final DartRoom saved = dartRoomService.save(dartRoom);
+        Response response = Response.status(Response.Status.CREATED).entity(saved).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
     @PUT
@@ -100,9 +119,15 @@ public class DartRoomResource {
             }
     )
     @RolesAllowed("ADMIN")
-    public Response put(@Valid DartRoom DartRoom) {
-        final DartRoom saved = dartRoomService.update(DartRoom);
-        return Response.ok(saved).build();
+    public Response put(@Valid DartRoom dartRoom) {
+        logger.info("Method put() called with argument: {}", dartRoom);
+
+        final DartRoom saved = dartRoomService.update(dartRoom);
+        Response response = Response.ok(saved).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
     @PUT
@@ -123,8 +148,14 @@ public class DartRoomResource {
     @RolesAllowed("ADMIN")
     public Response putEquipmentToObject(@PathParam("sportObjectId") Integer sportObjectId,
                                          @PathParam("rentEquipmentId") Integer rentEquipmentId) {
+        logger.info("Method putEquipmentToObject() called with arguments: {}, {}", sportObjectId, rentEquipmentId);
+
         final DartRoom saved = dartRoomService.putEquipmentToObject(sportObjectId, rentEquipmentId);
-        return Response.ok(saved).build();
+        Response response = Response.ok(saved).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
 }

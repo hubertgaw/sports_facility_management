@@ -27,6 +27,8 @@ public class BeachVolleyballCourtResource {
     public BeachVolleyballCourtResource(BeachVolleyballCourtService beachVolleyballCourtService, Logger logger) {
         this.beachVolleyballCourtService = beachVolleyballCourtService;
         this.logger = logger;
+
+        logger.info("Constructor BeachVolleyballCourtResource called");
     }
 
     @GET
@@ -41,7 +43,13 @@ public class BeachVolleyballCourtResource {
     )
     @PermitAll
     public Response get() {
-        return Response.ok(beachVolleyballCourtService.findAll()).build();
+        logger.info("Method get() called");
+
+        Response response = Response.ok(beachVolleyballCourtService.findAll()).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
     @GET
@@ -61,7 +69,13 @@ public class BeachVolleyballCourtResource {
     )
     @PermitAll
     public Response getById(@PathParam("sportObjectId") Integer sportObjectId) {
-        return Response.ok(beachVolleyballCourtService.findById(sportObjectId)).build();
+        logger.info("Method getById() called with argument: {}", sportObjectId);
+
+        Response response = Response.ok(beachVolleyballCourtService.findById(sportObjectId)).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
     @POST
@@ -80,9 +94,14 @@ public class BeachVolleyballCourtResource {
     )
     @RolesAllowed("ADMIN")
     public Response post(@Valid BeachVolleyballCourt beachVolleyballCourt) {
-        logger.info("post");
+        logger.info("Method post() called with argument: {}", beachVolleyballCourt);
+
         final BeachVolleyballCourt saved = beachVolleyballCourtService.save(beachVolleyballCourt);
-        return Response.status(Response.Status.CREATED).entity(saved).build();
+        Response response = Response.status(Response.Status.CREATED).entity(saved).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
     @PUT
@@ -101,8 +120,14 @@ public class BeachVolleyballCourtResource {
     )
     @RolesAllowed("ADMIN")
     public Response put(@Valid BeachVolleyballCourt beachVolleyballCourt) {
+        logger.info("Method put() called with argument: {}", beachVolleyballCourt);
+
         final BeachVolleyballCourt saved = beachVolleyballCourtService.update(beachVolleyballCourt);
-        return Response.ok(saved).build();
+        Response response = Response.ok(saved).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
     @PUT
@@ -123,8 +148,14 @@ public class BeachVolleyballCourtResource {
     @RolesAllowed("ADMIN")
     public Response putEquipmentToObject(@PathParam("sportObjectId") Integer sportObjectId,
                                          @PathParam("rentEquipmentId") Integer rentEquipmentId) {
+        logger.info("Method putEquipmentToObject() called with arguments: {}, {}", sportObjectId, rentEquipmentId);
+
         final BeachVolleyballCourt saved = beachVolleyballCourtService.putEquipmentToObject(sportObjectId, rentEquipmentId);
-        return Response.ok(saved).build();
+        Response response = Response.ok(saved).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
 }

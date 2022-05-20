@@ -26,6 +26,8 @@ public class TennisCourtResource {
     public TennisCourtResource(pl.lodz.hubertgaw.service.TennisCourtService TennisCourtService, Logger logger) {
         this.tennisCourtService = TennisCourtService;
         this.logger = logger;
+
+        logger.info("Constructor TennisCourtResource called");
     }
 
     @GET
@@ -40,7 +42,13 @@ public class TennisCourtResource {
     )
     @PermitAll
     public Response get() {
-        return Response.ok(tennisCourtService.findAll()).build();
+        logger.info("Method get() called");
+
+        Response response = Response.ok(tennisCourtService.findAll()).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
     @GET
@@ -60,7 +68,13 @@ public class TennisCourtResource {
     )
     @PermitAll
     public Response getById(@PathParam("sportObjectId") Integer sportObjectId) {
-        return Response.ok(tennisCourtService.findById(sportObjectId)).build();
+        logger.info("Method getById() called with argument: {}", sportObjectId);
+
+        Response response = Response.ok(tennisCourtService.findById(sportObjectId)).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
     @POST
@@ -78,10 +92,15 @@ public class TennisCourtResource {
             }
     )
     @RolesAllowed("ADMIN")
-    public Response post(@Valid TennisCourt TennisCourt) {
-        logger.info("post");
-        final TennisCourt saved = tennisCourtService.save(TennisCourt);
-        return Response.status(Response.Status.CREATED).entity(saved).build();
+    public Response post(@Valid TennisCourt tennisCourt) {
+        logger.info("Method post() called with argument: {}", tennisCourt);
+
+        final TennisCourt saved = tennisCourtService.save(tennisCourt);
+        Response response = Response.status(Response.Status.CREATED).entity(saved).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
     @PUT
@@ -99,9 +118,15 @@ public class TennisCourtResource {
             }
     )
     @RolesAllowed("ADMIN")
-    public Response put(@Valid TennisCourt TennisCourt) {
-        final TennisCourt saved = tennisCourtService.update(TennisCourt);
-        return Response.ok(saved).build();
+    public Response put(@Valid TennisCourt tennisCourt) {
+        logger.info("Method put() called with argument: {}", tennisCourt);
+
+        final TennisCourt saved = tennisCourtService.update(tennisCourt);
+        Response response = Response.ok(saved).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
     @PUT
@@ -122,8 +147,14 @@ public class TennisCourtResource {
     @RolesAllowed("ADMIN")
     public Response putEquipmentToObject(@PathParam("sportObjectId") Integer sportObjectId,
                                          @PathParam("rentEquipmentId") Integer rentEquipmentId) {
+        logger.info("Method putEquipmentToObject() called with arguments: {}, {}", sportObjectId, rentEquipmentId);
+
         final TennisCourt saved = tennisCourtService.putEquipmentToObject(sportObjectId, rentEquipmentId);
-        return Response.ok(saved).build();
+        Response response = Response.ok(saved).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
 }

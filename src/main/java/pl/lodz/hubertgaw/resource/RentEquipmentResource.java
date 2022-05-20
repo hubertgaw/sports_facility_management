@@ -27,6 +27,8 @@ public class RentEquipmentResource {
     public RentEquipmentResource(RentEquipmentService rentEquipmentService, Logger logger) {
         this.rentEquipmentService = rentEquipmentService;
         this.logger = logger;
+
+        logger.info("Constructor RentEquipmentResource called");
     }
 
     @GET
@@ -41,7 +43,13 @@ public class RentEquipmentResource {
     )
     @PermitAll
     public Response get() {
-        return Response.ok(rentEquipmentService.findAll()).build();
+        logger.info("Method get() called");
+
+        Response response = Response.ok(rentEquipmentService.findAll()).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
     @GET
@@ -61,8 +69,14 @@ public class RentEquipmentResource {
     )
     @PermitAll
     public Response getById(@PathParam("rentEquipmentId") Integer rentEquipmentId) {
+        logger.info("Method getById() called with argument: {}", rentEquipmentId);
+
 //        Optional<RentEquipment> optional =
-        return Response.ok(rentEquipmentService.findById(rentEquipmentId)).build();
+        Response response = Response.ok(rentEquipmentService.findById(rentEquipmentId)).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
     @POST
@@ -81,9 +95,14 @@ public class RentEquipmentResource {
     )
     @RolesAllowed("ADMIN")
     public Response post(@Valid RentEquipment rentEquipment) {
-        logger.info("post");
+        logger.info("Method post() called with argument: {}", rentEquipment);
+
         final RentEquipment saved = rentEquipmentService.save(rentEquipment);
-        return Response.status(Response.Status.CREATED).entity(saved).build();
+        Response response = Response.status(Response.Status.CREATED).entity(saved).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
     @PUT
@@ -102,8 +121,14 @@ public class RentEquipmentResource {
     )
     @RolesAllowed("ADMIN")
     public Response put(@Valid RentEquipment rentEquipment) {
+        logger.info("Method put() called with argument: {}", rentEquipment);
+
         final RentEquipment saved = rentEquipmentService.update(rentEquipment);
-        return Response.ok(saved).build();
+        Response response = Response.ok(saved).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
     @DELETE
@@ -123,8 +148,14 @@ public class RentEquipmentResource {
     )
     @RolesAllowed("ADMIN")
     public Response deleteRentEquipment(@PathParam("rentEquipmentId") Integer rentEquipmentId) {
+        logger.info("Method deleteRentEquipment() called with argument: {}", rentEquipmentId);
+
         rentEquipmentService.deleteRentEquipmentById(rentEquipmentId);
-        return Response.noContent().build();
+        Response response = Response.noContent().build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
 
     }
 

@@ -26,6 +26,8 @@ public class SmallPitchResource {
     public SmallPitchResource(pl.lodz.hubertgaw.service.SmallPitchService SmallPitchService, Logger logger) {
         this.smallPitchService = SmallPitchService;
         this.logger = logger;
+
+        logger.info("Constructor SmallPitchResource called");
     }
 
     @GET
@@ -40,7 +42,13 @@ public class SmallPitchResource {
     )
     @PermitAll
     public Response get() {
-        return Response.ok(smallPitchService.findAll()).build();
+        logger.info("Method get() called");
+
+        Response response = Response.ok(smallPitchService.findAll()).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
     @GET
@@ -60,7 +68,13 @@ public class SmallPitchResource {
     )
     @PermitAll
     public Response getById(@PathParam("sportObjectId") Integer sportObjectId) {
-        return Response.ok(smallPitchService.findById(sportObjectId)).build();
+        logger.info("Method getById() called with argument: {}", sportObjectId);
+
+        Response response = Response.ok(smallPitchService.findById(sportObjectId)).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
     @POST
@@ -78,10 +92,15 @@ public class SmallPitchResource {
             }
     )
     @RolesAllowed("ADMIN")
-    public Response post(@Valid SmallPitch SmallPitch) {
-        logger.info("post");
-        final SmallPitch saved = smallPitchService.save(SmallPitch);
-        return Response.status(Response.Status.CREATED).entity(saved).build();
+    public Response post(@Valid SmallPitch smallPitch) {
+        logger.info("Method post() called with argument: {}", smallPitch);
+
+        final SmallPitch saved = smallPitchService.save(smallPitch);
+        Response response = Response.status(Response.Status.CREATED).entity(saved).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
     @PUT
@@ -99,9 +118,15 @@ public class SmallPitchResource {
             }
     )
     @RolesAllowed("ADMIN")
-    public Response put(@Valid SmallPitch SmallPitch) {
-        final SmallPitch saved = smallPitchService.update(SmallPitch);
-        return Response.ok(saved).build();
+    public Response put(@Valid SmallPitch smallPitch) {
+        logger.info("Method put() called with argument: {}", smallPitch);
+
+        final SmallPitch saved = smallPitchService.update(smallPitch);
+        Response response = Response.ok(saved).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
     @PUT
@@ -122,8 +147,14 @@ public class SmallPitchResource {
     @RolesAllowed("ADMIN")
     public Response putEquipmentToObject(@PathParam("sportObjectId") Integer sportObjectId,
                                          @PathParam("rentEquipmentId") Integer rentEquipmentId) {
+        logger.info("Method putEquipmentToObject() called with arguments: {}, {}", sportObjectId, rentEquipmentId);
+
         final SmallPitch saved = smallPitchService.putEquipmentToObject(sportObjectId, rentEquipmentId);
-        return Response.ok(saved).build();
+        Response response = Response.ok(saved).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
 }

@@ -32,6 +32,8 @@ public class UserResource {
     public UserResource(UserService userService, Logger logger) {
         this.userService = userService;
         this.logger = logger;
+
+        logger.info("Constructor UserResource called");
     }
 
     @GET
@@ -46,7 +48,13 @@ public class UserResource {
     )
     @RolesAllowed("ADMIN")
     public Response get() {
-        return Response.ok(userService.findAll()).build();
+        logger.info("Method get() called");
+
+        Response response = Response.ok(userService.findAll()).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
     @GET
@@ -66,7 +74,13 @@ public class UserResource {
     )
     @RolesAllowed("ADMIN")
     public Response getById(@PathParam("userId") Integer userId) {
-        return Response.ok(userService.findById(userId)).build();
+        logger.info("Method getById() called with argument: {}", userId);
+
+        Response response = Response.ok(userService.findById(userId)).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
 
@@ -83,7 +97,13 @@ public class UserResource {
     )
     @RolesAllowed("USER")
     public Response getLoggedUser(@Context SecurityContext userContext) {
-        return Response.ok(userService.findByEmail(userContext.getUserPrincipal().getName())).build();
+        logger.info("Method getLoggedUser() called with argument: {}", userContext);
+
+        Response response = Response.ok(userService.findByEmail(userContext.getUserPrincipal().getName())).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
 
@@ -104,7 +124,13 @@ public class UserResource {
     )
     @RolesAllowed("ADMIN")
     public Response getByEmail(@PathParam("email") String email) {
-        return Response.ok(userService.findByEmail(email)).build();
+        logger.info("Method getByEmail() called with argument: {}", email);
+
+        Response response = Response.ok(userService.findByEmail(email)).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
     @GET
@@ -124,7 +150,13 @@ public class UserResource {
     )
     @RolesAllowed("ADMIN")
     public Response getByRole(@PathParam("role") String role) {
-        return Response.ok(userService.findByRole(role)).build();
+        logger.info("Method getByRole() called with argument: {}", role);
+
+        Response response = Response.ok(userService.findByRole(role)).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
 
@@ -144,9 +176,14 @@ public class UserResource {
     )
     @PermitAll
     public Response post(@Valid User user) {
-        logger.info("post");
+        logger.info("Method post() called with argument: {}", user);
+
         final User saved = userService.save(user);
-        return Response.status(Response.Status.CREATED).entity(saved).build();
+        Response response = Response.status(Response.Status.CREATED).entity(saved).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
     @PUT
@@ -165,8 +202,14 @@ public class UserResource {
     )
     @RolesAllowed("ADMIN")
     public Response putUserByAdmin(@Valid User user) {
+        logger.info("Method putUserByAdmin() called with argument: {}", user);
+
         final User saved = userService.update(user);
-        return Response.ok(saved).build();
+        Response response = Response.ok(saved).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
     @PUT
@@ -182,10 +225,16 @@ public class UserResource {
     )
     @RolesAllowed("USER")
     public Response putUserByUser(@Context SecurityContext userContext, @Valid User user) {
+        logger.info("Method putUserByUser() called with argument: {}, {}", userContext, user);
+
         int updatedUserId = userService.findByEmail((userContext.getUserPrincipal().getName())).getId();
         user.setId(updatedUserId);
         final User saved = userService.update(user);
-        return Response.ok(saved).build();
+        Response response = Response.ok(saved).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
     }
 
     @DELETE
@@ -205,8 +254,14 @@ public class UserResource {
     )
     @RolesAllowed("ADMIN")
     public Response deleteUser(@PathParam("userId") Integer userId) {
+        logger.info("Method deleteUser() called with arguments: {}", userId);
+
         userService.deleteUserById(userId);
-        return Response.noContent().build();
+        Response response = Response.noContent().build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
 
     }
 
