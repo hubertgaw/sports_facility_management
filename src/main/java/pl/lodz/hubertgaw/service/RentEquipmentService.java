@@ -137,7 +137,7 @@ public class RentEquipmentService {
 
         entity.setName(rentEquipment.getName());
         entity.setPrice(rentEquipment.getPrice());
-        rentEquipmentRepository.persist(entity); //todo check
+        rentEquipmentRepository.persist(entity);
 
         logger.info("RentEquipment updated and persisted: {}", entity);
 

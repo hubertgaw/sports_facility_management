@@ -127,7 +127,7 @@ public class BookingService {
 
         if (!userContext.isUserInRole("USER")) {
 
-            logger.info("User:{} is not in role USER", userContext.getUserPrincipal().getName());
+            logger.info("User is not in role USER");
 
             if (null == booking.getEmail() || booking.getEmail().isEmpty()) {
 
@@ -250,7 +250,7 @@ public class BookingService {
         entity.setLastName(entityToUpdate.getLastName());
         entity.setEmail(entityToUpdate.getEmail());
         entity.setPhoneNumber(entityToUpdate.getPhoneNumber());
-        bookingRepository.persist(entity); //todo check
+        bookingRepository.persist(entity);
 
         logger.info("BookingEntity after persisting in database:{}", entity);
 
