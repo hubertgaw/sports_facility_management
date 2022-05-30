@@ -1,6 +1,7 @@
 package pl.lodz.hubertgaw;
 
 import io.quarkus.test.junit.QuarkusTest;
+import io.quarkus.test.security.TestSecurity;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -22,12 +23,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static pl.lodz.hubertgaw.utils.TestUtils.createClimbingWall;
 
 @QuarkusTest
+@TestSecurity(authorizationEnabled = false)
 public class ClimbingWallResourceTest {
-
-    @Inject
-    SportObjectService sportObjectService;
-    @Inject
-    RentEquipmentService rentEquipmentService;
 
     @Test
     public void getAll() {
@@ -54,9 +51,25 @@ public class ClimbingWallResourceTest {
                 .statusCode(200)
                 .extract().as(ClimbingWall.class);
         assertThat(saved).isEqualTo(got);
-        clearClimbingWallAfterTest(saved.getId());
+        TestUtils.clearSportObjectAfterTest(saved.getId());
 //        assertThat(saved.equals(got)).isTrue();
     }
+
+    @Test
+    public void getByIdFailNotFound() {
+        Response response = given()
+                .when().get("/api/climbing_walls/{climbingWallId}", 0)// there will be for sure no object with id 0
+                .then()
+                .statusCode(404)
+                .extract().response();
+
+        String responseMessage = response.getBody().asString();
+        String actualExceptionMessage = TestUtils.getActualExceptionMessage(responseMessage);
+        assertThat(response.statusCode()).isEqualTo(404);
+        assertThat(actualExceptionMessage).isEqualTo("Climbing wall for given id not found. Try to search in all sport objects or change the id.");
+
+    }
+
 
     @Test
     public void post() {
@@ -70,7 +83,7 @@ public class ClimbingWallResourceTest {
                 .statusCode(201)
                 .extract().as(ClimbingWall.class);
         assertThat(saved.getId()).isNotNull();
-        clearClimbingWallAfterTest(saved.getId());
+        TestUtils.clearSportObjectAfterTest(saved.getId());
     }
 
     @Test
@@ -107,7 +120,7 @@ public class ClimbingWallResourceTest {
                 .statusCode(200)
                 .extract().as(ClimbingWall.class);
         assertThat(updated.getName()).isEqualTo("Updated");
-        clearClimbingWallAfterTest(saved.getId());
+        TestUtils.clearSportObjectAfterTest(saved.getId());
 
     }
 
@@ -130,7 +143,7 @@ public class ClimbingWallResourceTest {
                 .put("/api/climbing_walls")
                 .then()
                 .statusCode(400);
-        clearClimbingWallAfterTest(saved.getId());
+        TestUtils.clearSportObjectAfterTest(saved.getId());
     }
 
     @Test
@@ -160,7 +173,7 @@ public class ClimbingWallResourceTest {
         assertThat(response.statusCode()).isEqualTo(403);
         assertThat(actualExceptionMessage).isEqualTo("Sport object with given name already exists");
 
-        clearClimbingWallAfterTest(saved.getId());
+        TestUtils.clearSportObjectAfterTest(saved.getId());
     }
 
     @Test
@@ -190,7 +203,7 @@ public class ClimbingWallResourceTest {
         assertThat(response.statusCode()).isEqualTo(400);
         assertThat(actualExceptionMessage).isEqualTo("Id for updating climbing wall cannot be null");
 
-        clearClimbingWallAfterTest(id);
+        TestUtils.clearSportObjectAfterTest(id);
     }
 
     @Test
@@ -249,8 +262,8 @@ public class ClimbingWallResourceTest {
         //compare name of rent equipment
         assertThat(new ArrayList<>(trackAfterPut.getRentEquipmentNames()).get(0)).isEqualTo(savedEquipment.getName());
 
-        clearRentEquipmentAfterTest(savedEquipment.getId());
-        clearClimbingWallAfterTest(savedTrack.getId());
+        TestUtils.clearRentEquipmentAfterTest(savedEquipment.getId());
+        TestUtils.clearSportObjectAfterTest(savedTrack.getId());
     }
 
     @Test
@@ -286,8 +299,8 @@ public class ClimbingWallResourceTest {
         assertThat(actualExceptionMessage).isEqualTo("Climbing wall for given id not found. Try to search in all sport objects or change the id.");
 
 
-        clearRentEquipmentAfterTest(savedEquipment.getId());
-//        clearClimbingWallAfterTest(savedTrack.getId());
+        TestUtils.clearRentEquipmentAfterTest(savedEquipment.getId());
+//        TestUtils.clearSportObjectAfterTest(savedTrack.getId());
     }
 
     @Test
@@ -318,15 +331,7 @@ public class ClimbingWallResourceTest {
         assertThat(response.statusCode()).isEqualTo(404);
         assertThat(actualExceptionMessage).isEqualTo("Rent equipment for given id not found!");
 
-        clearClimbingWallAfterTest(savedTrack.getId());
+        TestUtils.clearSportObjectAfterTest(savedTrack.getId());
     }
 
-
-    private void clearClimbingWallAfterTest(Integer id) {
-        sportObjectService.deleteSportObjectById(id);
-    }
-
-    private void clearRentEquipmentAfterTest(Integer id) {
-        rentEquipmentService.deleteRentEquipmentById(id);
-    }
 }

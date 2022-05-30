@@ -21,6 +21,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import pl.lodz.hubertgaw.service.exception.SportObjectException;
+import pl.lodz.hubertgaw.service.exception.UserException;
 
 
 @ApplicationScoped
@@ -82,6 +83,26 @@ public class SportObjectService {
 
         return sportObjectDto;
     }
+
+    public SportObject findByName(String sportObjectName) {
+        logger.info("Method findByName() called with argument: {}", sportObjectName);
+
+        SportObjectEntity entity = sportObjectRepository.findByName(sportObjectName);
+
+        if (entity == null) {
+            logger.warn("Exception", SportObjectException.sportObjectForGivenNameNotFoundException());
+            throw SportObjectException.sportObjectForGivenNameNotFoundException();
+        }
+
+        logger.info("SportObjectEntity by name: {} found in database:{}", sportObjectName, entity);
+
+        SportObject sportObjectDto = sportObjectMapper.toDomain(entity);
+
+        logger.info("SportObject by id: {} found after mapping to DTO:{}", sportObjectName, sportObjectDto);
+
+        return sportObjectDto;
+    }
+
 
     @Transactional
     public SportObject putEquipmentToObject(Integer sportObjectId, Integer rentEquipmentId) {

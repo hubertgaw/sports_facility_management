@@ -1,46 +1,33 @@
 package pl.lodz.hubertgaw;
 
 import io.quarkus.test.junit.QuarkusTest;
+import io.quarkus.test.security.TestSecurity;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
-import pl.lodz.hubertgaw.dto.AthleticsTrack;
 import pl.lodz.hubertgaw.dto.Booking;
-import pl.lodz.hubertgaw.dto.ClimbingWall;
 import pl.lodz.hubertgaw.dto.RentEquipment;
 import pl.lodz.hubertgaw.mapper.BookingMapper;
-import pl.lodz.hubertgaw.mapper.RentEquipmentMapper;
 import pl.lodz.hubertgaw.repository.entity.BookingEntity;
 import pl.lodz.hubertgaw.repository.entity.RentEquipmentEntity;
-import pl.lodz.hubertgaw.service.BookingService;
 import pl.lodz.hubertgaw.service.RentEquipmentService;
-import pl.lodz.hubertgaw.service.SportObjectService;
 import pl.lodz.hubertgaw.utils.TestUtils;
 
 import javax.inject.Inject;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
-import static pl.lodz.hubertgaw.utils.TestUtils.createAthleticsTrack;
-import static pl.lodz.hubertgaw.utils.TestUtils.createBooking;
 
 @QuarkusTest
+@TestSecurity(authorizationEnabled = false)
 public class BookingResourceTest {
 
-
-    @Inject
-    BookingService bookingService;
-    @Inject
-    SportObjectService sportObjectService;
     @Inject
     RentEquipmentService rentEquipmentService;
-    @Inject
-    RentEquipmentMapper rentEquipmentMapper;
+
     @Inject
     BookingMapper bookingMapper;
 
@@ -55,7 +42,7 @@ public class BookingResourceTest {
 
     @Test
     public void getById() {
-        Booking booking = prepareObjectsForBooking();
+        Booking booking = TestUtils.prepareObjectsWithCapacityForBooking(10);
 
         Booking savedBooking = given()
                 .contentType(ContentType.JSON)
@@ -72,17 +59,17 @@ public class BookingResourceTest {
                 .extract().as(Booking.class);
 
         assertThat(savedBooking).isEqualTo(gotBooking);
-        clearBookingAfterTest(savedBooking.getId());
+        TestUtils.clearBookingAfterTest(savedBooking.getId());
         BookingEntity bookingEntity = bookingMapper.toEntity(savedBooking);
         for (RentEquipmentEntity rentEquipmentEntity : bookingEntity.getRentEquipment()) {
-            clearRentEquipmentAfterTest(rentEquipmentEntity.getId());
+            TestUtils.clearRentEquipmentAfterTest(rentEquipmentEntity.getId());
         }
-        clearAthleticsTrackAfterTest(bookingEntity.getSportObject().getId());
+        TestUtils.clearSportObjectAfterTest(bookingEntity.getSportObject().getId());
     }
 
     @Test
     public void post() {
-        Booking booking = prepareObjectsForBooking();
+        Booking booking = TestUtils.prepareObjectsWithCapacityForBooking(10);
 
         Booking saved = given()
                 .contentType(ContentType.JSON)
@@ -93,19 +80,19 @@ public class BookingResourceTest {
                 .statusCode(201)
                 .extract().as(Booking.class);
         assertThat(saved.getId()).isNotNull();
-        clearBookingAfterTest(saved.getId());
+        TestUtils.clearBookingAfterTest(saved.getId());
         BookingEntity bookingEntity = bookingMapper.toEntity(saved);
         for (RentEquipmentEntity rentEquipmentEntity : bookingEntity.getRentEquipment()) {
-            clearRentEquipmentAfterTest(rentEquipmentEntity.getId());
+            TestUtils.clearRentEquipmentAfterTest(rentEquipmentEntity.getId());
         }
-        clearAthleticsTrackAfterTest(bookingEntity.getSportObject().getId());
+        TestUtils.clearSportObjectAfterTest(bookingEntity.getSportObject().getId());
 
     }
 
     @Test
     public void put() {
 
-        Booking booking = prepareObjectsForBooking();
+        Booking booking = TestUtils.prepareObjectsWithCapacityForBooking(10);
         Booking saved = given()
                 .contentType(ContentType.JSON)
                 .accept(ContentType.JSON)
@@ -124,12 +111,12 @@ public class BookingResourceTest {
                 .statusCode(200)
                 .extract().as(Booking.class);
         assertThat(updated.getLastName()).isEqualTo("Updated");
-        clearBookingAfterTest(saved.getId());
+        TestUtils.clearBookingAfterTest(saved.getId());
         BookingEntity bookingEntity = bookingMapper.toEntity(saved);
         for (RentEquipmentEntity rentEquipmentEntity : bookingEntity.getRentEquipment()) {
-            clearRentEquipmentAfterTest(rentEquipmentEntity.getId());
+            TestUtils.clearRentEquipmentAfterTest(rentEquipmentEntity.getId());
         }
-        clearAthleticsTrackAfterTest(bookingEntity.getSportObject().getId());
+        TestUtils.clearSportObjectAfterTest(bookingEntity.getSportObject().getId());
 
 
     }
@@ -137,7 +124,7 @@ public class BookingResourceTest {
 
     @Test
     public void putFailNotFound() {
-        Booking booking = prepareObjectsForBooking();
+        Booking booking = TestUtils.prepareObjectsWithCapacityForBooking(10);
 
         //there will never be id 0 in repo.
         booking.setId(0);
@@ -156,15 +143,15 @@ public class BookingResourceTest {
         assertThat(actualExceptionMessage).isEqualTo("Booking for given id not found!");
 
         for (String rentEquipmentName : booking.getRentEquipmentNames()) {
-            clearRentEquipmentAfterTest(rentEquipmentService.findByName(rentEquipmentName).getId());
+            TestUtils.clearRentEquipmentAfterTest(rentEquipmentService.findByName(rentEquipmentName).getId());
         }
-        clearAthleticsTrackAfterTest(booking.getSportObjectId());
+        TestUtils.clearSportObjectAfterTest(booking.getSportObjectId());
 
     }
 
     @Test
     public void putFailEmptyId() {
-        Booking booking = prepareObjectsForBooking();
+        Booking booking = TestUtils.prepareObjectsWithCapacityForBooking(10);
         Booking saved = given()
                 .contentType(ContentType.JSON)
                 .accept(ContentType.JSON)
@@ -189,17 +176,17 @@ public class BookingResourceTest {
         assertThat(response.statusCode()).isEqualTo(400);
         assertThat(actualExceptionMessage).isEqualTo("Id for updating booking cannot be null");
 
-        clearBookingAfterTest(id);
+        TestUtils.clearBookingAfterTest(id);
         BookingEntity bookingEntity = bookingMapper.toEntity(saved);
         for (RentEquipmentEntity rentEquipmentEntity : bookingEntity.getRentEquipment()) {
-            clearRentEquipmentAfterTest(rentEquipmentEntity.getId());
+            TestUtils.clearRentEquipmentAfterTest(rentEquipmentEntity.getId());
         }
-        clearAthleticsTrackAfterTest(bookingEntity.getSportObject().getId());
+        TestUtils.clearSportObjectAfterTest(bookingEntity.getSportObject().getId());
     }
 
     @Test
     public void delete() {
-        Booking booking = prepareObjectsForBooking();
+        Booking booking = TestUtils.prepareObjectsWithCapacityForBooking(10);
         Booking saved = given()
                 .contentType(ContentType.JSON)
                 .accept(ContentType.JSON)
@@ -221,9 +208,9 @@ public class BookingResourceTest {
 
         BookingEntity bookingEntity = bookingMapper.toEntity(saved);
         for (RentEquipmentEntity rentEquipmentEntity : bookingEntity.getRentEquipment()) {
-            clearRentEquipmentAfterTest(rentEquipmentEntity.getId());
+            TestUtils.clearRentEquipmentAfterTest(rentEquipmentEntity.getId());
         }
-        clearAthleticsTrackAfterTest(bookingEntity.getSportObject().getId());
+        TestUtils.clearSportObjectAfterTest(bookingEntity.getSportObject().getId());
     }
 
     @Test
@@ -244,7 +231,7 @@ public class BookingResourceTest {
 
     @Test
     public void validateBookingSportObjectNotFound() {
-        Booking booking = prepareObjectsForBooking();
+        Booking booking = TestUtils.prepareObjectsWithCapacityForBooking(10);
         int sportObjectId = booking.getSportObjectId(); // we will need to delete created sportObject
         booking.setSportObjectId(0);// there will never be id 0 in repository
 
@@ -262,15 +249,15 @@ public class BookingResourceTest {
         assertThat(actualExceptionMessage).isEqualTo("Sport object for given id not found");
 
         for (String rentEquipmentName : booking.getRentEquipmentNames()) {
-            clearRentEquipmentAfterTest(rentEquipmentService.findByName(rentEquipmentName).getId());
+            TestUtils.clearRentEquipmentAfterTest(rentEquipmentService.findByName(rentEquipmentName).getId());
         }
-        clearAthleticsTrackAfterTest(sportObjectId);
+        TestUtils.clearSportObjectAfterTest(sportObjectId);
 
     }
 
     @Test
     public void validateBookingRentEquipmentForSportObjectNotFound() {
-        Booking booking = prepareObjectsForBooking();
+        Booking booking = TestUtils.prepareObjectsWithCapacityForBooking(10);
         RentEquipment rentEquipmentNotInBooking = TestUtils.createRentEquipment();
         given()
                 .contentType(ContentType.JSON)
@@ -296,15 +283,15 @@ public class BookingResourceTest {
         assertThat(actualExceptionMessage).isEqualTo("Rent equipment with specified name not found in booked sport object");
 
         for (String rentEquipmentName : booking.getRentEquipmentNames()) {
-            clearRentEquipmentAfterTest(rentEquipmentService.findByName(rentEquipmentName).getId());
+            TestUtils.clearRentEquipmentAfterTest(rentEquipmentService.findByName(rentEquipmentName).getId());
         }
-        clearAthleticsTrackAfterTest(booking.getSportObjectId());
+        TestUtils.clearSportObjectAfterTest(booking.getSportObjectId());
 
     }
 
     @Test
     public void validateBookingWrongDatePast() {
-        Booking booking = prepareObjectsForBooking();
+        Booking booking = TestUtils.prepareObjectsWithCapacityForBooking(10);
         booking.setFromDate(LocalDateTime.of(2020,1,1,12,0));
 
         Response response = given()
@@ -321,15 +308,15 @@ public class BookingResourceTest {
         assertThat(actualExceptionMessage).isEqualTo("Date cannot be a past value");
 
         for (String rentEquipmentName : booking.getRentEquipmentNames()) {
-            clearRentEquipmentAfterTest(rentEquipmentService.findByName(rentEquipmentName).getId());
+            TestUtils.clearRentEquipmentAfterTest(rentEquipmentService.findByName(rentEquipmentName).getId());
         }
-        clearAthleticsTrackAfterTest(booking.getSportObjectId());
+        TestUtils.clearSportObjectAfterTest(booking.getSportObjectId());
 
     }
 
     @Test
     public void validateBookingWrongDateMinutesNot30Or00() {
-        Booking booking = prepareObjectsForBooking();
+        Booking booking = TestUtils.prepareObjectsWithCapacityForBooking(10);
         booking.setFromDate(LocalDateTime.of(2025,1,1,12,15)); // minutes - 15; should be 00 or 30
 
         Response response = given()
@@ -346,15 +333,21 @@ public class BookingResourceTest {
         assertThat(actualExceptionMessage).isEqualTo("Time in the date must be a full hour or half past hour");
 
         for (String rentEquipmentName : booking.getRentEquipmentNames()) {
-            clearRentEquipmentAfterTest(rentEquipmentService.findByName(rentEquipmentName).getId());
+            TestUtils.clearRentEquipmentAfterTest(rentEquipmentService.findByName(rentEquipmentName).getId());
         }
-        clearAthleticsTrackAfterTest(booking.getSportObjectId());
+        TestUtils.clearSportObjectAfterTest(booking.getSportObjectId());
 
     }
 
+    // in this test there will be validation of booking based on time
+    // (for example booking is at 12:00 for 2 hours so there cannot be any
+    // booking from 12:00 to 14:00) we use object with getHalfRent set to false
+    // and with no capacity field, because in this type of object there can be
+    // only one booking in a time (in bookings for objects with capacity there
+    // can be more bookings than one in a time).
     @Test
-    public void validateBookingIfNewBookingConflictWithExisting() {
-        Booking bookingDefault = prepareObjectsForBooking();
+    public void validateBookingBasedOnTime() {
+        Booking bookingDefault = TestUtils.prepareObjectsWithHalfRentForBooking(false);
         bookingDefault.setFromDate(LocalDateTime.of(2024,1,1,12,0)); // default date to tests: 1.01.2024, 12:00
         Booking savedDefault = given()
                 .contentType(ContentType.JSON)
@@ -442,8 +435,8 @@ public class BookingResourceTest {
                 .extract().as(Booking.class);
         assertThat(savedAfterRight.getId()).isNotNull();
 
-
-        Booking bookingConflictTimeButOtherObject = prepareObjectsForBooking(); //should pass
+        // Booking with the same time as previous, but it is another object so booking can be added
+        Booking bookingConflictTimeButOtherObject = TestUtils.prepareObjectsWithCapacityForBooking(10); //should pass
         bookingConflictTimeButOtherObject.setFromDate(LocalDateTime.of(2024,1,1,12,0)); //12:00-15:00 existing booking is 12:00-15:00, but object with other id
         Booking savedConflictTimeButOtherObject = given()
                 .contentType(ContentType.JSON)
@@ -456,93 +449,238 @@ public class BookingResourceTest {
         assertThat(savedConflictTimeButOtherObject.getId()).isNotNull();
 
 
-        clearBookingAfterTest(savedDefault.getId());
-        clearBookingAfterTest(savedBeforeRight.getId());
-        clearBookingAfterTest(savedAfterRight.getId());
-        clearBookingAfterTest(savedConflictTimeButOtherObject.getId());
+        TestUtils.clearBookingAfterTest(savedDefault.getId());
+        TestUtils.clearBookingAfterTest(savedBeforeRight.getId());
+        TestUtils.clearBookingAfterTest(savedAfterRight.getId());
+        TestUtils.clearBookingAfterTest(savedConflictTimeButOtherObject.getId());
 
 
         BookingEntity bookingEntityDefault = bookingMapper.toEntity(savedDefault);
         for (RentEquipmentEntity rentEquipmentEntity : bookingEntityDefault.getRentEquipment()) {
-            clearRentEquipmentAfterTest(rentEquipmentEntity.getId());
+            TestUtils.clearRentEquipmentAfterTest(rentEquipmentEntity.getId());
         }
-        clearAthleticsTrackAfterTest(bookingEntityDefault.getSportObject().getId());
+        TestUtils.clearSportObjectAfterTest(bookingEntityDefault.getSportObject().getId());
 
         BookingEntity bookingEntityConflictTimeButOtherObject = bookingMapper.toEntity(savedConflictTimeButOtherObject);
         for (RentEquipmentEntity rentEquipmentEntity : bookingEntityConflictTimeButOtherObject.getRentEquipment()) {
-            clearRentEquipmentAfterTest(rentEquipmentEntity.getId());
+            TestUtils.clearRentEquipmentAfterTest(rentEquipmentEntity.getId());
         }
-        clearAthleticsTrackAfterTest(bookingEntityConflictTimeButOtherObject.getSportObject().getId());
-
+        TestUtils.clearSportObjectAfterTest(bookingEntityConflictTimeButOtherObject.getSportObject().getId());
 
     }
 
-    private Booking prepareObjectsForBooking() {
-        AthleticsTrack athleticsTrack = TestUtils.createAthleticsTrack();
-        RentEquipment rentEquipment1 = TestUtils.createRentEquipment();
-        RentEquipment rentEquipment2 = TestUtils.createRentEquipment();
-
-        AthleticsTrack savedTrack = given()
+    // in this test we are checking if booking's validation based on halfRent property
+    // works. If that property in object is set to true there can be 2 bookings at the time
+    // (if in booking that property is also set to true). In previous test we checked how it
+    // works if property in object is set to false.
+    @Test
+    public void validateBookingBasedOnHalfRentTrueAndExistedBookingIsHalfRentTrue() {
+        Booking bookingDefault = TestUtils.prepareObjectsWithHalfRentForBooking(true);
+        bookingDefault.setFromDate(LocalDateTime.of(2024, 1, 1, 12, 0)); // default date to tests: 1.01.2024, 12:00
+        // when that property is set to true there can be 2 bookings at the same time
+        bookingDefault.setHalfRent(true);
+        //first booking
+        Booking savedDefault = given()
                 .contentType(ContentType.JSON)
                 .accept(ContentType.JSON)
-                .body(athleticsTrack)
-                .post("/api/athletics_tracks")
+                .body(bookingDefault)
+                .post("/api/bookings")
                 .then()
                 .statusCode(201)
-                .extract().as(AthleticsTrack.class);
+                .extract().as(Booking.class);
+        assertThat(savedDefault).isNotNull();
 
-        RentEquipment savedEquipment1 = given()
+        // second booking at the same time - it should be added
+        Booking secondBooking = given()
                 .contentType(ContentType.JSON)
                 .accept(ContentType.JSON)
-                .body(rentEquipment1)
-                .post("/api/rent_equipments")
+                .body(bookingDefault)
+                .post("/api/bookings")
                 .then()
                 .statusCode(201)
-                .extract().as(RentEquipment.class);
+                .extract().as(Booking.class);
+        assertThat(secondBooking).isNotNull();
 
-        RentEquipment savedEquipment2 = given()
+        // third booking at the same time - it shouldn't be added
+        Response tooMuchBookingsResponse = given()
                 .contentType(ContentType.JSON)
                 .accept(ContentType.JSON)
-                .body(rentEquipment2)
-                .post("/api/rent_equipments")
+                .body(bookingDefault)
+                .post("/api/bookings")
+                .then()
+                .statusCode(403)
+                .extract().response();
+        String responseMessageHalfRentTrue = tooMuchBookingsResponse.getBody().asString();
+        String actualExceptionMessageHalfRentTrue = TestUtils.getActualExceptionMessage(responseMessageHalfRentTrue);
+        assertThat(tooMuchBookingsResponse.statusCode()).isEqualTo(403);
+        assertThat(actualExceptionMessageHalfRentTrue).isEqualTo("There is already booking for this object in given time");
+
+
+        Booking bookingWithObjectHalfRentFalse = TestUtils.prepareObjectsWithHalfRentForBooking(false);
+        bookingWithObjectHalfRentFalse.setFromDate(LocalDateTime.of(2024, 1, 3, 12, 0));
+        bookingWithObjectHalfRentFalse.setHalfRent(true);
+        Response wrongHalfRentResponse = given()
+                .contentType(ContentType.JSON)
+                .accept(ContentType.JSON)
+                .body(bookingWithObjectHalfRentFalse)
+                .post("/api/bookings")
+                .then()
+                .statusCode(400)
+                .extract().response();
+        String responseMessageWrongHalfRent = wrongHalfRentResponse.getBody().asString();
+        String actualExceptionWrongHalfRent = TestUtils.getActualExceptionMessage(responseMessageWrongHalfRent);
+        assertThat(wrongHalfRentResponse.statusCode()).isEqualTo(400);
+        assertThat(actualExceptionWrongHalfRent).isEqualTo("Field half rented cannot be applicable to provided object");
+
+        TestUtils.clearBookingAfterTest(savedDefault.getId());
+        TestUtils.clearBookingAfterTest(secondBooking.getId());
+    }
+
+    @Test
+    public void validateBookingBasedOnHalfRentTrueAndExistedBookingIsHalfRentFalse() {
+        Booking bookingDefault = TestUtils.prepareObjectsWithHalfRentForBooking(true);
+        bookingDefault.setFromDate(LocalDateTime.of(2024, 1, 1, 12, 0)); // default date to tests: 1.01.2024, 12:00
+        // we set it to false, so there can be only one booking at the time (even if in object halfRent is set to true)
+        bookingDefault.setHalfRent(false);
+        //first booking
+        Booking savedDefault = given()
+                .contentType(ContentType.JSON)
+                .accept(ContentType.JSON)
+                .body(bookingDefault)
+                .post("/api/bookings")
                 .then()
                 .statusCode(201)
-                .extract().as(RentEquipment.class);
+                .extract().as(Booking.class);
+        assertThat(savedDefault).isNotNull();
 
-        //add equipment to athletics track
-        given()
+        // second booking at the same time - it should not be added (even for half rent)
+        Response tooMuchBookingsResponse = given()
                 .contentType(ContentType.JSON)
                 .accept(ContentType.JSON)
-                .body(athleticsTrack)
-                .put("/api/athletics_tracks/{athleticsTrackId}/rent_equipment/{rentEquipmentId}",
-                        savedTrack.getId(), savedEquipment1.getId());
+                .body(bookingDefault)
+                .post("/api/bookings")
+                .then()
+                .statusCode(403)
+                .extract().response();
+        String responseMessage = tooMuchBookingsResponse.getBody().asString();
+        String actualExceptionMessage = TestUtils.getActualExceptionMessage(responseMessage);
+        assertThat(tooMuchBookingsResponse.statusCode()).isEqualTo(403);
+        assertThat(actualExceptionMessage).isEqualTo("There is already booking for this object in given time");
 
-        given()
+        bookingDefault.setHalfRent(true);
+        Response tooMuchBookingsResponseWithHalfRent = given()
                 .contentType(ContentType.JSON)
                 .accept(ContentType.JSON)
-                .body(athleticsTrack)
-                .put("/api/athletics_tracks/{athleticsTrackId}/rent_equipment/{rentEquipmentId}",
-                        savedTrack.getId(), savedEquipment2.getId());
+                .body(bookingDefault)
+                .post("/api/bookings")
+                .then()
+                .statusCode(403)
+                .extract().response();
+        String responseMessageWithHalfRent = tooMuchBookingsResponseWithHalfRent.getBody().asString();
+        String actualExceptionMessageWithHalfRent = TestUtils.getActualExceptionMessage(responseMessageWithHalfRent);
+        assertThat(tooMuchBookingsResponseWithHalfRent.statusCode()).isEqualTo(403);
+        assertThat(actualExceptionMessageWithHalfRent).isEqualTo("There is already booking for this object in given time");
 
 
-
-        List<RentEquipment> rentEquipments = Arrays.asList(savedEquipment1, savedEquipment2);
-
-        return createBooking(savedTrack.getId(), rentEquipments);
+        TestUtils.clearBookingAfterTest(savedDefault.getId());
     }
 
 
-    // todo zmienic userContext
-    private void clearBookingAfterTest(Integer id) {
-        bookingService.deleteBookingById(id, null);
+    @Test
+    public void validateBookingBasedOnCapacity() {
+        Booking bookingDefault = TestUtils.prepareObjectsWithCapacityForBooking(10);
+        bookingDefault.setFromDate(LocalDateTime.of(2024, 1, 1, 12, 0)); // default date to tests: 1.01.2024, 12:00
+        bookingDefault.setNumberOfPlaces(5);
+        //first booking
+        Booking savedDefault = given()
+                .contentType(ContentType.JSON)
+                .accept(ContentType.JSON)
+                .body(bookingDefault)
+                .post("/api/bookings")
+                .then()
+                .statusCode(201)
+                .extract().as(Booking.class);
+        assertThat(savedDefault).isNotNull();
+
+        bookingDefault.setNumberOfPlaces(4);
+        // second booking at the same time - it should be added (numberOfPlaces 9/10)
+        Booking secondBooking = given()
+                .contentType(ContentType.JSON)
+                .accept(ContentType.JSON)
+                .body(bookingDefault)
+                .post("/api/bookings")
+                .then()
+                .statusCode(201)
+                .extract().as(Booking.class);
+        assertThat(secondBooking).isNotNull();
+
+        bookingDefault.setNumberOfPlaces(1);
+        // third booking at the same time - it should be added (numberOfPlaces 10/10)
+        Booking thirdBooking = given()
+                .contentType(ContentType.JSON)
+                .accept(ContentType.JSON)
+                .body(bookingDefault)
+                .post("/api/bookings")
+                .then()
+                .statusCode(201)
+                .extract().as(Booking.class);
+        assertThat(thirdBooking).isNotNull();
+
+        // fourth booking at the same time - it shouldn't be added (too much numberOfPlaces)
+        Response tooMuchBookingsResponse = given()
+                .contentType(ContentType.JSON)
+                .accept(ContentType.JSON)
+                .body(bookingDefault)
+                .post("/api/bookings")
+                .then()
+                .statusCode(403)
+                .extract().response();
+        String responseMessageHalfRentTrue = tooMuchBookingsResponse.getBody().asString();
+        String actualExceptionMessageHalfRentTrue = TestUtils.getActualExceptionMessage(responseMessageHalfRentTrue);
+        assertThat(tooMuchBookingsResponse.statusCode()).isEqualTo(403);
+        assertThat(actualExceptionMessageHalfRentTrue).isEqualTo("There is already booking for this object in given time");
+
     }
 
-    private void clearRentEquipmentAfterTest(Integer id) {
-        rentEquipmentService.deleteRentEquipmentById(id);
+    @Test
+    public void validateBookingHalfRentAndCapacityBothSpecified() {
+        Booking bookingWithHalfRentAndCapacity = TestUtils.prepareObjectsWithHalfRentForBooking(true);
+        bookingWithHalfRentAndCapacity.setFromDate(LocalDateTime.of(2024, 1, 3, 12, 0));
+        bookingWithHalfRentAndCapacity.setHalfRent(true);
+        bookingWithHalfRentAndCapacity.setNumberOfPlaces(10);
+        Response response = given()
+                .contentType(ContentType.JSON)
+                .accept(ContentType.JSON)
+                .body(bookingWithHalfRentAndCapacity)
+                .post("/api/bookings")
+                .then()
+                .statusCode(400)
+                .extract().response();
+        String responseMessageWrongHalfRent = response.getBody().asString();
+        String actualExceptionWrongHalfRent = TestUtils.getActualExceptionMessage(responseMessageWrongHalfRent);
+        assertThat(response.statusCode()).isEqualTo(400);
+        assertThat(actualExceptionWrongHalfRent).isEqualTo("Number of people cannot be provided along with half rent");
+
     }
 
-    private void clearAthleticsTrackAfterTest(Integer id) {
-        sportObjectService.deleteSportObjectById(id);
+    @Test
+    public void validateBookingCapacityNotAllowedButSpecified() {
+        Booking bookingWithCapacity = TestUtils.prepareObjectsWithHalfRentForBooking(true); // With half Rent means capacity is null
+        bookingWithCapacity.setFromDate(LocalDateTime.of(2024, 1, 3, 12, 0));
+        bookingWithCapacity.setNumberOfPlaces(10);
+        Response response = given()
+                .contentType(ContentType.JSON)
+                .accept(ContentType.JSON)
+                .body(bookingWithCapacity)
+                .post("/api/bookings")
+                .then()
+                .statusCode(400)
+                .extract().response();
+        String responseMessageWrongHalfRent = response.getBody().asString();
+        String actualExceptionWrongHalfRent = TestUtils.getActualExceptionMessage(responseMessageWrongHalfRent);
+        assertThat(response.statusCode()).isEqualTo(400);
+        assertThat(actualExceptionWrongHalfRent).isEqualTo("Field number of places cannot be applicable to provided object");
+
     }
 
 

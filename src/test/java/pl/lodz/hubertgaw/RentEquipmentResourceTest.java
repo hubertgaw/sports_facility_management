@@ -1,6 +1,7 @@
 package pl.lodz.hubertgaw;
 
 import io.quarkus.test.junit.QuarkusTest;
+import io.quarkus.test.security.TestSecurity;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -17,10 +18,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static pl.lodz.hubertgaw.utils.TestUtils.createRentEquipment;
 
 @QuarkusTest
+@TestSecurity(authorizationEnabled = false)
 public class RentEquipmentResourceTest {
-
-    @Inject
-    RentEquipmentService rentEquipmentService;
 
     @Test
     public void getAll() {
@@ -47,8 +46,60 @@ public class RentEquipmentResourceTest {
                 .statusCode(200)
                 .extract().as(RentEquipment.class);
         assertThat(saved).isEqualTo(got);
-        clearRentEquipmentAfterTest(saved.getId());
+        TestUtils.clearRentEquipmentAfterTest(saved.getId());
 //        assertThat(saved.equals(got)).isTrue();
+    }
+
+    @Test
+    public void getByIdFailNotFound() {
+        Response response = given()
+                .when().get("/api/rent_equipments/{rentEquipmentId}", 0)// there will be for sure no object with id 0
+                .then()
+                .statusCode(404)
+                .extract().response();
+
+        String responseMessage = response.getBody().asString();
+        String actualExceptionMessage = TestUtils.getActualExceptionMessage(responseMessage);
+        assertThat(response.statusCode()).isEqualTo(404);
+        assertThat(actualExceptionMessage).isEqualTo("Rent equipment for given id not found!");
+
+    }
+
+    @Test
+    public void getByName() {
+        RentEquipment rentEquipment = createRentEquipment();
+        RentEquipment saved = given()
+                .contentType(ContentType.JSON)
+                .accept(ContentType.JSON)
+                .body(rentEquipment)
+                .post("/api/rent_equipments")
+                .then()
+                .statusCode(201)
+                .extract().as(RentEquipment.class);
+        RentEquipment got = given()
+                .when().get("/api/rent_equipments/name/{rentEquipmentName}", saved.getName())
+                .then()
+                .statusCode(200)
+                .extract().as(RentEquipment.class);
+        assertThat(saved).isEqualTo(got);
+        TestUtils.clearRentEquipmentAfterTest(saved.getId());
+//        assertThat(saved.equals(got)).isTrue();
+    }
+
+
+    @Test
+    public void getByNameFailNotFound() {
+        Response response = given()
+                .when().get("/api/rent_equipments/name/{rentEquipmentName}", "randomNamexcxdfs")// there will be for sure no object with name provided
+                .then()
+                .statusCode(404)
+                .extract().response();
+
+        String responseMessage = response.getBody().asString();
+        String actualExceptionMessage = TestUtils.getActualExceptionMessage(responseMessage);
+        assertThat(response.statusCode()).isEqualTo(404);
+        assertThat(actualExceptionMessage).isEqualTo("No rent equipment found for specified name");
+
     }
 
     @Test
@@ -63,7 +114,7 @@ public class RentEquipmentResourceTest {
                 .statusCode(201)
                 .extract().as(RentEquipment.class);
         assertThat(saved.getId()).isNotNull();
-        clearRentEquipmentAfterTest(saved.getId());
+        TestUtils.clearRentEquipmentAfterTest(saved.getId());
     }
 
     @Test
@@ -100,7 +151,7 @@ public class RentEquipmentResourceTest {
                 .statusCode(200)
                 .extract().as(RentEquipment.class);
         assertThat(updated.getName()).isEqualTo("Updated");
-        clearRentEquipmentAfterTest(saved.getId());
+        TestUtils.clearRentEquipmentAfterTest(saved.getId());
 
     }
 
@@ -123,7 +174,7 @@ public class RentEquipmentResourceTest {
                 .put("/api/rent_equipments")
                 .then()
                 .statusCode(400);
-        clearRentEquipmentAfterTest(saved.getId());
+        TestUtils.clearRentEquipmentAfterTest(saved.getId());
     }
 
     @Test
@@ -176,7 +227,7 @@ public class RentEquipmentResourceTest {
         assertThat(response.statusCode()).isEqualTo(403);
         assertThat(actualExceptionMessage).isEqualTo("Rent equipment with given name already exists");
 
-        clearRentEquipmentAfterTest(saved.getId());
+        TestUtils.clearRentEquipmentAfterTest(saved.getId());
     }
 
     @Test
@@ -206,7 +257,7 @@ public class RentEquipmentResourceTest {
         assertThat(response.statusCode()).isEqualTo(400);
         assertThat(actualExceptionMessage).isEqualTo("Id for updating rent equipment cannot be null");
 
-        clearRentEquipmentAfterTest(id);
+        TestUtils.clearRentEquipmentAfterTest(id);
     }
 
     @Test
@@ -243,10 +294,6 @@ public class RentEquipmentResourceTest {
         String actualExceptionMessage = TestUtils.getActualExceptionMessage(responseMessage);
         assertThat(response.statusCode()).isEqualTo(404);
         assertThat(actualExceptionMessage).isEqualTo("Rent equipment for given id not found!");
-    }
-
-    private void clearRentEquipmentAfterTest(Integer id) {
-        rentEquipmentService.deleteRentEquipmentById(id);
     }
 
 }

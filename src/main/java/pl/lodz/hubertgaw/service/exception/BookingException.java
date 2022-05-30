@@ -13,7 +13,7 @@ public class BookingException extends BaseException {
     }
 
     public static BookingException bookingForUserNotFoundException() {
-        return new BookingException(NotFoundException.notFound("Booking for given user not found!"));
+        return new BookingException(ForbiddenException.forbidden("Booking for given user not found!"));
     }
 
     public static BookingException bookingEmptyIdException() {

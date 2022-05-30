@@ -81,6 +81,32 @@ public class SportObjectResource {
     }
 
 
+    @GET
+    @Path("/name/{sportObjectName}")
+    @APIResponses(
+            value = {
+                    @APIResponse(
+                            responseCode = "200",
+                            description = "Get SportObject by name",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(type = SchemaType.OBJECT, implementation = SportObject.class))),
+                    @APIResponse(
+                            responseCode = "404",
+                            description = "No SportObject found for name provided",
+                            content = @Content(mediaType = "application/json")),
+            }
+    )
+    @PermitAll
+    public Response getByName(@PathParam("sportObjectName") String sportObjectName) {
+        logger.info("Method getByName() called with argument: {}", sportObjectName);
+
+        Response response = Response.ok(sportObjectService.findByName(sportObjectName)).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
+    }
+
     @PUT
     @Path("/{sportObjectId}/rent_equipment/{rentEquipmentId}")
     @APIResponses(

@@ -7,6 +7,7 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 import org.slf4j.Logger;
 import pl.lodz.hubertgaw.dto.RentEquipment;
+import pl.lodz.hubertgaw.dto.SportObject;
 import pl.lodz.hubertgaw.service.RentEquipmentService;
 
 import javax.annotation.security.PermitAll;
@@ -78,6 +79,33 @@ public class RentEquipmentResource {
 
         return response;
     }
+
+    @GET
+    @Path("/name/{rentEquipmentName}")
+    @APIResponses(
+            value = {
+                    @APIResponse(
+                            responseCode = "200",
+                            description = "Get RentEquipment by name",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(type = SchemaType.OBJECT, implementation = SportObject.class))),
+                    @APIResponse(
+                            responseCode = "404",
+                            description = "No RentEquipment found for name provided",
+                            content = @Content(mediaType = "application/json")),
+            }
+    )
+    @PermitAll
+    public Response getByName(@PathParam("rentEquipmentName") String rentEquipmentName) {
+        logger.info("Method getByName() called with argument: {}", rentEquipmentName);
+
+        Response response = Response.ok(rentEquipmentService.findByName(rentEquipmentName)).build();
+
+        logger.info("Built response: {}", response);
+
+        return response;
+    }
+
 
     @POST
     @APIResponses(

@@ -17,6 +17,10 @@ public class SportObjectException extends BaseException {
         return new SportObjectException(NotFoundException.notFound("Sport object for given id not found"));
     }
 
+    public static SportObjectException sportObjectForGivenNameNotFoundException() {
+        return new SportObjectException(NotFoundException.notFound("Sport object for given name not found"));
+    }
+
     public static SportObjectException sportObjectEmptyIdException() {
         return new SportObjectException(EmptyPropertyException.emptyProperty("Id for updating sport object cannot be null"));
     }

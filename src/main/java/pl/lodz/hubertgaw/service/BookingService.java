@@ -108,12 +108,12 @@ public class BookingService {
                 .map(Booking.class::cast)
                 .collect(Collectors.toList());
 
-        if (bookingsByUserDto.isEmpty()) {
-
-            logger.warn("", BookingException.bookingForUserNotFoundException());
-
-            throw BookingException.bookingForUserNotFoundException();
-        }
+//        if (bookingsByUserDto.isEmpty()) {
+//
+//            logger.warn("", BookingException.bookingForUserNotFoundException());
+//
+//            throw BookingException.bookingForUserNotFoundException();
+//        }
 
         logger.info("All bookings for user: {} found (after mapping from entity to DTO): {}",
                 userId, bookingsByUserDto);
@@ -198,13 +198,8 @@ public class BookingService {
 
             logger.info("Found User with role USER:{}", userContext.getUserPrincipal().getName());
 
-            if (!checkIfUserHasBooking(
-                    booking.getId(), loggedUser.getId())) {
+            checkIfUserHasBooking(booking.getId(), loggedUser.getId());
 
-                logger.warn("Exception", BookingException.bookingForUserNotFoundException());
-
-                throw BookingException.bookingForUserNotFoundException();
-            }
             booking.setUserId(loggedUser.getId());
             booking.setEmail(loggedUser.getEmail());
             booking.setFirstName(loggedUser.getFirstName());
@@ -270,12 +265,7 @@ public class BookingService {
 
             logger.info("Found User with role USER:{}", userContext.getUserPrincipal().getName());
 
-            if (!checkIfUserHasBooking(
-                    bookingId, loggedUser.getId())) {
-                logger.warn("Exception", BookingException.bookingForUserNotFoundException());
-
-                throw BookingException.bookingForUserNotFoundException();
-            }
+            checkIfUserHasBooking(bookingId, loggedUser.getId());
         }
         BookingEntity bookingToDelete = bookingRepository.findById(bookingId);
         if (bookingToDelete == null) {
@@ -430,13 +420,17 @@ public class BookingService {
 
     }
 
-    private Boolean checkIfUserHasBooking(Integer bookingId, Integer userId) {
+    private void checkIfUserHasBooking(Integer bookingId, Integer userId) {
         logger.info("Method checkIfUserHasBooking() called with arguments: {}, {}", bookingId, userId);
 
-        boolean userHasBooking = findById(bookingId).getUserId().equals(userId);
+        bookingRepository.findByIdOptional(bookingId)
+                .orElseThrow(() -> {
 
-        logger.info("UserHasBooking: {}", userHasBooking);
+                    logger.warn("Exception", BookingException.bookingForUserNotFoundException());
 
-        return userHasBooking;
+                    return BookingException.bookingForUserNotFoundException();
+                });
+
+        logger.info("BookingEntity by id: {} found in database for user:{}", bookingId, userId);
     }
 }

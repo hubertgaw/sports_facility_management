@@ -1,6 +1,7 @@
 package pl.lodz.hubertgaw;
 
 import io.quarkus.test.junit.QuarkusTest;
+import io.quarkus.test.security.TestSecurity;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
@@ -19,12 +20,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static pl.lodz.hubertgaw.utils.TestUtils.createFullSizePitch;
 
 @QuarkusTest
+@TestSecurity(authorizationEnabled = false)
 public class FullSizePitchResourceTest {
-
-    @Inject
-    SportObjectService sportObjectService;
-    @Inject
-    RentEquipmentService rentEquipmentService;
 
     @Test
     public void getAll() {
@@ -51,8 +48,23 @@ public class FullSizePitchResourceTest {
                 .statusCode(200)
                 .extract().as(FullSizePitch.class);
         assertThat(saved).isEqualTo(got);
-        clearFullSizePitchAfterTest(saved.getId());
+        TestUtils.clearSportObjectAfterTest(saved.getId());
 //        assertThat(saved.equals(got)).isTrue();
+    }
+
+    @Test
+    public void getByIdFailNotFound() {
+        Response response = given()
+                .when().get("/api/full_size_pitches/{fullSizePitchId}", 0)// there will be for sure no object with id 0
+                .then()
+                .statusCode(404)
+                .extract().response();
+
+        String responseMessage = response.getBody().asString();
+        String actualExceptionMessage = TestUtils.getActualExceptionMessage(responseMessage);
+        assertThat(response.statusCode()).isEqualTo(404);
+        assertThat(actualExceptionMessage).isEqualTo("Full size pitch for given id not found. Try to search in all sport objects or change the id.");
+
     }
 
     @Test
@@ -67,7 +79,7 @@ public class FullSizePitchResourceTest {
                 .statusCode(201)
                 .extract().as(FullSizePitch.class);
         assertThat(saved.getId()).isNotNull();
-        clearFullSizePitchAfterTest(saved.getId());
+        TestUtils.clearSportObjectAfterTest(saved.getId());
     }
 
     @Test
@@ -104,7 +116,7 @@ public class FullSizePitchResourceTest {
                 .statusCode(200)
                 .extract().as(FullSizePitch.class);
         assertThat(updated.getName()).isEqualTo("Updated");
-        clearFullSizePitchAfterTest(saved.getId());
+        TestUtils.clearSportObjectAfterTest(saved.getId());
 
     }
 
@@ -120,16 +132,15 @@ public class FullSizePitchResourceTest {
                 .statusCode(201)
                 .extract().as(FullSizePitch.class);
         saved.setIsHalfRentable(null);
-        FullSizePitch updated = given()
+        given()
                 .contentType(ContentType.JSON)
                 .accept(ContentType.JSON)
                 .body(saved)
                 .put("/api/full_size_pitches")
                 .then()
-                .statusCode(200)
+                .statusCode(400)
                 .extract().as(FullSizePitch.class);
-        assertThat(updated.getIsHalfRentable()).isEqualTo(null);
-        clearFullSizePitchAfterTest(saved.getId());
+        TestUtils.clearSportObjectAfterTest(saved.getId());
 
     }
 
@@ -152,7 +163,7 @@ public class FullSizePitchResourceTest {
                 .put("/api/full_size_pitches")
                 .then()
                 .statusCode(400);
-        clearFullSizePitchAfterTest(saved.getId());
+        TestUtils.clearSportObjectAfterTest(saved.getId());
     }
 
     @Test
@@ -182,7 +193,7 @@ public class FullSizePitchResourceTest {
         assertThat(response.statusCode()).isEqualTo(403);
         assertThat(actualExceptionMessage).isEqualTo("Sport object with given name already exists");
 
-        clearFullSizePitchAfterTest(saved.getId());
+        TestUtils.clearSportObjectAfterTest(saved.getId());
     }
 
     @Test
@@ -212,7 +223,7 @@ public class FullSizePitchResourceTest {
         assertThat(response.statusCode()).isEqualTo(400);
         assertThat(actualExceptionMessage).isEqualTo("Id for updating full size pitch cannot be null");
 
-        clearFullSizePitchAfterTest(id);
+        TestUtils.clearSportObjectAfterTest(id);
     }
 
     @Test
@@ -271,8 +282,8 @@ public class FullSizePitchResourceTest {
         //compare name of rent equipment
         assertThat(new ArrayList<>(trackAfterPut.getRentEquipmentNames()).get(0)).isEqualTo(savedEquipment.getName());
 
-        clearRentEquipmentAfterTest(savedEquipment.getId());
-        clearFullSizePitchAfterTest(savedTrack.getId());
+        TestUtils.clearRentEquipmentAfterTest(savedEquipment.getId());
+        TestUtils.clearSportObjectAfterTest(savedTrack.getId());
     }
 
     @Test
@@ -308,8 +319,8 @@ public class FullSizePitchResourceTest {
         assertThat(actualExceptionMessage).isEqualTo("Full size pitch for given id not found. Try to search in all sport objects or change the id.");
 
 
-        clearRentEquipmentAfterTest(savedEquipment.getId());
-//        clearFullSizePitchAfterTest(savedTrack.getId());
+        TestUtils.clearRentEquipmentAfterTest(savedEquipment.getId());
+//        TestUtils.clearSportObjectAfterTest(savedTrack.getId());
     }
 
     @Test
@@ -340,15 +351,7 @@ public class FullSizePitchResourceTest {
         assertThat(response.statusCode()).isEqualTo(404);
         assertThat(actualExceptionMessage).isEqualTo("Rent equipment for given id not found!");
 
-        clearFullSizePitchAfterTest(savedTrack.getId());
+        TestUtils.clearSportObjectAfterTest(savedTrack.getId());
     }
 
-
-    private void clearFullSizePitchAfterTest(Integer id) {
-        sportObjectService.deleteSportObjectById(id);
-    }
-
-    private void clearRentEquipmentAfterTest(Integer id) {
-        rentEquipmentService.deleteRentEquipmentById(id);
-    }
 }

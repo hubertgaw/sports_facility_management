@@ -1,6 +1,7 @@
 package pl.lodz.hubertgaw;
 
 import io.quarkus.test.junit.QuarkusTest;
+import io.quarkus.test.security.TestSecurity;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -20,12 +21,8 @@ import static pl.lodz.hubertgaw.utils.TestUtils.createAthleticsTrack;
 import static pl.lodz.hubertgaw.utils.TestUtils.createRentEquipment;
 
 @QuarkusTest
+@TestSecurity(authorizationEnabled = false)
 public class SportObjectResourceTest {
-
-    @Inject
-    SportObjectService sportObjectService;
-    @Inject
-    RentEquipmentService rentEquipmentService;
 
     @Test
     public void getAll() {
@@ -52,9 +49,61 @@ public class SportObjectResourceTest {
                 .statusCode(200)
                 .extract().as(AthleticsTrack.class);
         assertThat(saved).isEqualTo(got);
-        clearAthleticsTrackAfterTest(saved.getId());
+        TestUtils.clearSportObjectAfterTest(saved.getId());
 //        assertThat(saved.equals(got)).isTrue();
     }
+
+    @Test
+    public void getByIdFailNotFound() {
+        Response response = given()
+                .when().get("/api/sport_objects/{sportObjectId}", 0)// there will be for sure no object with id 0
+                .then()
+                .statusCode(404)
+                .extract().response();
+
+        String responseMessage = response.getBody().asString();
+        String actualExceptionMessage = TestUtils.getActualExceptionMessage(responseMessage);
+        assertThat(response.statusCode()).isEqualTo(404);
+        assertThat(actualExceptionMessage).isEqualTo("Sport object for given id not found");
+
+    }
+
+    @Test
+    public void getByName() {
+        AthleticsTrack athleticsTrack = createAthleticsTrack();
+        SportObject saved = (SportObject) given()
+                .contentType(ContentType.JSON)
+                .accept(ContentType.JSON)
+                .body(athleticsTrack)
+                .post("/api/athletics_tracks")
+                .then()
+                .statusCode(201)
+                .extract().as(AthleticsTrack.class);
+        SportObject got = (SportObject) given()
+                .when().get("/api/sport_objects/name/{sportObjectName}", saved.getName())
+                .then()
+                .statusCode(200)
+                .extract().as(AthleticsTrack.class);
+        assertThat(saved).isEqualTo(got);
+        TestUtils.clearSportObjectAfterTest(saved.getId());
+//        assertThat(saved.equals(got)).isTrue();
+    }
+
+    @Test
+    public void getByNameFailNotFound() {
+        Response response = given()
+                .when().get("/api/sport_objects/name/{sportObjectName}", "randomNamecdjfbdhas")// there will be for sure no object with name provided
+                .then()
+                .statusCode(404)
+                .extract().response();
+
+        String responseMessage = response.getBody().asString();
+        String actualExceptionMessage = TestUtils.getActualExceptionMessage(responseMessage);
+        assertThat(response.statusCode()).isEqualTo(404);
+        assertThat(actualExceptionMessage).isEqualTo("Sport object for given name not found");
+
+    }
+
 
     @Test
     public void putEquipmentToObject() {
@@ -91,8 +140,8 @@ public class SportObjectResourceTest {
         assertThat(sportObjectWithEquipment.getRentEquipmentNames().stream().findFirst().get())
                 .isEqualTo(savedRentEquipment.getName());
 
-        clearAthleticsTrackAfterTest(savedAthleticsTrack.getId());
-        clearRentEquipmentAfterTest(savedRentEquipment.getId());
+        TestUtils.clearSportObjectAfterTest(savedAthleticsTrack.getId());
+        TestUtils.clearRentEquipmentAfterTest(savedRentEquipment.getId());
 
     }
 
@@ -168,8 +217,8 @@ public class SportObjectResourceTest {
         assertThat(actualExceptionMessage).isEqualTo("Sport object for given id not found");
 
 
-        clearRentEquipmentAfterTest(savedEquipment.getId());
-//        clearAthleticsTrackAfterTest(savedTrack.getId());
+        TestUtils.clearRentEquipmentAfterTest(savedEquipment.getId());
+//        TestUtils.clearSportObjectAfterTest(savedTrack.getId());
     }
 
     @Test
@@ -200,16 +249,7 @@ public class SportObjectResourceTest {
         assertThat(response.statusCode()).isEqualTo(404);
         assertThat(actualExceptionMessage).isEqualTo("Rent equipment for given id not found!");
 
-        clearAthleticsTrackAfterTest(savedTrack.getId());
-    }
-
-
-    private void clearAthleticsTrackAfterTest(Integer id) {
-        sportObjectService.deleteSportObjectById(id);
-    }
-
-    private void clearRentEquipmentAfterTest(Integer id) {
-        rentEquipmentService.deleteRentEquipmentById(id);
+        TestUtils.clearSportObjectAfterTest(savedTrack.getId());
     }
 
 }

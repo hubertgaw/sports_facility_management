@@ -1,11 +1,17 @@
 package pl.lodz.hubertgaw.utils;
 
+import io.restassured.http.ContentType;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.eclipse.microprofile.config.ConfigProvider;
+import pl.lodz.hubertgaw.AthleticsTrackResourceTest;
 import pl.lodz.hubertgaw.dto.*;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static io.restassured.RestAssured.given;
 
 public class TestUtils {
     public static String getActualExceptionMessage(String response) {
@@ -132,4 +138,155 @@ public class TestUtils {
         return booking;
     }
 
+    public static User createUser() {
+        User user = new User();
+        user.setEmail(RandomStringUtils.randomAlphabetic(4) + "@" + RandomStringUtils.randomAlphabetic(4) + "." + RandomStringUtils.randomAlphabetic(3));
+        user.setFirstName(RandomStringUtils.randomAlphabetic(10));
+        user.setLastName(RandomStringUtils.randomAlphabetic(10));
+        user.setPassword(RandomStringUtils.randomAlphabetic(6));
+        user.setPhoneNumber(RandomStringUtils.randomNumeric(9));
+        return user;
+    }
+
+    public static Booking prepareObjectsWithCapacityForBooking(int capacity) {
+        AthleticsTrack athleticsTrack = createAthleticsTrack();
+        athleticsTrack.setCapacity(capacity);
+        RentEquipment rentEquipment1 = createRentEquipment();
+        RentEquipment rentEquipment2 = createRentEquipment();
+
+        AthleticsTrack savedTrack = given().port(ConfigProvider.getConfig().getValue("quarkus.http.test-port", Integer.class))
+                .contentType(ContentType.JSON)
+                .accept(ContentType.JSON)
+                .body(athleticsTrack)
+                .post("/api/athletics_tracks")
+                .then()
+                .statusCode(201)
+                .extract().as(AthleticsTrack.class);
+
+        RentEquipment savedEquipment1 = given()
+                .contentType(ContentType.JSON)
+                .accept(ContentType.JSON)
+                .body(rentEquipment1)
+                .post("/api/rent_equipments")
+                .then()
+                .statusCode(201)
+                .extract().as(RentEquipment.class);
+
+        RentEquipment savedEquipment2 = given()
+                .contentType(ContentType.JSON)
+                .accept(ContentType.JSON)
+                .body(rentEquipment2)
+                .post("/api/rent_equipments")
+                .then()
+                .statusCode(201)
+                .extract().as(RentEquipment.class);
+
+        //add equipment to athletics track
+        given()
+                .contentType(ContentType.JSON)
+                .accept(ContentType.JSON)
+                .body(athleticsTrack)
+                .put("/api/athletics_tracks/{athleticsTrackId}/rent_equipment/{rentEquipmentId}",
+                        savedTrack.getId(), savedEquipment1.getId());
+
+        given()
+                .contentType(ContentType.JSON)
+                .accept(ContentType.JSON)
+                .body(athleticsTrack)
+                .put("/api/athletics_tracks/{athleticsTrackId}/rent_equipment/{rentEquipmentId}",
+                        savedTrack.getId(), savedEquipment2.getId());
+
+
+
+        List<RentEquipment> rentEquipments = Arrays.asList(savedEquipment1, savedEquipment2);
+
+        return createBooking(savedTrack.getId(), rentEquipments);
+    }
+
+    public static Booking prepareObjectsWithHalfRentForBooking(boolean halfRent) {
+        FullSizePitch fullSizePitch = createFullSizePitch();
+        fullSizePitch.setIsHalfRentable(halfRent);
+        RentEquipment rentEquipment1 = createRentEquipment();
+        RentEquipment rentEquipment2 = createRentEquipment();
+
+        FullSizePitch savedPitch = given().port(ConfigProvider.getConfig().getValue("quarkus.http.test-port", Integer.class))
+                .contentType(ContentType.JSON)
+                .accept(ContentType.JSON)
+                .body(fullSizePitch)
+                .post("/api/full_size_pitches")
+                .then()
+                .statusCode(201)
+                .extract().as(FullSizePitch.class);
+
+        RentEquipment savedEquipment1 = given()
+                .contentType(ContentType.JSON)
+                .accept(ContentType.JSON)
+                .body(rentEquipment1)
+                .post("/api/rent_equipments")
+                .then()
+                .statusCode(201)
+                .extract().as(RentEquipment.class);
+
+        RentEquipment savedEquipment2 = given()
+                .contentType(ContentType.JSON)
+                .accept(ContentType.JSON)
+                .body(rentEquipment2)
+                .post("/api/rent_equipments")
+                .then()
+                .statusCode(201)
+                .extract().as(RentEquipment.class);
+
+        //add equipment to athletics track
+        given()
+                .contentType(ContentType.JSON)
+                .accept(ContentType.JSON)
+                .body(fullSizePitch)
+                .put("/api/full_size_pitches/{athleticsTrackId}/rent_equipment/{rentEquipmentId}",
+                        savedPitch.getId(), savedEquipment1.getId());
+
+        given()
+                .contentType(ContentType.JSON)
+                .accept(ContentType.JSON)
+                .body(fullSizePitch)
+                .put("/api/full_size_pitches/{athleticsTrackId}/rent_equipment/{rentEquipmentId}",
+                        savedPitch.getId(), savedEquipment2.getId());
+
+
+
+        List<RentEquipment> rentEquipments = Arrays.asList(savedEquipment1, savedEquipment2);
+
+        return createBooking(savedPitch.getId(), rentEquipments);
+    }
+
+
+
+    public static void clearSportObjectAfterTest(Integer id) {
+        given()
+                .when()
+                .delete("api/sport_objects/{sportObjectId}", id)
+                .then()
+                .statusCode(204);    }
+
+    public static void clearRentEquipmentAfterTest(Integer id) {
+        given()
+                .when()
+                .delete("api/rent_equipments/{rentEquipmentId}", id)
+                .then()
+                .statusCode(204);    }
+
+    public static void clearBookingAfterTest(Integer id) {
+        given()
+                .when()
+                .delete("api/bookings/{bookingId}", id)
+                .then()
+                .statusCode(204);
+    }
+
+    public static void clearUserAfterTest(Integer id) {
+        given()
+                .when()
+                .delete("api/users/{userId}", id)
+                .then()
+                .statusCode(204);
+    }
 }

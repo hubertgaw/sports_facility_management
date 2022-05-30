@@ -72,7 +72,7 @@ public class Booking implements Cloneable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Booking booking = (Booking) o;
-        return id.equals(booking.id) && sportObjectId.equals(booking.sportObjectId) && fromDate.equals(booking.fromDate) && hours.equals(booking.hours) && CollectionUtils.isEqualCollection(rentEquipmentNames, booking.rentEquipmentNames) && Objects.equals(firstName, booking.firstName) && Objects.equals(lastName, booking.lastName) && email == booking.email && Objects.equals(phoneNumber, booking.phoneNumber);
+        return id.equals(booking.id) && sportObjectId.equals(booking.sportObjectId) && fromDate.equals(booking.fromDate) && hours.equals(booking.hours) && CollectionUtils.isEqualCollection(rentEquipmentNames, booking.rentEquipmentNames) && Objects.equals(firstName, booking.firstName) && Objects.equals(lastName, booking.lastName) && Objects.equals(email, booking.email) && Objects.equals(phoneNumber, booking.phoneNumber);
     }
 
     @Override

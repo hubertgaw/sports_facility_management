@@ -1,6 +1,7 @@
 package pl.lodz.hubertgaw;
 
 import io.quarkus.test.junit.QuarkusTest;
+import io.quarkus.test.security.TestSecurity;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
@@ -19,6 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static pl.lodz.hubertgaw.utils.TestUtils.createCustomObject;
 
 @QuarkusTest
+@TestSecurity(authorizationEnabled = false)
 public class CustomObjectResourceTest {
 
 
@@ -52,8 +54,23 @@ public class CustomObjectResourceTest {
                 .statusCode(200)
                 .extract().as(CustomObject.class);
         assertThat(saved).isEqualTo(got);
-        clearCustomObjectAfterTest(saved.getId());
+        TestUtils.clearSportObjectAfterTest(saved.getId());
 //        assertThat(saved.equals(got)).isTrue();
+    }
+
+    @Test
+    public void getByIdFailNotFound() {
+        Response response = given()
+                .when().get("/api/custom_objects/{customObjectId}", 0)// there will be for sure no object with id 0
+                .then()
+                .statusCode(404)
+                .extract().response();
+
+        String responseMessage = response.getBody().asString();
+        String actualExceptionMessage = TestUtils.getActualExceptionMessage(responseMessage);
+        assertThat(response.statusCode()).isEqualTo(404);
+        assertThat(actualExceptionMessage).isEqualTo("Custom object for given id not found. Try to search in all sport objects or change the id.");
+
     }
 
     @Test
@@ -104,9 +121,9 @@ public class CustomObjectResourceTest {
         assertThat(got.get(1)).isEqualTo(saved2);
         assertThat(got.contains(saved3)).isFalse();
 
-        clearCustomObjectAfterTest(saved1.getId());
-        clearCustomObjectAfterTest(saved2.getId());
-        clearCustomObjectAfterTest(saved3.getId());
+        TestUtils.clearSportObjectAfterTest(saved1.getId());
+        TestUtils.clearSportObjectAfterTest(saved2.getId());
+        TestUtils.clearSportObjectAfterTest(saved3.getId());
     }
 
     @Test
@@ -135,7 +152,7 @@ public class CustomObjectResourceTest {
         assertThat(response.statusCode()).isEqualTo(404);
         assertThat(actualExceptionMessage).isEqualTo("No custom object was found for provided type");
 
-        clearCustomObjectAfterTest(saved.getId());
+        TestUtils.clearSportObjectAfterTest(saved.getId());
     }
 
     @Test
@@ -150,7 +167,7 @@ public class CustomObjectResourceTest {
                 .statusCode(201)
                 .extract().as(CustomObject.class);
         assertThat(saved.getId()).isNotNull();
-        clearCustomObjectAfterTest(saved.getId());
+        TestUtils.clearSportObjectAfterTest(saved.getId());
     }
 
     @Test
@@ -208,7 +225,7 @@ public class CustomObjectResourceTest {
                 .statusCode(200)
                 .extract().as(CustomObject.class);
         assertThat(updated.getName()).isEqualTo("Updated");
-        clearCustomObjectAfterTest(saved.getId());
+        TestUtils.clearSportObjectAfterTest(saved.getId());
 
     }
 
@@ -231,7 +248,7 @@ public class CustomObjectResourceTest {
                 .put("/api/custom_objects")
                 .then()
                 .statusCode(400);
-        clearCustomObjectAfterTest(saved.getId());
+        TestUtils.clearSportObjectAfterTest(saved.getId());
     }
 
     @Test
@@ -261,7 +278,7 @@ public class CustomObjectResourceTest {
         assertThat(response.statusCode()).isEqualTo(403);
         assertThat(actualExceptionMessage).isEqualTo("Sport object with given name already exists");
 
-        clearCustomObjectAfterTest(saved.getId());
+        TestUtils.clearSportObjectAfterTest(saved.getId());
     }
 
     @Test
@@ -291,7 +308,7 @@ public class CustomObjectResourceTest {
         assertThat(response.statusCode()).isEqualTo(400);
         assertThat(actualExceptionMessage).isEqualTo("Id for updating custom object cannot be null");
 
-        clearCustomObjectAfterTest(id);
+        TestUtils.clearSportObjectAfterTest(id);
     }
 
     @Test
@@ -341,7 +358,7 @@ public class CustomObjectResourceTest {
         assertThat(response.statusCode()).isEqualTo(400);
         assertThat(actualExceptionMessage).isEqualTo("Type can contains only letters and digits (no space allowed)");
 
-        clearCustomObjectAfterTest(saved.getId());
+        TestUtils.clearSportObjectAfterTest(saved.getId());
     }
 
 
@@ -381,8 +398,8 @@ public class CustomObjectResourceTest {
         //compare name of rent equipment
         assertThat(new ArrayList<>(trackAfterPut.getRentEquipmentNames()).get(0)).isEqualTo(savedEquipment.getName());
 
-        clearRentEquipmentAfterTest(savedEquipment.getId());
-        clearCustomObjectAfterTest(savedTrack.getId());
+        TestUtils.clearRentEquipmentAfterTest(savedEquipment.getId());
+        TestUtils.clearSportObjectAfterTest(savedTrack.getId());
     }
 
     @Test
@@ -418,8 +435,8 @@ public class CustomObjectResourceTest {
         assertThat(actualExceptionMessage).isEqualTo("Custom object for given id not found. Try to search in all sport objects or change the id.");
 
 
-        clearRentEquipmentAfterTest(savedEquipment.getId());
-//        clearCustomObjectAfterTest(savedTrack.getId());
+        TestUtils.clearRentEquipmentAfterTest(savedEquipment.getId());
+//        TestUtils.clearSportObjectAfterTest(savedTrack.getId());
     }
 
     @Test
@@ -450,18 +467,7 @@ public class CustomObjectResourceTest {
         assertThat(response.statusCode()).isEqualTo(404);
         assertThat(actualExceptionMessage).isEqualTo("Rent equipment for given id not found!");
 
-        clearCustomObjectAfterTest(savedTrack.getId());
-    }
-
-
-
-
-    private void clearCustomObjectAfterTest(Integer id) {
-        sportObjectService.deleteSportObjectById(id);
-    }
-
-    private void clearRentEquipmentAfterTest(Integer id) {
-        rentEquipmentService.deleteRentEquipmentById(id);
+        TestUtils.clearSportObjectAfterTest(savedTrack.getId());
     }
 
 }

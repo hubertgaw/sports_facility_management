@@ -1,6 +1,7 @@
 package pl.lodz.hubertgaw;
 
 import io.quarkus.test.junit.QuarkusTest;
+import io.quarkus.test.security.TestSecurity;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -22,12 +23,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static pl.lodz.hubertgaw.utils.TestUtils.createSportsHall;
 
 @QuarkusTest
+@TestSecurity(authorizationEnabled = false)
 public class SportsHallResourceTest {
-
-    @Inject
-    SportObjectService sportObjectService;
-    @Inject
-    RentEquipmentService rentEquipmentService;
 
     @Test
     public void getAll() {
@@ -54,8 +51,23 @@ public class SportsHallResourceTest {
                 .statusCode(200)
                 .extract().as(SportsHall.class);
         assertThat(saved).isEqualTo(got);
-        clearSportsHallAfterTest(saved.getId());
+        TestUtils.clearSportObjectAfterTest(saved.getId());
 //        assertThat(saved.equals(got)).isTrue();
+    }
+
+    @Test
+    public void getByIdFailNotFound() {
+        Response response = given()
+                .when().get("/api/sports_halls/{sportsHallId}", 0)// there will be for sure no object with id 0
+                .then()
+                .statusCode(404)
+                .extract().response();
+
+        String responseMessage = response.getBody().asString();
+        String actualExceptionMessage = TestUtils.getActualExceptionMessage(responseMessage);
+        assertThat(response.statusCode()).isEqualTo(404);
+        assertThat(actualExceptionMessage).isEqualTo("Sports hall for given id not found. Try to search in all sport objects or change the id.");
+
     }
 
     @Test
@@ -70,7 +82,7 @@ public class SportsHallResourceTest {
                 .statusCode(201)
                 .extract().as(SportsHall.class);
         assertThat(saved.getId()).isNotNull();
-        clearSportsHallAfterTest(saved.getId());
+        TestUtils.clearSportObjectAfterTest(saved.getId());
     }
 
     @Test
@@ -107,7 +119,7 @@ public class SportsHallResourceTest {
                 .statusCode(200)
                 .extract().as(SportsHall.class);
         assertThat(updated.getName()).isEqualTo("Updated");
-        clearSportsHallAfterTest(saved.getId());
+        TestUtils.clearSportObjectAfterTest(saved.getId());
 
     }
 
@@ -130,7 +142,7 @@ public class SportsHallResourceTest {
                 .put("/api/sports_halls")
                 .then()
                 .statusCode(400);
-        clearSportsHallAfterTest(saved.getId());
+        TestUtils.clearSportObjectAfterTest(saved.getId());
     }
 
     @Test
@@ -160,7 +172,7 @@ public class SportsHallResourceTest {
         assertThat(response.statusCode()).isEqualTo(403);
         assertThat(actualExceptionMessage).isEqualTo("Sport object with given name already exists");
 
-        clearSportsHallAfterTest(saved.getId());
+        TestUtils.clearSportObjectAfterTest(saved.getId());
     }
 
     @Test
@@ -190,7 +202,7 @@ public class SportsHallResourceTest {
         assertThat(response.statusCode()).isEqualTo(400);
         assertThat(actualExceptionMessage).isEqualTo("Id for updating sports hall cannot be null");
 
-        clearSportsHallAfterTest(id);
+        TestUtils.clearSportObjectAfterTest(id);
     }
 
     @Test
@@ -249,8 +261,8 @@ public class SportsHallResourceTest {
         //compare name of rent equipment
         assertThat(new ArrayList<>(trackAfterPut.getRentEquipmentNames()).get(0)).isEqualTo(savedEquipment.getName());
 
-        clearRentEquipmentAfterTest(savedEquipment.getId());
-        clearSportsHallAfterTest(savedTrack.getId());
+        TestUtils.clearRentEquipmentAfterTest(savedEquipment.getId());
+        TestUtils.clearSportObjectAfterTest(savedTrack.getId());
     }
 
     @Test
@@ -286,8 +298,8 @@ public class SportsHallResourceTest {
         assertThat(actualExceptionMessage).isEqualTo("Sports hall for given id not found. Try to search in all sport objects or change the id.");
 
 
-        clearRentEquipmentAfterTest(savedEquipment.getId());
-//        clearSportsHallAfterTest(savedTrack.getId());
+        TestUtils.clearRentEquipmentAfterTest(savedEquipment.getId());
+//        TestUtils.clearSportObjectAfterTest(savedTrack.getId());
     }
 
     @Test
@@ -318,15 +330,7 @@ public class SportsHallResourceTest {
         assertThat(response.statusCode()).isEqualTo(404);
         assertThat(actualExceptionMessage).isEqualTo("Rent equipment for given id not found!");
 
-        clearSportsHallAfterTest(savedTrack.getId());
+        TestUtils.clearSportObjectAfterTest(savedTrack.getId());
     }
 
-
-    private void clearSportsHallAfterTest(Integer id) {
-        sportObjectService.deleteSportObjectById(id);
-    }
-
-    private void clearRentEquipmentAfterTest(Integer id) {
-        rentEquipmentService.deleteRentEquipmentById(id);
-    }
 }
