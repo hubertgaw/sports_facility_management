@@ -120,6 +120,15 @@ public class BeachVolleyballCourtService {
                     return BeachVolleyballCourtException.beachVolleyballCourtNotFoundException();
                 });
 
+        if (!beachVolleyballCourt.getName().equals(entity.getName())) {
+            if (serviceUtils.compareSportObjectNameWithExisting(beachVolleyballCourt.getName())) {
+
+                logger.warn("Exception", SportObjectException.sportObjectNotFoundException());
+
+                throw SportObjectException.sportObjectDuplicateNameException();
+            }
+        }
+
         logger.info("BeachVolleyballCourt before update: {}", entity);
 
         entity.setFullPrice(beachVolleyballCourt.getFullPrice());

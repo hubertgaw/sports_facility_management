@@ -160,6 +160,16 @@ public class CustomObjectService {
 
             throw CustomObjectException.customObjectWrongTypeFormatException();
         }
+
+        if (!customObject.getName().equals(entity.getName())) {
+            if (serviceUtils.compareSportObjectNameWithExisting(customObject.getName())) {
+
+                logger.warn("Exception", SportObjectException.sportObjectNotFoundException());
+
+                throw SportObjectException.sportObjectDuplicateNameException();
+            }
+        }
+
         logger.info("CustomObject before update: {}", entity);
 
         entity.setFullPrice(customObject.getFullPrice());

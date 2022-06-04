@@ -120,6 +120,15 @@ public class AthleticsTrackService {
                     return AthleticsTrackException.athleticsTrackNotFoundException();
                 });
 
+        if (!athleticsTrack.getName().equals(entity.getName())) {
+            if (serviceUtils.compareSportObjectNameWithExisting(athleticsTrack.getName())) {
+
+                logger.warn("Exception", SportObjectException.sportObjectNotFoundException());
+
+                throw SportObjectException.sportObjectDuplicateNameException();
+            }
+        }
+
         logger.info("AthleticsTrack before update: {}", entity);
 
         entity.setName(athleticsTrack.getName());

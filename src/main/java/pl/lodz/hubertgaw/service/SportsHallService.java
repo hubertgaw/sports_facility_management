@@ -122,6 +122,15 @@ public class SportsHallService {
                     return SportsHallException.sportsHallNotFoundException();
                 });
 
+        if (!sportsHall.getName().equals(entity.getName())) {
+            if (serviceUtils.compareSportObjectNameWithExisting(sportsHall.getName())) {
+
+                logger.warn("Exception", SportObjectException.sportObjectNotFoundException());
+
+                throw SportObjectException.sportObjectDuplicateNameException();
+            }
+        }
+
         logger.info("SportsHall before update: {}", entity);
 
         entity.setFullPrice(sportsHall.getFullPrice());

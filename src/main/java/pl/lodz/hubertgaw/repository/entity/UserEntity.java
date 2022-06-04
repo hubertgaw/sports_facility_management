@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity(name = "User")
-@Table(name = "user")
+@Table(name = "user_info")
 @Getter
 @Setter
 public class UserEntity {

@@ -5,10 +5,10 @@
     <changeSet author="hubertgaw" id="2">
         <preConditions onFail="CONTINUE">
             <not>
-                <tableExists tableName="user"/>
+                <tableExists tableName="user_info"/>
             </not>
         </preConditions>
-        <createTable tableName="user">
+        <createTable tableName="user_info">
             <column name="user_id" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true"/>
             </column>

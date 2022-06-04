@@ -122,6 +122,14 @@ public class DartRoomService {
                     return DartRoomException.dartRoomNotFoundException();
                 });
 
+        if (!dartRoom.getName().equals(entity.getName())) {
+            if (serviceUtils.compareSportObjectNameWithExisting(dartRoom.getName())) {
+
+                logger.warn("Exception", SportObjectException.sportObjectNotFoundException());
+
+                throw SportObjectException.sportObjectDuplicateNameException();
+            }
+        }
         logger.info("DartRoom before update: {}", entity);
 
         entity.setFullPrice(dartRoom.getFullPrice());

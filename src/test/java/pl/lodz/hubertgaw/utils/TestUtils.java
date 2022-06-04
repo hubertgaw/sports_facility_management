@@ -9,6 +9,7 @@ import pl.lodz.hubertgaw.dto.*;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 import static io.restassured.RestAssured.given;
@@ -21,14 +22,14 @@ public class TestUtils {
 
     public static RentEquipment createRentEquipment() {
         RentEquipment rentEquipment = new RentEquipment();
-        rentEquipment.setName(RandomStringUtils.randomAlphabetic(10));
+        rentEquipment.setName(RandomStringUtils.randomAlphabetic(10).toLowerCase(Locale.ROOT));
         rentEquipment.setPrice(Double.valueOf(RandomStringUtils.randomNumeric(2)));
         return rentEquipment;
     }
 
     public static AthleticsTrack createAthleticsTrack() {
         AthleticsTrack athleticsTrack = new AthleticsTrack();
-        athleticsTrack.setName(RandomStringUtils.randomAlphabetic(10));
+        athleticsTrack.setName(RandomStringUtils.randomAlphabetic(10).toLowerCase(Locale.ROOT));
         athleticsTrack.setFullPrice(Double.valueOf(RandomStringUtils.randomNumeric(2)));
         athleticsTrack.setCapacity(Integer.valueOf(RandomStringUtils.randomNumeric(2)));
         athleticsTrack.setSingleTrackPrice(Double.valueOf(RandomStringUtils.randomNumeric(1)));
@@ -37,14 +38,14 @@ public class TestUtils {
 
     public static BeachVolleyballCourt createBeachVolleyballCourt() {
         BeachVolleyballCourt beachVolleyballCourt = new BeachVolleyballCourt();
-        beachVolleyballCourt.setName(RandomStringUtils.randomAlphabetic(10));
+        beachVolleyballCourt.setName(RandomStringUtils.randomAlphabetic(10).toLowerCase(Locale.ROOT));
         beachVolleyballCourt.setFullPrice(Double.valueOf(RandomStringUtils.randomNumeric(2)));
         return beachVolleyballCourt;
     }
 
     public static ClimbingWall createClimbingWall() {
         ClimbingWall climbingWall = new ClimbingWall();
-        climbingWall.setName(RandomStringUtils.randomAlphabetic(10));
+        climbingWall.setName(RandomStringUtils.randomAlphabetic(10).toLowerCase(Locale.ROOT));
         climbingWall.setFullPrice(Double.valueOf(RandomStringUtils.randomNumeric(2)));
         climbingWall.setCapacity(Integer.valueOf(RandomStringUtils.randomNumeric(2)));
         climbingWall.setSinglePrice(Double.valueOf(RandomStringUtils.randomNumeric(1)));
@@ -53,7 +54,7 @@ public class TestUtils {
 
     public static DartRoom createDartRoom() {
         DartRoom dartRoom = new DartRoom();
-        dartRoom.setName(RandomStringUtils.randomAlphabetic(10));
+        dartRoom.setName(RandomStringUtils.randomAlphabetic(10).toLowerCase(Locale.ROOT));
         dartRoom.setFullPrice(Double.valueOf(RandomStringUtils.randomNumeric(2)));
         dartRoom.setStandsNumber(Integer.valueOf(RandomStringUtils.randomNumeric(2)));
         dartRoom.setStandPrice(Double.valueOf(RandomStringUtils.randomNumeric(1)));
@@ -62,7 +63,7 @@ public class TestUtils {
 
     public static FullSizePitch createFullSizePitch() {
         FullSizePitch fullSizePitch = new FullSizePitch();
-        fullSizePitch.setName(RandomStringUtils.randomAlphabetic(10));
+        fullSizePitch.setName(RandomStringUtils.randomAlphabetic(10).toLowerCase(Locale.ROOT));
         fullSizePitch.setFullPrice(Double.valueOf(RandomStringUtils.randomNumeric(2)));
         fullSizePitch.setIsHalfRentable(Boolean.valueOf(RandomStringUtils.randomNumeric(2)));
         fullSizePitch.setHalfPitchPrice(Double.valueOf(RandomStringUtils.randomNumeric(1)));
@@ -71,7 +72,7 @@ public class TestUtils {
 
     public static Gym createGym() {
         Gym gym = new Gym();
-        gym.setName(RandomStringUtils.randomAlphabetic(10));
+        gym.setName(RandomStringUtils.randomAlphabetic(10).toLowerCase(Locale.ROOT));
         gym.setFullPrice(Double.valueOf(RandomStringUtils.randomNumeric(2)));
         gym.setCapacity(Integer.valueOf(RandomStringUtils.randomNumeric(2)));
         gym.setSinglePrice(Double.valueOf(RandomStringUtils.randomNumeric(1)));
@@ -80,7 +81,7 @@ public class TestUtils {
 
     public static SmallPitch createSmallPitch() {
         SmallPitch smallPitch = new SmallPitch();
-        smallPitch.setName(RandomStringUtils.randomAlphabetic(10));
+        smallPitch.setName(RandomStringUtils.randomAlphabetic(10).toLowerCase(Locale.ROOT));
         smallPitch.setFullPrice(Double.valueOf(RandomStringUtils.randomNumeric(2)));
         smallPitch.setIsHalfRentable(Boolean.valueOf(RandomStringUtils.randomNumeric(2)));
         smallPitch.setHalfPitchPrice(Double.valueOf(RandomStringUtils.randomNumeric(1)));
@@ -89,7 +90,7 @@ public class TestUtils {
 
     public static SportsHall createSportsHall() {
         SportsHall sportsHall = new SportsHall();
-        sportsHall.setName(RandomStringUtils.randomAlphabetic(10));
+        sportsHall.setName(RandomStringUtils.randomAlphabetic(10).toLowerCase(Locale.ROOT));
         sportsHall.setFullPrice(Double.valueOf(RandomStringUtils.randomNumeric(2)));
         sportsHall.setSectorsNumber(Integer.valueOf(RandomStringUtils.randomNumeric(2)));
         sportsHall.setSectorPrice(Double.valueOf(RandomStringUtils.randomNumeric(1)));
@@ -99,7 +100,7 @@ public class TestUtils {
 
     public static SportSwimmingPool createSportSwimmingPool() {
         SportSwimmingPool sportSwimmingPool = new SportSwimmingPool();
-        sportSwimmingPool.setName(RandomStringUtils.randomAlphabetic(10));
+        sportSwimmingPool.setName(RandomStringUtils.randomAlphabetic(10).toLowerCase(Locale.ROOT));
         sportSwimmingPool.setFullPrice(Double.valueOf(RandomStringUtils.randomNumeric(2)));
         sportSwimmingPool.setTracksNumber(Integer.valueOf(RandomStringUtils.randomNumeric(2)));
         sportSwimmingPool.setTrackPrice(Double.valueOf(RandomStringUtils.randomNumeric(1)));
@@ -108,15 +109,15 @@ public class TestUtils {
 
     public static TennisCourt createTennisCourt() {
         TennisCourt tennisCourt = new TennisCourt();
-        tennisCourt.setName(RandomStringUtils.randomAlphabetic(10));
+        tennisCourt.setName(RandomStringUtils.randomAlphabetic(10).toLowerCase(Locale.ROOT));
         tennisCourt.setFullPrice(Double.valueOf(RandomStringUtils.randomNumeric(2)));
         return tennisCourt;
     }
 
     public static CustomObject createCustomObject() {
         CustomObject customObject = new CustomObject();
-        customObject.setType(RandomStringUtils.randomAlphabetic(5));
-        customObject.setName(RandomStringUtils.randomAlphabetic(10));
+        customObject.setType(RandomStringUtils.randomAlphabetic(5).toLowerCase(Locale.ROOT));
+        customObject.setName(RandomStringUtils.randomAlphabetic(10).toLowerCase(Locale.ROOT));
         customObject.setFullPrice(Double.valueOf(RandomStringUtils.randomNumeric(2)));
         customObject.setCapacity(Integer.valueOf(RandomStringUtils.randomNumeric(2)));
         return customObject;
@@ -140,7 +141,7 @@ public class TestUtils {
 
     public static User createUser() {
         User user = new User();
-        user.setEmail(RandomStringUtils.randomAlphabetic(4) + "@" + RandomStringUtils.randomAlphabetic(4) + "." + RandomStringUtils.randomAlphabetic(3));
+        user.setEmail(RandomStringUtils.randomAlphabetic(4) + "@" + RandomStringUtils.randomAlphabetic(4) + "." + RandomStringUtils.randomAlphabetic(3).toLowerCase(Locale.ROOT));
         user.setFirstName(RandomStringUtils.randomAlphabetic(10));
         user.setLastName(RandomStringUtils.randomAlphabetic(10));
         user.setPassword(RandomStringUtils.randomAlphabetic(6));
@@ -163,7 +164,7 @@ public class TestUtils {
                 .statusCode(201)
                 .extract().as(AthleticsTrack.class);
 
-        RentEquipment savedEquipment1 = given()
+        RentEquipment savedEquipment1 = given().port(ConfigProvider.getConfig().getValue("quarkus.http.test-port", Integer.class))
                 .contentType(ContentType.JSON)
                 .accept(ContentType.JSON)
                 .body(rentEquipment1)
@@ -172,7 +173,7 @@ public class TestUtils {
                 .statusCode(201)
                 .extract().as(RentEquipment.class);
 
-        RentEquipment savedEquipment2 = given()
+        RentEquipment savedEquipment2 = given().port(ConfigProvider.getConfig().getValue("quarkus.http.test-port", Integer.class))
                 .contentType(ContentType.JSON)
                 .accept(ContentType.JSON)
                 .body(rentEquipment2)

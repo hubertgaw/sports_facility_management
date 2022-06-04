@@ -121,6 +121,15 @@ public class SmallPitchService {
                     return SmallPitchException.smallPitchNotFoundException();
                 });
 
+        if (!smallPitch.getName().equals(entity.getName())) {
+            if (serviceUtils.compareSportObjectNameWithExisting(smallPitch.getName())) {
+
+                logger.warn("Exception", SportObjectException.sportObjectNotFoundException());
+
+                throw SportObjectException.sportObjectDuplicateNameException();
+            }
+        }
+
         logger.info("SmallPitch before update: {}", entity);
 
         entity.setFullPrice(smallPitch.getFullPrice());

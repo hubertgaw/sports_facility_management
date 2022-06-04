@@ -120,6 +120,15 @@ public class FullSizePitchService {
                     return FullSizePitchException.fullSizePitchNotFoundException();
                 });
 
+        if (!fullSizePitch.getName().equals(entity.getName())) {
+            if (serviceUtils.compareSportObjectNameWithExisting(fullSizePitch.getName())) {
+
+                logger.warn("Exception", SportObjectException.sportObjectNotFoundException());
+
+                throw SportObjectException.sportObjectDuplicateNameException();
+            }
+        }
+
         logger.info("FullSizePitch before update: {}", entity);
 
         entity.setFullPrice(fullSizePitch.getFullPrice());

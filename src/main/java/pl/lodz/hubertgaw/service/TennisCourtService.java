@@ -120,6 +120,15 @@ public class TennisCourtService {
                     return TennisCourtException.tennisCourtNotFoundException();
                 });
 
+        if (!tennisCourt.getName().equals(entity.getName())) {
+            if (serviceUtils.compareSportObjectNameWithExisting(tennisCourt.getName())) {
+
+                logger.warn("Exception", SportObjectException.sportObjectNotFoundException());
+
+                throw SportObjectException.sportObjectDuplicateNameException();
+            }
+        }
+
         logger.info("TennisCourt before update: {}", entity);
 
         entity.setFullPrice(tennisCourt.getFullPrice());

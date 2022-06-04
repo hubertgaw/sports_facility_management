@@ -9,6 +9,7 @@ import pl.lodz.hubertgaw.repository.UserRepository;
 import pl.lodz.hubertgaw.repository.entity.*;
 import pl.lodz.hubertgaw.repository.entity.UserEntity;
 import pl.lodz.hubertgaw.security.PasswordEncoder;
+import pl.lodz.hubertgaw.service.exception.SportObjectException;
 import pl.lodz.hubertgaw.service.exception.UserException;
 import pl.lodz.hubertgaw.service.exception.RoleException;
 import pl.lodz.hubertgaw.service.exception.UserException;
@@ -176,6 +177,15 @@ public class UserService {
 
                     return UserException.userNotFoundException();
                 });
+
+        if (!user.getEmail().equals(entity.getEmail())) {
+            if (serviceUtils.compareUserEmailWithExisting(user.getEmail())) {
+
+                logger.warn("Exception", UserException.userDuplicateEmailException());
+
+                throw UserException.userDuplicateEmailException();
+            }
+        }
 
         logger.info("User before update: {}", entity);
 

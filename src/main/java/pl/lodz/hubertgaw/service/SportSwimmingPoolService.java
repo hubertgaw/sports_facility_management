@@ -121,6 +121,15 @@ public class SportSwimmingPoolService {
                     return SportSwimmingPoolException.sportSwimmingPoolNotFoundException();
                 });
 
+        if (!sportSwimmingPool.getName().equals(entity.getName())) {
+            if (serviceUtils.compareSportObjectNameWithExisting(sportSwimmingPool.getName())) {
+
+                logger.warn("Exception", SportObjectException.sportObjectNotFoundException());
+
+                throw SportObjectException.sportObjectDuplicateNameException();
+            }
+        }
+
         logger.info("SportSwimmingPool before update: {}", entity);
 
         entity.setFullPrice(sportSwimmingPool.getFullPrice());

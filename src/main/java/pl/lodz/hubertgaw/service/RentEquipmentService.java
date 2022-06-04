@@ -133,6 +133,15 @@ public class RentEquipmentService {
                     return RentEquipmentException.rentEquipmentNotFoundException();
                 });
 
+        if (!rentEquipment.getName().equals(entity.getName())) {
+            if (serviceUtils.compareRentEquipmentNameWithExisting(rentEquipment.getName())) {
+
+                logger.warn("Exception", RentEquipmentException.rentEquipmentNotFoundException());
+
+                throw RentEquipmentException.rentEquipmentNotFoundException();
+            }
+        }
+
         logger.info("RentEquipment before update: {}", entity);
 
         entity.setName(rentEquipment.getName());

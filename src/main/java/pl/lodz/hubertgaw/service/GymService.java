@@ -121,6 +121,15 @@ public class GymService {
                     return GymException.gymNotFoundException();
                 });
 
+        if (!gym.getName().equals(entity.getName())) {
+            if (serviceUtils.compareSportObjectNameWithExisting(gym.getName())) {
+
+                logger.warn("Exception", SportObjectException.sportObjectNotFoundException());
+
+                throw SportObjectException.sportObjectDuplicateNameException();
+            }
+        }
+
         logger.info("Gym before update: {}", entity);
 
         entity.setFullPrice(gym.getFullPrice());

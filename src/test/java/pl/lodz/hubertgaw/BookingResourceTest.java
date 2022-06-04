@@ -61,9 +61,9 @@ public class BookingResourceTest {
         assertThat(savedBooking).isEqualTo(gotBooking);
         TestUtils.clearBookingAfterTest(savedBooking.getId());
         BookingEntity bookingEntity = bookingMapper.toEntity(savedBooking);
-        for (RentEquipmentEntity rentEquipmentEntity : bookingEntity.getRentEquipment()) {
-            TestUtils.clearRentEquipmentAfterTest(rentEquipmentEntity.getId());
-        }
+//        for (RentEquipmentEntity rentEquipmentEntity : bookingEntity.getRentEquipment()) {
+//            TestUtils.clearRentEquipmentAfterTest(rentEquipmentEntity.getId());
+//        }
         TestUtils.clearSportObjectAfterTest(bookingEntity.getSportObject().getId());
     }
 
@@ -82,9 +82,9 @@ public class BookingResourceTest {
         assertThat(saved.getId()).isNotNull();
         TestUtils.clearBookingAfterTest(saved.getId());
         BookingEntity bookingEntity = bookingMapper.toEntity(saved);
-        for (RentEquipmentEntity rentEquipmentEntity : bookingEntity.getRentEquipment()) {
-            TestUtils.clearRentEquipmentAfterTest(rentEquipmentEntity.getId());
-        }
+//        for (RentEquipmentEntity rentEquipmentEntity : bookingEntity.getRentEquipment()) {
+//            TestUtils.clearRentEquipmentAfterTest(rentEquipmentEntity.getId());
+//        }
         TestUtils.clearSportObjectAfterTest(bookingEntity.getSportObject().getId());
 
     }
@@ -113,9 +113,9 @@ public class BookingResourceTest {
         assertThat(updated.getLastName()).isEqualTo("Updated");
         TestUtils.clearBookingAfterTest(saved.getId());
         BookingEntity bookingEntity = bookingMapper.toEntity(saved);
-        for (RentEquipmentEntity rentEquipmentEntity : bookingEntity.getRentEquipment()) {
-            TestUtils.clearRentEquipmentAfterTest(rentEquipmentEntity.getId());
-        }
+//        for (RentEquipmentEntity rentEquipmentEntity : bookingEntity.getRentEquipment()) {
+//            TestUtils.clearRentEquipmentAfterTest(rentEquipmentEntity.getId());
+//        }
         TestUtils.clearSportObjectAfterTest(bookingEntity.getSportObject().getId());
 
 
@@ -142,9 +142,9 @@ public class BookingResourceTest {
         assertThat(response.statusCode()).isEqualTo(404);
         assertThat(actualExceptionMessage).isEqualTo("Booking for given id not found!");
 
-        for (String rentEquipmentName : booking.getRentEquipmentNames()) {
-            TestUtils.clearRentEquipmentAfterTest(rentEquipmentService.findByName(rentEquipmentName).getId());
-        }
+//        for (String rentEquipmentName : booking.getRentEquipmentNames()) {
+//            TestUtils.clearRentEquipmentAfterTest(rentEquipmentService.findByName(rentEquipmentName).getId());
+//        }
         TestUtils.clearSportObjectAfterTest(booking.getSportObjectId());
 
     }
@@ -178,9 +178,9 @@ public class BookingResourceTest {
 
         TestUtils.clearBookingAfterTest(id);
         BookingEntity bookingEntity = bookingMapper.toEntity(saved);
-        for (RentEquipmentEntity rentEquipmentEntity : bookingEntity.getRentEquipment()) {
-            TestUtils.clearRentEquipmentAfterTest(rentEquipmentEntity.getId());
-        }
+//        for (RentEquipmentEntity rentEquipmentEntity : bookingEntity.getRentEquipment()) {
+//            TestUtils.clearRentEquipmentAfterTest(rentEquipmentEntity.getId());
+//        }
         TestUtils.clearSportObjectAfterTest(bookingEntity.getSportObject().getId());
     }
 
@@ -207,9 +207,9 @@ public class BookingResourceTest {
                 .statusCode(404);
 
         BookingEntity bookingEntity = bookingMapper.toEntity(saved);
-        for (RentEquipmentEntity rentEquipmentEntity : bookingEntity.getRentEquipment()) {
-            TestUtils.clearRentEquipmentAfterTest(rentEquipmentEntity.getId());
-        }
+//        for (RentEquipmentEntity rentEquipmentEntity : bookingEntity.getRentEquipment()) {
+//            TestUtils.clearRentEquipmentAfterTest(rentEquipmentEntity.getId());
+//        }
         TestUtils.clearSportObjectAfterTest(bookingEntity.getSportObject().getId());
     }
 
@@ -248,9 +248,9 @@ public class BookingResourceTest {
         assertThat(response.statusCode()).isEqualTo(404);
         assertThat(actualExceptionMessage).isEqualTo("Sport object for given id not found");
 
-        for (String rentEquipmentName : booking.getRentEquipmentNames()) {
-            TestUtils.clearRentEquipmentAfterTest(rentEquipmentService.findByName(rentEquipmentName).getId());
-        }
+//        for (String rentEquipmentName : booking.getRentEquipmentNames()) {
+//            TestUtils.clearRentEquipmentAfterTest(rentEquipmentService.findByName(rentEquipmentName).getId());
+//        }
         TestUtils.clearSportObjectAfterTest(sportObjectId);
 
     }
@@ -282,9 +282,9 @@ public class BookingResourceTest {
         assertThat(response.statusCode()).isEqualTo(404);
         assertThat(actualExceptionMessage).isEqualTo("Rent equipment with specified name not found in booked sport object");
 
-        for (String rentEquipmentName : booking.getRentEquipmentNames()) {
-            TestUtils.clearRentEquipmentAfterTest(rentEquipmentService.findByName(rentEquipmentName).getId());
-        }
+//        for (String rentEquipmentName : booking.getRentEquipmentNames()) {
+//            TestUtils.clearRentEquipmentAfterTest(rentEquipmentService.findByName(rentEquipmentName).getId());
+//        }
         TestUtils.clearSportObjectAfterTest(booking.getSportObjectId());
 
     }
@@ -307,9 +307,9 @@ public class BookingResourceTest {
         assertThat(response.statusCode()).isEqualTo(400);
         assertThat(actualExceptionMessage).isEqualTo("Date cannot be a past value");
 
-        for (String rentEquipmentName : booking.getRentEquipmentNames()) {
-            TestUtils.clearRentEquipmentAfterTest(rentEquipmentService.findByName(rentEquipmentName).getId());
-        }
+//        for (String rentEquipmentName : booking.getRentEquipmentNames()) {
+//            TestUtils.clearRentEquipmentAfterTest(rentEquipmentService.findByName(rentEquipmentName).getId());
+//        }
         TestUtils.clearSportObjectAfterTest(booking.getSportObjectId());
 
     }
@@ -332,9 +332,9 @@ public class BookingResourceTest {
         assertThat(response.statusCode()).isEqualTo(400);
         assertThat(actualExceptionMessage).isEqualTo("Time in the date must be a full hour or half past hour");
 
-        for (String rentEquipmentName : booking.getRentEquipmentNames()) {
-            TestUtils.clearRentEquipmentAfterTest(rentEquipmentService.findByName(rentEquipmentName).getId());
-        }
+//        for (String rentEquipmentName : booking.getRentEquipmentNames()) {
+//            TestUtils.clearRentEquipmentAfterTest(rentEquipmentService.findByName(rentEquipmentName).getId());
+//        }
         TestUtils.clearSportObjectAfterTest(booking.getSportObjectId());
 
     }
@@ -456,15 +456,15 @@ public class BookingResourceTest {
 
 
         BookingEntity bookingEntityDefault = bookingMapper.toEntity(savedDefault);
-        for (RentEquipmentEntity rentEquipmentEntity : bookingEntityDefault.getRentEquipment()) {
-            TestUtils.clearRentEquipmentAfterTest(rentEquipmentEntity.getId());
-        }
+//        for (RentEquipmentEntity rentEquipmentEntity : bookingEntityDefault.getRentEquipment()) {
+//            TestUtils.clearRentEquipmentAfterTest(rentEquipmentEntity.getId());
+//        }
         TestUtils.clearSportObjectAfterTest(bookingEntityDefault.getSportObject().getId());
 
         BookingEntity bookingEntityConflictTimeButOtherObject = bookingMapper.toEntity(savedConflictTimeButOtherObject);
-        for (RentEquipmentEntity rentEquipmentEntity : bookingEntityConflictTimeButOtherObject.getRentEquipment()) {
-            TestUtils.clearRentEquipmentAfterTest(rentEquipmentEntity.getId());
-        }
+//        for (RentEquipmentEntity rentEquipmentEntity : bookingEntityConflictTimeButOtherObject.getRentEquipment()) {
+//            TestUtils.clearRentEquipmentAfterTest(rentEquipmentEntity.getId());
+//        }
         TestUtils.clearSportObjectAfterTest(bookingEntityConflictTimeButOtherObject.getSportObject().getId());
 
     }

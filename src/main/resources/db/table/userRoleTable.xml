@@ -10,7 +10,7 @@
         </preConditions>
         <createTable tableName="user_role">
             <column name="user_id" type="bigint">
-                <constraints foreignKeyName="fk_role_user_id" references="user(user_id)"
+                <constraints foreignKeyName="fk_role_user_id" references="user_info(user_id)"
                              nullable="false"/>
             </column>
             <column name="role_id" type="bigint">

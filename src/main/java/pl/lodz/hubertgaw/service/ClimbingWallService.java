@@ -120,6 +120,15 @@ public class ClimbingWallService {
                     return ClimbingWallException.climbingWallNotFoundException();
                 });
 
+        if (!climbingWall.getName().equals(entity.getName())) {
+            if (serviceUtils.compareSportObjectNameWithExisting(climbingWall.getName())) {
+
+                logger.warn("Exception", SportObjectException.sportObjectNotFoundException());
+
+                throw SportObjectException.sportObjectDuplicateNameException();
+            }
+        }
+
         logger.info("ClimbingWall before update: {}", entity);
 
         entity.setFullPrice(climbingWall.getFullPrice());
