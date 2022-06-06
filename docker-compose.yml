@@ -1,0 +1,46 @@
+version: "3.8"
+
+services:
+  heroku-postgresql:
+    container_name: heroku-postgres
+    image: postgres:14.3
+    environment:
+      - POSTGRES_PASSWORD=12345
+      - POSTGRES_DB=sport_facility_management
+      - POSTGRES_USER=sport_facility_management
+    ports:
+      - 5432:5432
+    networks:
+      - heroku-net
+
+  heroku-quarkus:
+    container_name: heroku-quarkus
+    image: heroku/quarkus-jvm:1.0
+    build:
+      context: .
+      dockerfile: ./src/main/docker/Dockerfile.jvm
+    ports:
+      - 8080:8080
+    networks:
+      - heroku-net
+    depends_on:
+      - heroku-postgresql
+    environment:
+      - DB_ECHO_VALUES=true
+      - PORT=8080
+      - DB_HEROKU_SPLIT=false
+      - DB_JDBC_URL=jdbc:postgresql://heroku-postgresql:5432/sport_facility_management
+      - DB_JDBC_USER=sport_facility_management
+      - DB_JDBC_PASSWORD=12345
+      ### Using the DB_HEROKU_SPLIT = true  ###
+#      - DB_HEROKU_SPLIT=true
+#      - DATABASE_URL=postgres://postgres:postgres@heroku-postgresql:5432/sport_facility_management
+      ### Using the DB_HEROKU_SPLIT = false ###
+      # - DB_HEROKU_SPLIT=false
+      # - DB_JDBC_URL=jdbc:postgresql://heroku-postgresql:5432/postgres
+      # - DB_JDBC_USER=postgres
+      # - DB_JDBC_PASSWORD=postgres
+
+networks:
+  heroku-net:
+    driver: bridge
