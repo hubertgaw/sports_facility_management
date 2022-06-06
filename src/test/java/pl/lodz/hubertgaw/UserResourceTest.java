@@ -102,7 +102,7 @@ public class UserResourceTest {
                 .jsonPath().getList(".", User.class);
 
 //        assertThat(gotUser.size()).isEqualTo(1);
-        assertThat(gotUser.get(1)).isEqualTo(savedUser);
+        assertThat(gotUser.get(0).getRoles().stream().findFirst().get().name()).isEqualTo("USER");
 
         TestUtils.clearUserAfterTest(savedUser.getId());
     }
