@@ -1,0 +1,31 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <include file="db/table/rentEquipmentTable.xml"/>
+    <include file="db/table/sportObjectTable.xml"/>
+    <include file="db/table/athleticsTrackTable.xml"/>
+    <include file="db/table/beachVolleyballCourtTable.xml"/>
+    <include file="db/table/climbingWallTable.xml"/>
+    <include file="db/table/customObjectTable.xml"/>
+    <include file="db/table/dartRoomTable.xml"/>
+    <include file="db/table/fullSizePitchTable.xml"/>
+    <include file="db/table/gymTable.xml"/>
+    <include file="db/table/smallPitchTable.xml"/>
+    <include file="db/table/sportsHallTable.xml"/>
+    <include file="db/table/sportSwimmingPoolTable.xml"/>
+    <include file="db/table/tennisCourtTable.xml"/>
+    <include file="db/table/bookingTable.xml"/>
+    <include file="db/table/objectEquipmentTable.xml"/>
+    <include file="db/table/bookingEquipmentTable.xml"/>
+    <include file="db/table/roleTable.xml"/>
+    <include file="db/table/userTable.xml"/>
+    <include file="db/table/userRoleTable.xml"/>
+</databaseChangeLog>
+

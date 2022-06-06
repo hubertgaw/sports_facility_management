@@ -1,0 +1,22 @@
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+    <changeSet author="hubertgaw" id="1">
+        <preConditions onFail="CONTINUE">
+            <not>
+                <tableExists tableName="user_role"/>
+            </not>
+        </preConditions>
+        <createTable tableName="user_role">
+            <column name="user_id" type="bigint">
+                <constraints foreignKeyName="fk_role_user_id" references="user_info(user_id)"
+                             nullable="false"/>
+            </column>
+            <column name="role_id" type="bigint">
+                <constraints foreignKeyName="fk_user_role_id" references="role(role_id)"
+                             nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

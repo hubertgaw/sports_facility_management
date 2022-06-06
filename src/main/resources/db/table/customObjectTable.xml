@@ -1,0 +1,30 @@
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+    <changeSet author="hubertgaw" id="2">
+        <preConditions onFail="CONTINUE">
+            <not>
+                <tableExists tableName="custom_object"/>
+            </not>
+        </preConditions>
+        <createTable tableName="custom_object">
+            <column name="sport_object_id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="type" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="capacity" type="int">
+                <constraints nullable="true"/>
+            </column>
+            <column name="single_price" type="float">
+                <constraints nullable="true"/>
+            </column>
+            <column name="is_half_rentable" type="boolean">
+                <constraints nullable="true"/>
+            </column>
+
+        </createTable>
+    </changeSet>
+</databaseChangeLog>
