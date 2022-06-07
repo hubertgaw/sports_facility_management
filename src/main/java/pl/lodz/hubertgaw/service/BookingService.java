@@ -3,18 +3,14 @@ package pl.lodz.hubertgaw.service;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.slf4j.Logger;
 import pl.lodz.hubertgaw.dto.Booking;
-import pl.lodz.hubertgaw.dto.Booking;
 import pl.lodz.hubertgaw.dto.SportObject;
 import pl.lodz.hubertgaw.dto.User;
 import pl.lodz.hubertgaw.mapper.BookingMapper;
 import pl.lodz.hubertgaw.repository.BookingRepository;
 import pl.lodz.hubertgaw.repository.RentEquipmentRepository;
 import pl.lodz.hubertgaw.repository.SportObjectRepository;
-import pl.lodz.hubertgaw.repository.UserRepository;
 import pl.lodz.hubertgaw.repository.entity.BookingEntity;
 import pl.lodz.hubertgaw.repository.entity.RentEquipmentEntity;
-import pl.lodz.hubertgaw.repository.entity.UserEntity;
-import pl.lodz.hubertgaw.service.exception.BookingException;
 import pl.lodz.hubertgaw.service.exception.BookingException;
 import pl.lodz.hubertgaw.service.utils.ServiceUtils;
 

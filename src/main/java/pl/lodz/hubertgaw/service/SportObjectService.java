@@ -1,27 +1,23 @@
 package pl.lodz.hubertgaw.service;
 
+import org.slf4j.Logger;
 import pl.lodz.hubertgaw.dto.Booking;
 import pl.lodz.hubertgaw.dto.SportObject;
 import pl.lodz.hubertgaw.mapper.BookingMapper;
 import pl.lodz.hubertgaw.mapper.SportObjectMapper;
 import pl.lodz.hubertgaw.repository.RentEquipmentRepository;
 import pl.lodz.hubertgaw.repository.SportObjectRepository;
-
-import org.slf4j.Logger;
 import pl.lodz.hubertgaw.repository.entity.BookingEntity;
 import pl.lodz.hubertgaw.repository.entity.RentEquipmentEntity;
 import pl.lodz.hubertgaw.repository.entity.sports_objects.SportObjectEntity;
 import pl.lodz.hubertgaw.service.exception.RentEquipmentException;
+import pl.lodz.hubertgaw.service.exception.SportObjectException;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.transaction.Transactional;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import pl.lodz.hubertgaw.service.exception.SportObjectException;
-import pl.lodz.hubertgaw.service.exception.UserException;
 
 
 @ApplicationScoped

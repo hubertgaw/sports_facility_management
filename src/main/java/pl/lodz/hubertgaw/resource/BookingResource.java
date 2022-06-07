@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import pl.lodz.hubertgaw.dto.Booking;
 import pl.lodz.hubertgaw.dto.RentEquipment;
 import pl.lodz.hubertgaw.dto.User;
-import pl.lodz.hubertgaw.repository.entity.UserEntity;
 import pl.lodz.hubertgaw.service.BookingService;
 import pl.lodz.hubertgaw.service.UserService;
 
@@ -17,12 +16,10 @@ import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import javax.ws.rs.*;
-
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
-import java.security.Principal;
 
 @Path("/api/bookings")
 @Produces(MediaType.APPLICATION_JSON)

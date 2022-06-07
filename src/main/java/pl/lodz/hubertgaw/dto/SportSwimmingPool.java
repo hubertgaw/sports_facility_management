@@ -1,9 +1,7 @@
 package pl.lodz.hubertgaw.dto;
 
-import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 
 import javax.validation.constraints.NotNull;
 

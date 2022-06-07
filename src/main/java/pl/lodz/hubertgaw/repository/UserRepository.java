@@ -7,7 +7,6 @@ import pl.lodz.hubertgaw.repository.entity.UserEntity;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.util.List;
-import java.util.Set;
 
 @ApplicationScoped
 public class UserRepository implements PanacheRepositoryBase<UserEntity, Integer> {

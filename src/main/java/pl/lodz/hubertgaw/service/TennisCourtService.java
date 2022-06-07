@@ -2,14 +2,11 @@ package pl.lodz.hubertgaw.service;
 
 import org.slf4j.Logger;
 import pl.lodz.hubertgaw.dto.TennisCourt;
-import pl.lodz.hubertgaw.dto.TennisCourt;
 import pl.lodz.hubertgaw.mapper.SportObjectMapper;
 import pl.lodz.hubertgaw.repository.RentEquipmentRepository;
 import pl.lodz.hubertgaw.repository.TennisCourtRepository;
 import pl.lodz.hubertgaw.repository.entity.RentEquipmentEntity;
 import pl.lodz.hubertgaw.repository.entity.sports_objects.TennisCourtEntity;
-import pl.lodz.hubertgaw.repository.entity.sports_objects.TennisCourtEntity;
-import pl.lodz.hubertgaw.service.exception.TennisCourtException;
 import pl.lodz.hubertgaw.service.exception.RentEquipmentException;
 import pl.lodz.hubertgaw.service.exception.SportObjectException;
 import pl.lodz.hubertgaw.service.exception.TennisCourtException;

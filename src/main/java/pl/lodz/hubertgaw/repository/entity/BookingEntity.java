@@ -1,13 +1,13 @@
 package pl.lodz.hubertgaw.repository.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
 import pl.lodz.hubertgaw.repository.entity.sports_objects.SportObjectEntity;
 
 import javax.persistence.*;
-import javax.validation.constraints.*;
-import java.time.LocalDate;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;

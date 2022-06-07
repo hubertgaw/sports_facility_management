@@ -2,7 +2,6 @@ package pl.lodz.hubertgaw.dto;
 
 import lombok.Data;
 import org.apache.commons.collections4.CollectionUtils;
-import pl.lodz.hubertgaw.repository.entity.RentEquipmentEntity;
 
 import javax.validation.constraints.*;
 import java.time.LocalDateTime;

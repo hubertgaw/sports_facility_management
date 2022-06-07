@@ -4,7 +4,6 @@ import io.quarkus.hibernate.orm.panache.PanacheRepositoryBase;
 import pl.lodz.hubertgaw.repository.entity.sports_objects.AthleticsTrackEntity;
 
 import javax.enterprise.context.ApplicationScoped;
-import java.util.Optional;
 
 @ApplicationScoped
 public class AthleticsTrackRepository implements PanacheRepositoryBase<AthleticsTrackEntity, Integer> {

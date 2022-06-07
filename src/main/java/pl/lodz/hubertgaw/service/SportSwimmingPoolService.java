@@ -2,14 +2,11 @@ package pl.lodz.hubertgaw.service;
 
 import org.slf4j.Logger;
 import pl.lodz.hubertgaw.dto.SportSwimmingPool;
-import pl.lodz.hubertgaw.dto.SportSwimmingPool;
 import pl.lodz.hubertgaw.mapper.SportObjectMapper;
 import pl.lodz.hubertgaw.repository.RentEquipmentRepository;
 import pl.lodz.hubertgaw.repository.SportSwimmingPoolRepository;
 import pl.lodz.hubertgaw.repository.entity.RentEquipmentEntity;
 import pl.lodz.hubertgaw.repository.entity.sports_objects.SportSwimmingPoolEntity;
-import pl.lodz.hubertgaw.repository.entity.sports_objects.SportSwimmingPoolEntity;
-import pl.lodz.hubertgaw.service.exception.SportSwimmingPoolException;
 import pl.lodz.hubertgaw.service.exception.RentEquipmentException;
 import pl.lodz.hubertgaw.service.exception.SportObjectException;
 import pl.lodz.hubertgaw.service.exception.SportSwimmingPoolException;
