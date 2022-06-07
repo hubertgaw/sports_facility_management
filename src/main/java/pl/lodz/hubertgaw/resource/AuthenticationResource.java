@@ -1,18 +1,15 @@
 package pl.lodz.hubertgaw.resource;
 
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.slf4j.Logger;
 import pl.lodz.hubertgaw.dto.AuthRequest;
 import pl.lodz.hubertgaw.dto.AuthResponse;
-import pl.lodz.hubertgaw.dto.User;
-import pl.lodz.hubertgaw.security.PasswordEncoder;
-import pl.lodz.hubertgaw.security.TokenUtils;
 import pl.lodz.hubertgaw.service.AuthenticationService;
-import pl.lodz.hubertgaw.service.UserService;
 
 import javax.annotation.security.PermitAll;
 import javax.inject.Inject;
-import javax.ws.rs.*;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 

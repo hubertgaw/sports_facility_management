@@ -1,12 +1,8 @@
 package pl.lodz.hubertgaw.mapper;
 
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.Mappings;
-import pl.lodz.hubertgaw.dto.Booking;
 import pl.lodz.hubertgaw.dto.User;
 import pl.lodz.hubertgaw.repository.RoleRepository;
-import pl.lodz.hubertgaw.repository.entity.BookingEntity;
 import pl.lodz.hubertgaw.repository.entity.RoleEntity;
 import pl.lodz.hubertgaw.repository.entity.RoleName;
 import pl.lodz.hubertgaw.repository.entity.UserEntity;

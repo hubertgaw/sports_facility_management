@@ -12,7 +12,6 @@ import pl.lodz.hubertgaw.service.SportObjectService;
 import pl.lodz.hubertgaw.utils.TestUtils;
 
 import javax.inject.Inject;
-
 import java.util.ArrayList;
 
 import static io.restassured.RestAssured.given;

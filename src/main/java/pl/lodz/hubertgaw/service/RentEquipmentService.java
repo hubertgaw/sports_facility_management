@@ -2,14 +2,11 @@ package pl.lodz.hubertgaw.service;
 
 import org.slf4j.Logger;
 import pl.lodz.hubertgaw.dto.RentEquipment;
-import pl.lodz.hubertgaw.dto.RentEquipment;
 import pl.lodz.hubertgaw.mapper.RentEquipmentMapper;
 import pl.lodz.hubertgaw.repository.RentEquipmentRepository;
 import pl.lodz.hubertgaw.repository.entity.RentEquipmentEntity;
 import pl.lodz.hubertgaw.repository.entity.sports_objects.SportObjectEntity;
 import pl.lodz.hubertgaw.service.exception.RentEquipmentException;
-import pl.lodz.hubertgaw.service.exception.RentEquipmentException;
-import pl.lodz.hubertgaw.service.exception.SportObjectException;
 import pl.lodz.hubertgaw.service.utils.ServiceUtils;
 
 import javax.enterprise.context.ApplicationScoped;

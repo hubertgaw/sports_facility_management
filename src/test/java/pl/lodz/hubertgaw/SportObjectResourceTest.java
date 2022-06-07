@@ -4,16 +4,11 @@ import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.security.TestSecurity;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Test;
 import pl.lodz.hubertgaw.dto.AthleticsTrack;
 import pl.lodz.hubertgaw.dto.RentEquipment;
 import pl.lodz.hubertgaw.dto.SportObject;
-import pl.lodz.hubertgaw.service.RentEquipmentService;
-import pl.lodz.hubertgaw.service.SportObjectService;
 import pl.lodz.hubertgaw.utils.TestUtils;
-
-import javax.inject.Inject;
 
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;

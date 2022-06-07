@@ -1,6 +1,9 @@
 package pl.lodz.hubertgaw.service.exception;
 
-import pl.lodz.hubertgaw.service.exception.core.*;
+import pl.lodz.hubertgaw.service.exception.core.BaseException;
+import pl.lodz.hubertgaw.service.exception.core.DuplicateEntryException;
+import pl.lodz.hubertgaw.service.exception.core.EmptyPropertyException;
+import pl.lodz.hubertgaw.service.exception.core.NotFoundException;
 
 public class UserException extends BaseException {
 

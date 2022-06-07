@@ -3,7 +3,10 @@ package pl.lodz.hubertgaw.dto;
 import lombok.Data;
 import pl.lodz.hubertgaw.repository.entity.RoleName;
 
-import javax.validation.constraints.*;
+import javax.validation.constraints.Digits;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.util.HashSet;
 import java.util.Set;
 

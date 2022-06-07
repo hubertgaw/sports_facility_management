@@ -2,16 +2,13 @@ package pl.lodz.hubertgaw.service;
 
 import org.slf4j.Logger;
 import pl.lodz.hubertgaw.dto.User;
-import pl.lodz.hubertgaw.dto.User;
 import pl.lodz.hubertgaw.mapper.UserMapper;
 import pl.lodz.hubertgaw.repository.RoleRepository;
 import pl.lodz.hubertgaw.repository.UserRepository;
-import pl.lodz.hubertgaw.repository.entity.*;
+import pl.lodz.hubertgaw.repository.entity.RoleEntity;
+import pl.lodz.hubertgaw.repository.entity.RoleName;
 import pl.lodz.hubertgaw.repository.entity.UserEntity;
 import pl.lodz.hubertgaw.security.PasswordEncoder;
-import pl.lodz.hubertgaw.service.exception.SportObjectException;
-import pl.lodz.hubertgaw.service.exception.UserException;
-import pl.lodz.hubertgaw.service.exception.RoleException;
 import pl.lodz.hubertgaw.service.exception.UserException;
 import pl.lodz.hubertgaw.service.utils.ServiceUtils;
 

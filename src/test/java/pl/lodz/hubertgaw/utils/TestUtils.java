@@ -3,7 +3,6 @@ package pl.lodz.hubertgaw.utils;
 import io.restassured.http.ContentType;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.eclipse.microprofile.config.ConfigProvider;
-import pl.lodz.hubertgaw.AthleticsTrackResourceTest;
 import pl.lodz.hubertgaw.dto.*;
 
 import java.time.LocalDateTime;

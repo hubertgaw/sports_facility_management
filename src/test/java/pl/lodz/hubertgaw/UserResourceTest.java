@@ -3,13 +3,9 @@ package pl.lodz.hubertgaw;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.security.TestSecurity;
 import io.restassured.http.ContentType;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import pl.lodz.hubertgaw.dto.Booking;
 import pl.lodz.hubertgaw.dto.User;
 import pl.lodz.hubertgaw.repository.UserRepository;
-import pl.lodz.hubertgaw.repository.entity.BookingEntity;
-import pl.lodz.hubertgaw.repository.entity.RentEquipmentEntity;
 import pl.lodz.hubertgaw.utils.TestUtils;
 
 import javax.inject.Inject;

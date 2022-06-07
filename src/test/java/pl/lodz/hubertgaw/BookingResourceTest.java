@@ -9,12 +9,10 @@ import pl.lodz.hubertgaw.dto.Booking;
 import pl.lodz.hubertgaw.dto.RentEquipment;
 import pl.lodz.hubertgaw.mapper.BookingMapper;
 import pl.lodz.hubertgaw.repository.entity.BookingEntity;
-import pl.lodz.hubertgaw.repository.entity.RentEquipmentEntity;
 import pl.lodz.hubertgaw.service.RentEquipmentService;
 import pl.lodz.hubertgaw.utils.TestUtils;
 
 import javax.inject.Inject;
-
 import java.time.LocalDateTime;
 import java.util.Arrays;
 

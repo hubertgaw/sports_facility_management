@@ -1,6 +1,7 @@
 package pl.lodz.hubertgaw.service;
 
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.slf4j.Logger;
 import pl.lodz.hubertgaw.dto.AuthRequest;
 import pl.lodz.hubertgaw.dto.AuthResponse;
 import pl.lodz.hubertgaw.dto.User;
@@ -9,8 +10,6 @@ import pl.lodz.hubertgaw.security.TokenUtils;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.ws.rs.core.Response;
-import org.slf4j.Logger;
 
 @ApplicationScoped
 public class AuthenticationService {
