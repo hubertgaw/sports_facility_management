@@ -32,6 +32,8 @@ public class AuthenticationResource {
         try {
             response = authenticationService.login(authRequest);
         } catch (Exception e) {
+            logger.error("Exception: ", e);
+
             Response builtResponse = Response.status(Response.Status.UNAUTHORIZED).build();
 
             logger.info("Built response: {}", builtResponse);
